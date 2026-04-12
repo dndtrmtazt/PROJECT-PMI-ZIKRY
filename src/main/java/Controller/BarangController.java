@@ -1,4 +1,4 @@
-package controller; // SESUAIKAN DI SINI
+package Controller; // SESUAIKAN DI SINI
 
 import config.koneksi; // SESUAIKAN DI SINI
 import model.Barang;   // SESUAIKAN DI SINI

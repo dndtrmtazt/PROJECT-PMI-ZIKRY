@@ -6,7 +6,7 @@ module com.example.pmitokozikry {
 
     exports app;
     opens app to javafx.fxml;
-    opens controller to javafx.fxml;
+    opens Controller to javafx.fxml;
     opens model to javafx.fxml;
     opens config to javafx.fxml;
 }

@@ -2,12 +2,40 @@ package model;
 
 import config.koneksi;
 import java.sql.*;
+import java.util.ArrayList; // Tambahan import
+import java.util.List;      // Tambahan import
 
 public class UserDAO {
 
     /**
+     * Fungsi Tambahan: Mengambil semua data user dari database
+     * Digunakan untuk menampilkan list di halaman Manajemen User
+     */
+    public static List<User> getAllUsers() {
+        List<User> listUser = new ArrayList<>();
+        String query = "SELECT id_user, user_password, role FROM user";
+
+        try (Connection conn = koneksi.koneksiDB();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(query)) {
+
+            while (rs.next()) {
+                User user = new User();
+                // Menggunakan setUsername sesuai model User kamu
+                user.setUsername(rs.getString("id_user"));
+                user.setPassword(rs.getString("user_password"));
+                user.setRole(rs.getString("role"));
+                listUser.add(user);
+            }
+        } catch (SQLException e) {
+            System.err.println("Error getting all users: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return listUser;
+    }
+
+    /**
      * Validasi user login menggunakan struktur tabel existing
-     * Tabel: user, Kolom: id_user, user_password, role
      */
     public static User validateUser(String idUser, String password) {
         String query = "SELECT id_user, user_password, role FROM user WHERE id_user = ? AND user_password = ?";
@@ -15,7 +43,7 @@ public class UserDAO {
              PreparedStatement ps = conn.prepareStatement(query)) {
             ps.setString(1, idUser);
             ps.setString(2, password);
-            
+
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 User user = new User();
@@ -36,7 +64,7 @@ public class UserDAO {
         try (Connection conn = koneksi.koneksiDB();
              PreparedStatement ps = conn.prepareStatement(query)) {
             ps.setString(1, idUser);
-            
+
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 User user = new User();
@@ -59,7 +87,7 @@ public class UserDAO {
             ps.setString(1, idUser);
             ps.setString(2, password);
             ps.setString(3, role);
-            
+
             int result = ps.executeUpdate();
             System.out.println("User inserted: " + idUser);
             return result > 0;
@@ -76,7 +104,7 @@ public class UserDAO {
              PreparedStatement ps = conn.prepareStatement(query)) {
             ps.setString(1, newPassword);
             ps.setString(2, idUser);
-            
+
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             System.err.println("Error updating user password: " + e.getMessage());

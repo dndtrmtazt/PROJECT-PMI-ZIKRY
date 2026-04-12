@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.control.ScrollPane?>
+
+<VBox prefHeight="650.0" prefWidth="917.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.DashboardController">
+    <children>
+        <HBox alignment="CENTER_LEFT" prefHeight="60.0" style="-fx-background-color: #4A76A8;">
+            <children>
+                <Label text="Dashboard" textFill="WHITE">
+                    <font><Font name="System Bold" size="24.0" /></font>
+                    <padding><Insets left="20.0" /></padding>
+                </Label>
+            </children>
+        </HBox>
+
+        <GridPane alignment="TOP_CENTER" hgap="35.0" vgap="35.0" VBox.vgrow="ALWAYS">
+            <padding><Insets bottom="30.0" left="60.0" right="60.0" top="50.0" /></padding>
+            <columnConstraints>
+                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="360.0" />
+                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="360.0" />
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="240.0" valignment="CENTER" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="240.0" valignment="CENTER" vgrow="SOMETIMES" />
+            </rowConstraints>
+            <children>
+                <VBox maxHeight="220.0" maxWidth="360.0" spacing="15.0" style="-fx-background-color: #EAF1FB; -fx-background-radius: 15; -fx-border-color: #2196F3; -fx-border-radius: 15; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5);">
+                    <padding><Insets bottom="20.0" left="25.0" right="25.0" top="20.0" /></padding>
+                    <children>
+                        <HBox alignment="CENTER_LEFT" spacing="12.0">
+                            <children>
+                                <ImageView fitHeight="40.0" fitWidth="38.0"><image><Image url="@../Images/Component 13.png" /></image></ImageView>
+                                <Label text="TOTAL PENJUALAN HARI INI" textFill="#1976D2"><font><Font name="System Bold" size="13.0" /></font></Label>
+                            </children>
+                        </HBox>
+                        <Label prefHeight="61.0" prefWidth="210.0" text="Rp 2.500.000"><font><Font name="System Bold" size="34.0" /></font></Label>
+                        <Button contentDisplay="RIGHT" maxWidth="1.7976931348623157E308" prefHeight="38.0" style="-fx-background-color: white; -fx-background-radius: 8; -fx-border-color: #8B8B8B; -fx-border-radius: 8;" text="Lihat Laporan Harian">
+                            <graphic><ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true"><image><Image url="@../Images/PANAH.png" /></image></ImageView></graphic>
+                        </Button>
+                    </children>
+                </VBox>
+
+                <VBox maxHeight="220.0" maxWidth="360.0" spacing="15.0" style="-fx-background-color: white; -fx-background-radius: 15; -fx-border-color: #B0B0B0; -fx-border-radius: 15; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5)" GridPane.columnIndex="1">
+                    <padding><Insets bottom="20.0" left="25.0" right="25.0" top="20.0" /></padding>
+                    <children>
+                        <HBox alignment="CENTER_LEFT" spacing="12.0">
+                            <children>
+                                <ImageView fitHeight="40.0" fitWidth="38.0"><image><Image url="@../Images/Component 15.png" /></image></ImageView>
+                                <Label text="TOTAL PENGELUARAN HARI INI" textFill="#2C3E50"><font><Font name="System Bold" size="13.0" /></font></Label>
+                            </children>
+                        </HBox>
+                        <Label prefHeight="62.0" prefWidth="210.0" text="Rp 1.500.000"><font><Font name="System Bold" size="34.0" /></font></Label>
+                        <Button contentDisplay="RIGHT" maxWidth="1.7976931348623157E308" prefHeight="38.0" style="-fx-background-color: white; -fx-background-radius: 8; -fx-border-color: #8B8B8B; -fx-border-radius: 8;" text="Lihat Detail Pengeluaran">
+                            <graphic><ImageView fitHeight="15.0" fitWidth="15.0"><image><Image url="@../Images/PANAH.png" /></image></ImageView></graphic>
+                        </Button>
+                    </children>
+                </VBox>
+
+                <VBox maxHeight="220.0" maxWidth="360.0" spacing="15.0" style="-fx-background-color: white; -fx-background-radius: 15; -fx-border-color: #2196F3; -fx-border-radius: 15; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5);" GridPane.rowIndex="1">
+                    <padding><Insets bottom="20.0" left="25.0" right="25.0" top="20.0" /></padding>
+                    <children>
+                        <HBox alignment="CENTER_LEFT" spacing="12.0">
+                            <children>
+                                <ImageView fitHeight="40.0" fitWidth="38.0"><image><Image url="@../Images/Component 14.png" /></image></ImageView>
+                                <Label text="JUMLAH TRANSAKSI HARI INI" textFill="#2C3E50"><font><Font name="System Bold" size="13.0" /></font></Label>
+                            </children>
+                        </HBox>
+                        <Label prefHeight="61.0" prefWidth="272.0" text="125 Transaksi"><font><Font name="System Bold" size="34.0" /></font></Label>
+                    </children>
+                </VBox>
+
+                <VBox maxHeight="220.0" maxWidth="360.0" spacing="10.0" style="-fx-background-color: #E8F5E9; -fx-background-radius: 15; -fx-border-color: #328B51; -fx-border-radius: 15; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5);" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                    <padding><Insets bottom="15.0" left="20.0" right="20.0" top="15.0" /></padding>
+                    <children>
+                        <HBox alignment="CENTER_LEFT" spacing="12.0">
+                            <children>
+                                <ImageView fitHeight="40.0" fitWidth="38.0"><image><Image url="@../Images/Component 16.png" /></image></ImageView>
+                                <Label text="INFO STOK HAMPIR HABIS" textFill="#2E7D32"><font><Font name="System Bold" size="13.0" /></font></Label>
+                            </children>
+                        </HBox>
+
+                        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" prefHeight="100.0" style="-fx-background: transparent; -fx-background-color: transparent;" vbarPolicy="AS_NEEDED" VBox.vgrow="ALWAYS">
+                            <content>
+                                <VBox fx:id="stokListContainer" spacing="8.0" style="-fx-background-color: transparent;">
+                                    <children>
+                                    </children>
+                                </VBox>
+                            </content>
+                        </ScrollPane>
+
+                        <Button contentDisplay="RIGHT" maxWidth="1.7976931348623157E308" prefHeight="38.0" style="-fx-background-color: white; -fx-background-radius: 8; -fx-border-color: #8B8B8B; -fx-border-radius: 8;" text="Kelola Stok">
+                            <graphic><ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true"><image><Image url="@../Images/PANAH.png" /></image></ImageView></graphic>
+                        </Button>
+                    </children>
+                </VBox>
+            </children>
+        </GridPane>
+    </children>
+</VBox>
