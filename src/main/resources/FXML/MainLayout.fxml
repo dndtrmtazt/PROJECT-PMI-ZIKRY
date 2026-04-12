@@ -28,45 +28,86 @@
 
                 <VBox prefHeight="283.0" prefWidth="182.0" spacing="5.0" VBox.vgrow="ALWAYS">
                     <children>
-                        <Button fx:id="btnDashboard" alignment="BASELINE_LEFT" onAction="#handleMenuAction" prefHeight="45.0" prefWidth="183.0" style="-fx-background-color: transparent; -fx-text-fill: #555555; -fx-cursor: hand;" text="Dashboard">
-                            <graphic><ImageView fitHeight="20.0" fitWidth="20.0"><image><Image url="@../Images/icon39.png" /></image></ImageView></graphic>
-                            <padding><Insets left="20.0" /></padding>
-                        </Button>
 
-                        <Button fx:id="btnTransaksi" alignment="BASELINE_LEFT" onAction="#handleMenuAction" prefHeight="45.0" prefWidth="183.0" style="-fx-background-color: transparent; -fx-text-fill: #555555; -fx-cursor: hand;" text="Transaksi">
-                            <graphic><ImageView fitHeight="20.0" fitWidth="20.0"><image><Image url="@../Images/ICON5.png" /></image></ImageView></graphic>
-                            <padding><Insets left="20.0" /></padding>
-                        </Button>
+                        <HBox fx:id="wrapperDashboard" alignment="CENTER_LEFT" prefHeight="45.0">
+                            <children>
+                                <Region fx:id="indDashboard" prefHeight="25.0" prefWidth="3.0" style="-fx-background-color: transparent; -fx-background-radius: 10;" />
+                                <Button fx:id="btnDashboard" alignment="BASELINE_LEFT" onAction="#handleMenuAction" prefHeight="45.0" prefWidth="175.0" style="-fx-background-color: transparent; -fx-text-fill: #555555; -fx-cursor: hand;" text="Dashboard">
+                                    <graphic><ImageView fx:id="imgDashboard" fitHeight="20.0" fitWidth="20.0"><image><Image url="@../Images/icon39.png" /></image></ImageView></graphic>
+                                    <padding><Insets left="15.0" /></padding>
+                                </Button>
+                            </children>
+                        </HBox>
 
-                        <Button fx:id="btnDataBarang" alignment="BASELINE_LEFT" onAction="#handleMenuAction" prefHeight="45.0" prefWidth="183.0" style="-fx-background-color: transparent; -fx-text-fill: #555555; -fx-cursor: hand;" text="Data Barang">
-                            <graphic><ImageView fitHeight="20.0" fitWidth="23.0"><image><Image url="@../Images/ICON8.png" /></image></ImageView></graphic>
-                            <padding><Insets left="20.0" /></padding>
-                        </Button>
+                        <HBox fx:id="wrapperTransaksi" alignment="CENTER_LEFT" prefHeight="45.0">
+                            <children>
+                                <Region fx:id="indTransaksi" prefHeight="25.0" prefWidth="3.0" style="-fx-background-color: transparent; -fx-background-radius: 10;" />
+                                <Button fx:id="btnTransaksi" alignment="BASELINE_LEFT" onAction="#handleMenuAction" prefHeight="45.0" prefWidth="175.0" style="-fx-background-color: transparent; -fx-text-fill: #555555; -fx-cursor: hand;" text="Transaksi">
+                                    <graphic><ImageView fx:id="imgTransaksi" fitHeight="20.0" fitWidth="20.0"><image><Image url="@../Images/ICON5.png" /></image></ImageView></graphic>
+                                    <padding><Insets left="15.0" /></padding>
+                                </Button>
+                            </children>
+                        </HBox>
 
-                        <Button fx:id="btnLaporan" alignment="BASELINE_LEFT" onAction="#handleMenuAction" prefHeight="45.0" prefWidth="183.0" style="-fx-background-color: transparent; -fx-text-fill: #555555; -fx-cursor: hand;" text="Laporan">
-                            <graphic><ImageView fitHeight="20.0" fitWidth="20.0"><image><Image url="@../Images/ICON9.png" /></image></ImageView></graphic>
-                            <padding><Insets left="20.0" /></padding>
-                        </Button>
+                        <HBox fx:id="wrapperDataBarang" alignment="CENTER_LEFT" prefHeight="45.0">
+                            <children>
+                                <Region fx:id="indDataBarang" prefHeight="25.0" prefWidth="3.0" style="-fx-background-color: transparent; -fx-background-radius: 10;" />
+                                <Button fx:id="btnDataBarang" alignment="BASELINE_LEFT" onAction="#handleMenuAction" prefHeight="45.0" prefWidth="175.0" style="-fx-background-color: transparent; -fx-text-fill: #555555; -fx-cursor: hand;" text="Data Barang">
+                                    <graphic><ImageView fx:id="imgDataBarang" fitHeight="20.0" fitWidth="23.0"><image><Image url="@../Images/ICON8.png" /></image></ImageView></graphic>
+                                    <padding><Insets left="15.0" /></padding>
+                                </Button>
+                            </children>
+                        </HBox>
 
-                        <Button fx:id="btnDataKategori" alignment="BASELINE_LEFT" onAction="#handleMenuAction" prefHeight="45.0" prefWidth="183.0" style="-fx-background-color: transparent; -fx-text-fill: #555555; -fx-cursor: hand;" text="Data Kategori">
-                            <graphic><ImageView fitHeight="20.0" fitWidth="20.0"><image><Image url="@../Images/ICON10.png" /></image></ImageView></graphic>
-                            <padding><Insets left="20.0" /></padding>
-                        </Button>
+                        <HBox fx:id="wrapperLaporan" alignment="CENTER_LEFT" prefHeight="45.0">
+                            <children>
+                                <Region fx:id="indLaporan" prefHeight="25.0" prefWidth="3.0" style="-fx-background-color: transparent; -fx-background-radius: 10;" />
+                                <Button fx:id="btnLaporan" alignment="BASELINE_LEFT" onAction="#handleMenuAction" prefHeight="45.0" prefWidth="175.0" style="-fx-background-color: transparent; -fx-text-fill: #555555; -fx-cursor: hand;" text="Laporan">
+                                    <graphic><ImageView fx:id="imgLaporan" fitHeight="20.0" fitWidth="20.0"><image><Image url="@../Images/ICON9.png" /></image></ImageView></graphic>
+                                    <padding><Insets left="15.0" /></padding>
+                                </Button>
+                            </children>
+                        </HBox>
 
-                        <Button fx:id="btnKelolaPengeluaran" alignment="BASELINE_LEFT" onAction="#handleMenuAction" prefHeight="45.0" prefWidth="183.0" style="-fx-background-color: transparent; -fx-text-fill: #555555; -fx-cursor: hand;" text="Kelola Pengeluaran">
-                            <graphic><ImageView fitHeight="20.0" fitWidth="20.0"><image><Image url="@../Images/ICON11.png" /></image></ImageView></graphic>
-                            <padding><Insets left="20.0" /></padding>
-                        </Button>
+                        <HBox fx:id="wrapperKategori" alignment="CENTER_LEFT" prefHeight="45.0">
+                            <children>
+                                <Region fx:id="indKategori" prefHeight="25.0" prefWidth="3.0" style="-fx-background-color: transparent; -fx-background-radius: 10;" />
+                                <Button fx:id="btnDataKategori" alignment="BASELINE_LEFT" onAction="#handleMenuAction" prefHeight="45.0" prefWidth="175.0" style="-fx-background-color: transparent; -fx-text-fill: #555555; -fx-cursor: hand;" text="Data Kategori">
+                                    <graphic><ImageView fx:id="imgKategori" fitHeight="20.0" fitWidth="20.0"><image><Image url="@../Images/ICON10.png" /></image></ImageView></graphic>
+                                    <padding><Insets left="15.0" /></padding>
+                                </Button>
+                            </children>
+                        </HBox>
 
-                        <Button fx:id="btnUser" alignment="BASELINE_LEFT" onAction="#handleMenuAction" prefHeight="45.0" prefWidth="183.0" style="-fx-background-color: transparent; -fx-text-fill: #555555; -fx-cursor: hand;" text="User">
-                            <graphic><ImageView fitHeight="20.0" fitWidth="20.0"><image><Image url="@../Images/ICON12.png" /></image></ImageView></graphic>
-                            <padding><Insets left="20.0" /></padding>
-                        </Button>
+                        <HBox fx:id="wrapperPengeluaran" alignment="CENTER_LEFT" prefHeight="45.0">
+                            <children>
+                                <Region fx:id="indPengeluaran" prefHeight="25.0" prefWidth="3.0" style="-fx-background-color: transparent; -fx-background-radius: 10;" />
+                                <Button fx:id="btnKelolaPengeluaran" alignment="BASELINE_LEFT" onAction="#handleMenuAction" prefHeight="45.0" prefWidth="175.0" style="-fx-background-color: transparent; -fx-text-fill: #555555; -fx-cursor: hand;" text="Kelola Pengeluaran">
+                                    <graphic><ImageView fx:id="imgPengeluaran" fitHeight="20.0" fitWidth="20.0"><image><Image url="@../Images/ICON11.png" /></image></ImageView></graphic>
+                                    <padding><Insets left="15.0" /></padding>
+                                </Button>
+                            </children>
+                        </HBox>
 
-                        <Button fx:id="btnPengaturan" alignment="BASELINE_LEFT" onAction="#handleMenuAction" prefHeight="45.0" prefWidth="183.0" style="-fx-background-color: transparent; -fx-text-fill: #555555; -fx-cursor: hand;" text="Pengaturan">
-                            <graphic><ImageView fitHeight="20.0" fitWidth="20.0"><image><Image url="@../Images/ICON13.png" /></image></ImageView></graphic>
-                            <padding><Insets left="20.0" /></padding>
-                        </Button>
+                        <HBox fx:id="wrapperUser" alignment="CENTER_LEFT" prefHeight="45.0">
+                            <children>
+                                <Region fx:id="indUser" prefHeight="25.0" prefWidth="3.0" style="-fx-background-color: transparent; -fx-background-radius: 10;" />
+                                <Button fx:id="btnUser" alignment="BASELINE_LEFT" onAction="#handleMenuAction" prefHeight="45.0" prefWidth="175.0" style="-fx-background-color: transparent; -fx-text-fill: #555555; -fx-cursor: hand;" text="User">
+                                    <graphic><ImageView fx:id="imgUser" fitHeight="20.0" fitWidth="20.0"><image><Image url="@../Images/ICON12.png" /></image></ImageView></graphic>
+                                    <padding><Insets left="15.0" /></padding>
+                                </Button>
+                            </children>
+                        </HBox>
+
+                        <HBox fx:id="wrapperPengaturan" alignment="CENTER_LEFT" prefHeight="45.0">
+                            <children>
+                                <Region fx:id="indPengaturan" prefHeight="25.0" prefWidth="3.0" style="-fx-background-color: transparent; -fx-background-radius: 10;" />
+                                <Button fx:id="btnPengaturan" alignment="BASELINE_LEFT" onAction="#handleMenuAction" prefHeight="45.0" prefWidth="175.0" style="-fx-background-color: transparent; -fx-text-fill: #555555; -fx-cursor: hand;" text="Pengaturan">
+                                    <graphic><ImageView fx:id="imgPengaturan" fitHeight="20.0" fitWidth="20.0"><image><Image url="@../Images/ICON13.png" /></image></ImageView></graphic>
+                                    <padding><Insets left="15.0" /></padding>
+                                </Button>
+                            </children>
+                        </HBox>
                     </children>
                 </VBox>
 
@@ -74,14 +115,14 @@
 
                 <HBox fx:id="hboxThemeToggle" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="32.0" prefWidth="90.0" spacing="2.0" style="-fx-background-color: #F9FAFB; -fx-background-radius: 20; -fx-border-color: #D1D5DB; -fx-border-radius: 20; -fx-border-width: 1;">
                     <children>
-                        <Button fx:id="btnLightMode" mnemonicParsing="false" prefHeight="29.0" prefWidth="43.0" style="-fx-background-color: #efefef; -fx-background-radius: 20; -fx-cursor: hand;">
+                        <Button fx:id="btnLightMode" mnemonicParsing="false" onAction="#handleThemeChange" prefHeight="21.0" prefWidth="43.0" style="-fx-background-color: #efefef; -fx-background-radius: 20; -fx-cursor: hand;">
                             <graphic>
                                 <ImageView fitHeight="39.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
                                     <image><Image url="@../Images/ICON3.png" /></image>
                                 </ImageView>
                             </graphic>
                         </Button>
-                        <Button fx:id="btnDarkMode" mnemonicParsing="false" prefHeight="26.0" prefWidth="38.0" style="-fx-background-color: transparent; -fx-background-radius: 18; -fx-cursor: hand;">
+                        <Button fx:id="btnDarkMode" mnemonicParsing="false" onAction="#handleThemeChange" prefHeight="26.0" prefWidth="38.0" style="-fx-background-color: transparent; -fx-background-radius: 18; -fx-cursor: hand;">
                             <graphic>
                                 <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
                                     <image><Image url="@../Images/ICON4.png" /></image>
@@ -92,8 +133,8 @@
                     <VBox.margin><Insets bottom="15.0" left="20.0" /></VBox.margin>
                 </HBox>
 
-                <Button fx:id="btnLogout" alignment="BASELINE_LEFT" prefHeight="45.0" prefWidth="182.0" style="-fx-background-color: transparent; -fx-cursor: hand;" text="Logout">
-                    <graphic><ImageView fitHeight="20.0" fitWidth="20.0"><image><Image url="@../Images/ICON6.png" /></image></ImageView></graphic>
+                <Button fx:id="btnLogout" alignment="BASELINE_LEFT" onAction="#handleMenuAction" prefHeight="45.0" prefWidth="182.0" style="-fx-background-color: transparent; -fx-cursor: hand;" text="Logout">
+                    <graphic><ImageView fx:id="imgLogout" fitHeight="20.0" fitWidth="20.0"><image><Image url="@../Images/ICON6.png" /></image></ImageView></graphic>
                     <padding><Insets left="20.0" /></padding>
                 </Button>
                 <Region prefHeight="11.0" prefWidth="182.0" />

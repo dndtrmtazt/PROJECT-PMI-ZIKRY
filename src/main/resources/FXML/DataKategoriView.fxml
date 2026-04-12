@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox fx:id="vboxMainContent" prefHeight="600.0" prefWidth="817.0" style="-fx-background-color: #F4F4F4;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.KategoriController">
+<VBox fx:id="vboxMainContent" style="-fx-background-color: #F4F4F4;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.KategoriController">
     <children>
         <HBox alignment="CENTER_LEFT" prefHeight="60.0" style="-fx-background-color: #4A76A8;">
             <children>
@@ -46,9 +46,9 @@
                         <HBox prefHeight="40.0" spacing="10.0" style="-fx-background-color: #F8F9FA; -fx-background-radius: 5; -fx-border-color: #E0E0E0; -fx-border-width: 0 0 1 0;">
                             <padding><Insets left="15.0" right="15.0" /></padding>
                             <children>
-                                <Label prefWidth="50.0" style="-fx-font-weight: bold;" text="No" />
-                                <Label prefWidth="150.0" style="-fx-font-weight: bold;" text="ID Kategori" />
-                                <Label prefWidth="300.0" style="-fx-font-weight: bold;" text="Nama Kategori" />
+                                <Label prefHeight="17.0" prefWidth="91.0" style="-fx-font-weight: bold;" text="No" />
+                                <Label prefHeight="17.0" prefWidth="199.0" style="-fx-font-weight: bold;" text="ID Kategori" />
+                                <Label prefHeight="17.0" prefWidth="236.0" style="-fx-font-weight: bold;" text="Nama Kategori" />
                                 <Region HBox.hgrow="ALWAYS" />
                                 <Label prefWidth="120.0" style="-fx-font-weight: bold;" text="Aksi" />
                             </children>
