@@ -86,7 +86,7 @@ public class MainController {
             panggilHalaman("LaporanView");
         }
         else if (source == btnDataKategori) {
-            setActiveState(wrapSperKategori, indKategori, imgKategori, "icon43.png");
+            setActiveState(wrapperKategori, indKategori, imgKategori, "icon43.png");
             panggilHalaman("DataKategoriView");
         }
         else if (source == btnKelolaPengeluaran) {
