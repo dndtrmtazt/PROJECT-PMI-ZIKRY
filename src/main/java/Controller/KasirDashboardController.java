@@ -249,14 +249,59 @@ public class KasirDashboardController {
         btnSimpanCetak.setOnAction(e -> handleCheckout());
     }
 
-    // --- FINALISASI TRANSAKSI (Simpan & Bersihkan layar) ---
+    // --- FINALISASI TRANSAKSI (Update DB, Kurangi Stok, & Reset Layar) ---
     private void handleCheckout() {
-        if (cartItems.isEmpty()) return;
-        showAlert("Sukses", "Transaksi berhasil disimpan!");
-        cartItems.clear(); // Kosongkan keranjang
-        txtBayar.clear();   // Kosongkan input bayar
-        updateCartUI();    // Refresh tampilan keranjang
-        loadProducts(MainController.isDarkMode); // Refresh stok barang
+        // 1. Validasi: Jangan proses kalau keranjang masih kosong
+        if (cartItems.isEmpty()) {
+            showAlert("Peringatan", "Keranjang belanja masih kosong!");
+            return;
+        }
+
+        // 2. Validasi Pembayaran: Cek apakah uang cukup
+        String cleanVal = txtBayar.getText().replaceAll("[^0-9]", "");
+        double nominalBayar = cleanVal.isEmpty() ? 0 : Double.parseDouble(cleanVal);
+
+        if (nominalBayar < totalBelanja) {
+            showAlert("Gagal", "Uang pembayaran tidak cukup!");
+            return;
+        }
+
+        // 3. Update Database: Kurangi stok di MySQL satu per satu
+        String sqlUpdate = "UPDATE barang SET stok = stok - ? WHERE id_barang = ?";
+        try (java.sql.Connection conn = config.koneksi.koneksiDB();
+             java.sql.PreparedStatement pstmt = conn.prepareStatement(sqlUpdate)) {
+
+            // Looping isi keranjang untuk potong stok permanen di DB
+            for (Detail_Transaksi item : cartItems) {
+                pstmt.setInt(1, item.getJumlah());
+                pstmt.setString(2, item.getIdBarang());
+                pstmt.executeUpdate();
+            }
+
+            // (Catatan: Kamu bisa selipkan kodingan INSERT ke tabel penjualan di sini nanti)
+
+        } catch (java.sql.SQLException e) {
+            showAlert("Error Database", "Gagal update stok: " + e.getMessage());
+            e.printStackTrace();
+            return;
+        }
+
+        // 4. Notifikasi & Feedback: Tampilkan pesan sukses
+        showAlert("Sukses", "Transaksi Berhasil Disimpan!");
+
+        // 5. Reset UI: Bersihkan layar agar kembali ke 0
+        cartItems.clear();                // Kosongkan list keranjang
+        txtBayar.clear();                  // Kosongkan kotak bayar
+        totalBelanja = 0;                  // Kembalikan variabel hitung ke 0
+        lblTotalBelanja.setText("Rp 0");  // Label total jadi Rp 0
+        lblKembalian.setText("Rp 0");     // Label kembalian jadi Rp 0
+        lblKembalian.setStyle("-fx-text-fill: black;"); // Warna kembalian balik normal
+
+        // 6. Sinkronisasi Data: Tarik data terbaru dari DB ke list produk (kiri)
+        loadProducts(MainController.isDarkMode);
+        updateCartUI(); // Pastikan tampilan keranjang benar-benar bersih
+
+        System.out.println("Checkout Berhasil: DB Terupdate & UI Telah Direset.");
     }
 
     // --- FITUR PENCARIAN (Filter list kiri saat ketik) ---
