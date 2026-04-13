@@ -206,4 +206,17 @@ public class MainController {
             loginStage.show();
         } catch (IOException e) { e.printStackTrace(); }
     }
+    @FXML
+    private void handleTambahBarang() {
+        try {
+            // Panggil file FXML yang baru kita buat
+            Parent node = FXMLLoader.load(getClass().getResource("/view/TambahBarangView.fxml"));
+
+            // Ganti bagian TENGAH dashboard dengan form ini
+            mainPane.setCenter(node);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

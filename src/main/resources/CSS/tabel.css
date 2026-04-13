@@ -1,0 +1,5 @@
+/* Menyamakan Alignment Judul Kolom (Header) dengan Isi */
+.table-view .column-header .label {
+    -fx-alignment: CENTER-LEFT;
+    -fx-padding: 0 0 0 10; /* Kasih sedikit jarak biar nggak mepet garis kiri */
+}

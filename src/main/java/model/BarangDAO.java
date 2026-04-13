@@ -9,7 +9,7 @@ public class BarangDAO {
 
     public static List<Barang> getAllBarang() {
         List<Barang> listBarang = new ArrayList<>();
-        String query = "SELECT id_barang, nama_barang, id_kategori, stok, harga_beli, harga_jual FROM barang";
+        String query = "SELECT id_barang, nama_barang, id_kategori, stok, satuan, harga_beli, harga_jual FROM barang";
         try (Connection conn = koneksi.koneksiDB();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(query)) {
@@ -19,6 +19,7 @@ public class BarangDAO {
                 barang.setNamaBarang(rs.getString("nama_barang"));
                 barang.setIdKategori(rs.getString("id_kategori"));
                 barang.setStok(rs.getInt("stok"));
+                barang.setSatuan(rs.getString("satuan"));
                 barang.setHargaBeli(rs.getDouble("harga_beli"));
                 barang.setHargaJual(rs.getDouble("harga_jual"));
                 listBarang.add(barang);
@@ -31,7 +32,7 @@ public class BarangDAO {
     }
 
     public static Barang getBarangById(String idBarang) {
-        String query = "SELECT id_barang, nama_barang, id_kategori, stok, harga_beli, harga_jual FROM barang WHERE id_barang = ?";
+        String query = "SELECT id_barang, nama_barang, id_kategori, stok, satuan, harga_beli, harga_jual FROM barang WHERE id_barang = ?";
         try (Connection conn = koneksi.koneksiDB();
              PreparedStatement ps = conn.prepareStatement(query)) {
             ps.setString(1, idBarang);
@@ -43,6 +44,7 @@ public class BarangDAO {
                 barang.setNamaBarang(rs.getString("nama_barang"));
                 barang.setIdKategori(rs.getString("id_kategori"));
                 barang.setStok(rs.getInt("stok"));
+                barang.setSatuan(rs.getString("satuan"));
                 barang.setHargaBeli(rs.getDouble("harga_beli"));
                 barang.setHargaJual(rs.getDouble("harga_jual"));
                 return barang;
@@ -56,7 +58,7 @@ public class BarangDAO {
 
     public static List<Barang> getBarangByKategori(String idKategori) {
         List<Barang> listBarang = new ArrayList<>();
-        String query = "SELECT id_barang, nama_barang, id_kategori, stok, harga_beli, harga_jual FROM barang WHERE id_kategori = ?";
+        String query = "SELECT id_barang, nama_barang, id_kategori, stok, satuan, harga_beli, harga_jual FROM barang WHERE id_kategori = ?";
         try (Connection conn = koneksi.koneksiDB();
              PreparedStatement ps = conn.prepareStatement(query)) {
             ps.setString(1, idKategori);
@@ -68,6 +70,7 @@ public class BarangDAO {
                 barang.setNamaBarang(rs.getString("nama_barang"));
                 barang.setIdKategori(rs.getString("id_kategori"));
                 barang.setStok(rs.getInt("stok"));
+                barang.setSatuan(rs.getString("satuan"));
                 barang.setHargaBeli(rs.getDouble("harga_beli"));
                 barang.setHargaJual(rs.getDouble("harga_jual"));
                 listBarang.add(barang);
@@ -80,15 +83,16 @@ public class BarangDAO {
     }
 
     public static boolean insertBarang(Barang barang) {
-        String query = "INSERT INTO barang (id_barang, nama_barang, id_kategori, stok, harga_beli, harga_jual) VALUES (?, ?, ?, ?, ?, ?)";
+        String query = "INSERT INTO barang (id_barang, nama_barang, id_kategori, stok, satuan, harga_beli, harga_jual) VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = koneksi.koneksiDB();
              PreparedStatement ps = conn.prepareStatement(query)) {
             ps.setString(1, barang.getIdBarang());
             ps.setString(2, barang.getNamaBarang());
             ps.setString(3, barang.getIdKategori());
             ps.setInt(4, barang.getStok());
-            ps.setDouble(5, barang.getHargaBeli());
-            ps.setDouble(6, barang.getHargaJual());
+            ps.setString(5, barang.getSatuan());
+            ps.setDouble(6, barang.getHargaBeli());
+            ps.setDouble(7, barang.getHargaJual());
             
             int result = ps.executeUpdate();
             System.out.println("Barang inserted: " + barang.getIdBarang());
@@ -101,15 +105,16 @@ public class BarangDAO {
     }
 
     public static boolean updateBarang(Barang barang) {
-        String query = "UPDATE barang SET nama_barang = ?, id_kategori = ?, stok = ?, harga_beli = ?, harga_jual = ? WHERE id_barang = ?";
+        String query = "UPDATE barang SET nama_barang = ?, id_kategori = ?, stok = ?, satuan = ?, harga_beli = ?, harga_jual = ? WHERE id_barang = ?";
         try (Connection conn = koneksi.koneksiDB();
              PreparedStatement ps = conn.prepareStatement(query)) {
             ps.setString(1, barang.getNamaBarang());
             ps.setString(2, barang.getIdKategori());
             ps.setInt(3, barang.getStok());
-            ps.setDouble(4, barang.getHargaBeli());
-            ps.setDouble(5, barang.getHargaJual());
-            ps.setString(6, barang.getIdBarang());
+            ps.setString(4, barang.getSatuan());
+            ps.setDouble(5, barang.getHargaBeli());
+            ps.setDouble(6, barang.getHargaJual());
+            ps.setString(7, barang.getIdBarang());
             
             System.out.println("Barang updated: " + barang.getIdBarang());
             return ps.executeUpdate() > 0;

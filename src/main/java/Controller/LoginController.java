@@ -179,4 +179,10 @@ public class LoginController {
         usernameIcon.setEffect(null);
         passwordIcon.setEffect(null);
     }
+    @FXML
+    public void initialize() {
+        // Memberitahu Java kalau tombol login adalah tombol default
+        // Pas user tekan ENTER, method handleLogin() bakal langsung jalan
+        loginButton.setDefaultButton(true);
+    }
 }

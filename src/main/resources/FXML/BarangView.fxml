@@ -6,8 +6,6 @@
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
@@ -33,15 +31,15 @@
                 <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
             </padding>
             <children>
-                <HBox alignment="CENTER_LEFT">
+                <HBox alignment="CENTER_LEFT" spacing="10.0">
                     <children>
-                        <Label text="Daftar Barang" textFill="#2c3e50">
+                        <Label maxWidth="1.7976931348623157E308" text="Daftar Barang" textFill="#2c3e50">
                             <font>
-                                <Font name="System Bold" size="18.0" />
+                                <Font name="System Bold" size="20.0" />
                             </font>
                         </Label>
                         <HBox HBox.hgrow="ALWAYS" />
-                        <Button mnemonicParsing="false" onAction="#handleSimpan" prefHeight="35.0" prefWidth="130.0" style="-fx-background-color: #5CB85C; -fx-text-fill: white; -fx-background-radius: 10;" text="+ Tambahkan Barang" />
+                        <Button mnemonicParsing="false" onAction="#handleTambahBarang" prefHeight="35.0" prefWidth="130.0" style="-fx-background-color: #5CB85C; -fx-text-fill: white; -fx-background-radius: 10;" text="+ Tambahkan Barang" />
                     </children>
                 </HBox>
 
@@ -54,6 +52,7 @@
                         <TableColumn fx:id="colNama" prefWidth="150.0" text="Nama Barang" />
                         <TableColumn fx:id="colKategori" prefWidth="100.0" text="ID Kategori" />
                         <TableColumn fx:id="colStok" prefWidth="60.0" text="Stok" />
+                        <TableColumn fx:id="colSatuan" prefWidth="80.0" text="Satuan" />
                         <TableColumn fx:id="colHargaBeli" prefWidth="100.0" text="Harga Beli" />
                         <TableColumn fx:id="colHargaJual" prefWidth="100.0" text="Harga Jual" />
                     </columns>
