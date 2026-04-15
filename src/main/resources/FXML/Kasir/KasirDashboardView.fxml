@@ -14,17 +14,17 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="paneRoot" prefHeight="600.0" prefWidth="900.0" style="-fx-background-color: #efefef;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.KasirDashboardController">
+<AnchorPane fx:id="paneRoot" minHeight="600.0" minWidth="900.0" prefHeight="600.0" prefWidth="900.0" style="-fx-background-color: #efefef;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.KasirDashboardController">
     <children>
         <HBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <children>
-                <VBox fx:id="vboxSidebar" prefWidth="150.0" style="-fx-background-color: #f8f8f8; -fx-border-color: #d9d9d9; -fx-border-width: 0 1 0 0;">
+                <VBox fx:id="vboxSidebar" maxWidth="160.0" minWidth="160.0" prefWidth="160.0" style="-fx-background-color: #f8f8f8; -fx-border-color: #d9d9d9; -fx-border-width: 0 1 0 0;">
                     <children>
                         <HBox alignment="CENTER_LEFT" prefHeight="72.0" spacing="8.0">
                             <padding><Insets bottom="10.0" left="12.0" right="10.0" top="16.0" /></padding>
                             <children>
-                                <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                                    <image><Image url="@../Images/LOGO.png" /></image>
+                                <ImageView fx:id="imgLogo" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                                    <image><Image url="@../../Images/LOGO.png" /></image>
                                 </ImageView>
                                 <Label fx:id="lblLogo" style="-fx-font-weight: bold; -fx-text-fill: #111111;" text="Toko Zikry">
                                     <font><Font size="15.0" /></font>
@@ -38,7 +38,7 @@
                                 <Button fx:id="btnTransaksi" alignment="CENTER_LEFT" graphicTextGap="6.0" mnemonicParsing="false" prefHeight="38.0" prefWidth="126.0" style="-fx-background-color: #dce9f7; -fx-background-radius: 10; -fx-text-fill: #3b6ea7; -fx-font-size: 12px; -fx-padding: 0 0 0 10;">
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                            <image><Image url="@../Images/ICON5.png" /></image>
+                                            <image><Image url="@../../Images/ICON5.png" /></image>
                                         </ImageView>
                                     </graphic>
                                     <text>Transaksi</text>
@@ -54,15 +54,15 @@
                                 <HBox fx:id="hboxThemeToggle" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="32.0" prefWidth="90.0" spacing="2.0" style="-fx-background-color: white; -fx-border-color: #cfcfcf; -fx-border-radius: 20; -fx-background-radius: 20;">
                                     <children>
                                         <Button fx:id="btnLightMode" mnemonicParsing="false" prefHeight="26.0" prefWidth="38.0" style="-fx-background-color: #efefef; -fx-background-radius: 18; -fx-cursor: hand;">
-                                            <graphic><ImageView fx:id="imgLightMode" fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true"><image><Image url="@../Images/ICON3.png" /></image></ImageView></graphic>
+                                            <graphic><ImageView fx:id="imgLightMode" fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true"><image><Image url="@../../Images/ICON3.png" /></image></ImageView></graphic>
                                         </Button>
                                         <Button fx:id="btnDarkMode" mnemonicParsing="false" prefHeight="26.0" prefWidth="38.0" style="-fx-background-color: transparent; -fx-background-radius: 18; -fx-cursor: hand;">
-                                            <graphic><ImageView fx:id="imgDarkMode" fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true"><image><Image url="@../Images/ICON4.png" /></image></ImageView></graphic>
+                                            <graphic><ImageView fx:id="imgDarkMode" fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true"><image><Image url="@../../Images/ICON4.png" /></image></ImageView></graphic>
                                         </Button>
                                     </children>
                                 </HBox>
                                 <Button fx:id="btnLogout" alignment="CENTER" graphicTextGap="6.0" mnemonicParsing="false" prefHeight="28.0" prefWidth="100.0" style="-fx-background-color: transparent; -fx-text-fill: #111111; -fx-font-size: 12px; -fx-padding: 0;">
-                                    <graphic><ImageView fx:id="imgLogout" fitHeight="28.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true"><image><Image url="@../Images/ICON6.png" /></image></ImageView></graphic>
+                                    <graphic><ImageView fx:id="imgLogout" fitHeight="28.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true"><image><Image url="@../../Images/ICON6.png" /></image></ImageView></graphic>
                                     <text>Log Out</text>
                                 </Button>
                             </children>
@@ -70,7 +70,7 @@
                     </children>
                 </VBox>
 
-                <VBox fx:id="vboxMainContent" spacing="10.0" style="-fx-background-color: #efefef;" HBox.hgrow="ALWAYS">
+                <VBox fx:id="vboxMainContent" minWidth="740.0" spacing="10.0" style="-fx-background-color: #efefef;" HBox.hgrow="ALWAYS">
                     <padding><Insets bottom="10.0" left="10.0" right="10.0" top="10.0" /></padding>
                     <children>
                         <HBox alignment="CENTER_RIGHT" prefHeight="24.0">
@@ -86,26 +86,33 @@
                                         <HBox fx:id="hboxSearch" alignment="CENTER_LEFT" prefHeight="36.0" spacing="8.0" style="-fx-background-color: #ffffff; -fx-background-radius: 8; -fx-border-color: #d3d3d3; -fx-border-radius: 8;">
                                             <padding><Insets left="10.0" right="10.0" /></padding>
                                             <children>
-                                                <Label style="-fx-text-fill: #9a9a9a;" text="🔍"><font><Font size="12.0" /></font></Label>
+                                                <Label fx:id="lblSearchIcon" style="-fx-text-fill: #9a9a9a;" text="🔍"><font><Font size="12.0" /></font></Label>
                                                 <TextField fx:id="txtSearch" promptText="Cari Produk / kode barang..." style="-fx-background-color: transparent; -fx-font-size: 11px;" HBox.hgrow="ALWAYS" />
                                             </children>
                                         </HBox>
 
-                                        <VBox fx:id="vboxProductCard" style="-fx-background-color: #ffffff; -fx-background-radius: 10; -fx-border-color: #d7d7d7; -fx-border-radius: 10;" VBox.vgrow="ALWAYS">
+                                        <VBox fx:id="vboxProductCard" prefWidth="381.0" style="-fx-background-color: #ffffff; -fx-background-radius: 10; -fx-border-color: #d7d7d7; -fx-border-radius: 10;" VBox.vgrow="ALWAYS">
                                             <children>
                                                 <Label fx:id="lblListProduk" style="-fx-font-weight: bold; -fx-text-fill: #111111;" text="List Produk">
                                                     <font><Font size="17.0" /></font>
                                                     <padding><Insets bottom="10.0" left="14.0" right="0.0" top="12.0" /></padding>
                                                 </Label>
-                                                <HBox fx:id="hboxProductHeader" alignment="CENTER_LEFT" prefHeight="34.0" style="-fx-background-color: #dcdcdc;">
-                                                    <padding><Insets left="16.0" right="16.0" /></padding>
+                                                <HBox fx:id="hboxProductHeader" alignment="CENTER_LEFT" prefHeight="34.0" spacing="10.0" style="-fx-background-color: #dcdcdc;">
+                                                    <padding><Insets left="15.0" right="15.0" /></padding>
                                                     <children>
-                                                        <Label fx:id="lblHeaderNama" prefWidth="190.0" style="-fx-font-weight: bold;" text="Nama Produk"><font><Font size="11.5" /></font></Label>
-                                                        <Label fx:id="lblHeaderStok" prefHeight="18.0" prefWidth="65.0" style="-fx-font-weight: bold;" text="Stok"><font><Font size="11.5" /></font></Label>
-                                                        <Label fx:id="lblHeaderHarga" prefHeight="18.0" prefWidth="75.0" style="-fx-font-weight: bold;" text="Harga"><font><Font size="11.5" /></font></Label>
+                                                        <Label fx:id="lblHeaderNama" maxWidth="1.7976931348623157E308" style="-fx-font-weight: bold;" text="Nama Produk" HBox.hgrow="ALWAYS">
+                                                            <font><Font size="11.0" /></font>
+                                                        </Label>
+                                                        <Label fx:id="lblHeaderStok" alignment="CENTER" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" style="-fx-font-weight: bold;" text="Stok">
+                                                            <font><Font size="11.0" /></font>
+                                                        </Label>
+                                                        <Label fx:id="lblHeaderHarga" alignment="CENTER" maxWidth="140.0" minWidth="140.0" prefWidth="140.0" style="-fx-font-weight: bold;" text="Harga">
+                                                            <font><Font size="11.0" /></font>
+                                                        </Label>
+                                                        <Region maxWidth="105.0" minWidth="105.0" prefWidth="105.0" />
                                                     </children>
                                                 </HBox>
-                                                <ScrollPane fx:id="scrollProduct" fitToWidth="true" hbarPolicy="NEVER" style="-fx-background: white;" VBox.vgrow="ALWAYS">
+                                                <ScrollPane fx:id="scrollProduct" fitToWidth="true" hbarPolicy="NEVER" prefHeight="416.0" prefWidth="437.0" style="-fx-background: white;" vbarPolicy="ALWAYS" VBox.vgrow="ALWAYS">
                                                     <content><VBox fx:id="vboxProdukList" style="-fx-background-color: #ffffff;" /></content>
                                                 </ScrollPane>
                                             </children>
@@ -113,19 +120,22 @@
                                     </children>
                                 </VBox>
 
-                                <VBox fx:id="vboxCart" prefWidth="265.0" style="-fx-background-color: #ffffff; -fx-background-radius: 10; -fx-border-color: #d7d7d7; -fx-border-radius: 10;">
+                                <VBox fx:id="vboxCart" maxWidth="350.0" minWidth="350.0" prefHeight="547.0" prefWidth="350.0" style="-fx-background-color: #ffffff; -fx-background-radius: 10; -fx-border-color: #d7d7d7; -fx-border-radius: 10;">
                                     <children>
-                                        <Region prefHeight="40.0" />
-                                        <HBox fx:id="hboxCartHeader" alignment="CENTER_LEFT" prefHeight="34.0" style="-fx-background-color: #dcdcdc;">
-                                            <padding><Insets left="12.0" right="12.0" /></padding>
+                                        <Label fx:id="lblKeranjangBelanja" style="-fx-font-weight: bold; -fx-text-fill: #111111;" text="Keranjang Belanja">
+                                            <font><Font size="16.0" /></font>
+                                            <padding><Insets bottom="10.0" left="12.0" top="15.0" /></padding>
+                                        </Label>
+                                        <HBox fx:id="hboxCartHeader" alignment="CENTER_LEFT" minHeight="34.0" spacing="5.0" style="-fx-background-color: #dcdcdc;">
+                                            <padding><Insets bottom="8.0" left="10.0" right="10.0" top="8.0" /></padding>
                                             <children>
-                                                <Label fx:id="lblCartHeaderItem" prefWidth="84.0" style="-fx-font-weight: bold;" text="Item"><font><Font size="10.5" /></font></Label>
-                                                <Label fx:id="lblCartHeaderQty" alignment="CENTER" prefWidth="54.0" style="-fx-font-weight: bold;" text="Qty"><font><Font size="10.5" /></font></Label>
-                                                <Label fx:id="lblCartHeaderHarga" alignment="CENTER_RIGHT" prefWidth="48.0" style="-fx-font-weight: bold;" text="Harga"><font><Font size="10.5" /></font></Label>
-                                                <Label fx:id="lblCartHeaderSubtotal" alignment="CENTER_RIGHT" prefWidth="66.0" style="-fx-font-weight: bold;" text="Subtotal"><font><Font size="10.5" /></font></Label>
+                                                <Label fx:id="lblCartHeaderItem" maxWidth="1.7976931348623157E308" prefHeight="16.0" style="-fx-font-weight: bold;" text="Item" HBox.hgrow="ALWAYS"><font><Font size="11.0" /></font></Label>
+                                                <Label fx:id="lblCartHeaderQty" alignment="CENTER" maxWidth="55.0" minWidth="55.0" prefHeight="16.0" prefWidth="55.0" style="-fx-font-weight: bold;" text="Qty"><font><Font size="11.0" /></font></Label>
+                                                <Label fx:id="lblCartHeaderHarga" alignment="CENTER" maxWidth="80.0" minWidth="80.0" prefHeight="16.0" prefWidth="80.0" style="-fx-font-weight: bold;" text="Harga"><font><Font size="11.0" /></font></Label>
+                                                <Label fx:id="lblCartHeaderSubtotal" alignment="CENTER_RIGHT" maxWidth="90.0" minWidth="90.0" prefHeight="16.0" prefWidth="90.0" style="-fx-font-weight: bold;" text="Subtotal"><font><Font size="11.0" /></font></Label>
                                             </children>
                                         </HBox>
-                                        <ScrollPane fx:id="scrollCart" fitToWidth="true" hbarPolicy="NEVER" style="-fx-background: white;" VBox.vgrow="ALWAYS">
+                                        <ScrollPane fx:id="scrollCart" fitToWidth="true" hbarPolicy="NEVER" prefHeight="289.0" prefWidth="362.0" style="-fx-background: white;" VBox.vgrow="ALWAYS">
                                             <content><VBox fx:id="vboxCartList" style="-fx-background-color: #ffffff;" /></content>
                                         </ScrollPane>
                                         <Separator fx:id="sepCart" />
@@ -139,7 +149,7 @@
                                                         <Label fx:id="lblTotalBelanja" style="-fx-font-weight: bold;" text="Rp 0"><font><Font size="11.8" /></font></Label>
                                                     </children>
                                                 </HBox>
-                                                <TextField fx:id="txtBayar" prefHeight="32.0" promptText="Masukkan Nominal Bayar" style="-fx-background-radius: 8; -fx-font-size: 10.5px;" />
+                                                <TextField fx:id="txtBayar" maxWidth="1.7976931348623157E308" prefHeight="32.0" promptText="Masukkan Nominal Bayar" style="-fx-background-radius: 8; -fx-font-size: 10.5px;" />
                                                 <HBox alignment="CENTER_LEFT">
                                                     <children>
                                                         <Label fx:id="lblKembalianText" style="-fx-font-weight: bold;" text="Kembalian:"><font><Font size="11.8" /></font></Label>
@@ -147,7 +157,7 @@
                                                         <Label fx:id="lblKembalian" style="-fx-font-weight: bold; -fx-text-fill: red;" text="Rp 0"><font><Font size="11.8" /></font></Label>
                                                     </children>
                                                 </HBox>
-                                                <Button fx:id="btnSimpanCetak" mnemonicParsing="false" prefHeight="40.0" prefWidth="240.0" style="-fx-background-color: #379856; -fx-background-radius: 8; -fx-text-fill: white; -fx-font-weight: bold;" text="Simpan &amp; Cetak" />
+                                                <Button fx:id="btnSimpanCetak" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="40.0" style="-fx-background-color: #379856; -fx-background-radius: 8; -fx-text-fill: white; -fx-font-weight: bold;" text="Simpan &amp; Cetak" />
                                             </children>
                                         </VBox>
                                     </children>

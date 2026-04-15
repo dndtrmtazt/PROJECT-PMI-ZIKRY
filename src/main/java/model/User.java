@@ -1,25 +1,25 @@
 package model;
 
 public class User {
-    private String username;  // id_user
+    private String idUser;    // id_user
     private String password;  // user_password
     private String role;      // admin, kasir, pemilik, dll
 
     public User() {
     }
 
-    public User(String username, String password, String role) {
-        this.username = username;
+    public User(String idUser, String password, String role) {
+        this.idUser = idUser;
         this.password = password;
         this.role = role;
     }
 
-    public String getUsername() {
-        return username;
+    public String getIdUser() {
+        return idUser;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setIdUser(String idUser) {
+        this.idUser = idUser;
     }
 
     public String getPassword() {
@@ -41,7 +41,7 @@ public class User {
     @Override
     public String toString() {
         return "User{" +
-                "username='" + username + '\'' +
+                "idUser='" + idUser + '\'' +
                 ", role='" + role + '\'' +
                 '}';
     }

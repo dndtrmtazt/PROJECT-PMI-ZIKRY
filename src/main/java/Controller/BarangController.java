@@ -13,6 +13,8 @@ import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.layout.HBox;
 import java.io.IOException;
 import java.sql.*;
 import java.text.NumberFormat;
@@ -20,11 +22,14 @@ import java.util.Locale;
 
 public class BarangController {
 
+    @FXML private VBox paneRoot, vboxTableCard;
+    @FXML private HBox hboxSearch, hboxHeader;
     @FXML private TableView<Barang> tableBarang;
-    @FXML private TableColumn<Barang, String> colId, colNama, colKategori, colSatuan;
+    @FXML private TableColumn<Barang, String> colId, colNama, colKategori;
     @FXML private TableColumn<Barang, Integer> colStok;
     @FXML private TableColumn<Barang, Double> colHargaBeli, colHargaJual;
     @FXML private TextField txtCari;
+    @FXML private Label lblDaftarBarang, lblTitle;
 
     private ObservableList<Barang> listBarang = FXCollections.observableArrayList();
 
@@ -35,7 +40,6 @@ public class BarangController {
         colNama.setCellValueFactory(new PropertyValueFactory<>("namaBarang"));
         colKategori.setCellValueFactory(new PropertyValueFactory<>("idKategori"));
         colStok.setCellValueFactory(new PropertyValueFactory<>("stok"));
-        colSatuan.setCellValueFactory(new PropertyValueFactory<>("satuan"));
 
         tableBarang.getColumns().forEach(column -> column.setStyle("-fx-alignment: CENTER-LEFT;"));
         tableBarang.setItems(listBarang);
@@ -43,13 +47,10 @@ public class BarangController {
         // 2. FITUR DOUBLE CLICK PADA BARIS TABEL
         tableBarang.setRowFactory(tv -> {
             TableRow<Barang> row = new TableRow<>();
-            // Ubah kursor jadi tangan pas di atas baris
             row.setStyle("-fx-cursor: hand;");
-
             row.setOnMouseClicked(event -> {
-                // Jika diklik 2x dan barisnya ada isinya
                 if (event.getClickCount() == 2 && (!row.isEmpty())) {
-                    handleDetailBarang();
+                    handleEditBarang();
                 }
             });
             return row;
@@ -60,6 +61,37 @@ public class BarangController {
         setupFormatRupiah(colHargaJual, "hargaJual");
         loadData();
         setupPencarian();
+        
+        // Load CSS
+        try {
+            tableBarang.getStylesheets().add(getClass().getResource("/CSS/tabel.css").toExternalForm());
+        } catch (Exception e) {}
+
+        setDarkMode(MainController.isDarkMode);
+    }
+
+    public void setDarkMode(boolean enabled) {
+        String bgMain = enabled ? "#121212" : "#F4F4F4";
+        String bgCard = enabled ? "#1e1e1e" : "white";
+        String textColor = enabled ? "white" : "#2C3E50";
+        String borderColor = enabled ? "#333333" : "#D1D5DB";
+
+        if (paneRoot != null) paneRoot.setStyle("-fx-background-color: " + bgMain + ";");
+        if (hboxHeader != null) hboxHeader.setStyle("-fx-background-color: #4A76A8;");
+        if (lblTitle != null) lblTitle.setStyle("-fx-text-fill: white;");
+        if (hboxSearch != null) hboxSearch.setStyle("-fx-background-color: " + bgCard + "; -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5);");
+        if (vboxTableCard != null) vboxTableCard.setStyle("-fx-background-color: " + bgCard + "; -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5);");
+        
+        if (lblDaftarBarang != null) lblDaftarBarang.setStyle("-fx-text-fill: " + textColor + "; -fx-font-weight: bold; -fx-font-size: 20px;");
+        if (txtCari != null) txtCari.setStyle("-fx-background-radius: 10; -fx-background-color: " + (enabled ? "#2c2c2c" : "white") + "; -fx-text-fill: " + textColor + "; -fx-border-color: " + borderColor + "; -fx-border-radius: 10;");
+
+        // Sync Table Background
+        if (tableBarang != null) {
+            tableBarang.getStyleClass().remove("dark");
+            if (enabled) {
+                tableBarang.getStyleClass().add("dark");
+            }
+        }
     }
 
     private void loadData() {
@@ -75,7 +107,6 @@ public class BarangController {
                         rs.getString("nama_barang"),
                         rs.getString("id_kategori"),
                         rs.getInt("stok"),
-                        rs.getString("satuan"),
                         rs.getDouble("harga_beli"),
                         rs.getDouble("harga_jual")
                 ));
@@ -115,74 +146,29 @@ public class BarangController {
     }
 
     @FXML
-    private void handleDetailBarang() {
+    private void handleEditBarang() {
         Barang selected = tableBarang.getSelectionModel().getSelectedItem();
 
-        if (selected != null) {
-            try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/FXML/DetailBarangView.fxml"));
-                Parent view = loader.load();
-
-                DetailBarangController controller = loader.getController();
+        if (selected != null && MainController.getInstance() != null) {
+            FXMLLoader loader = MainController.getInstance().panggilHalaman("EditBarang");
+            if (loader != null) {
+                EditBarangController controller = loader.getController();
                 controller.initData(
                         selected.getIdBarang(),
                         selected.getNamaBarang(),
                         selected.getIdKategori(),
                         selected.getStok(),
-                        selected.getSatuan(),
                         selected.getHargaBeli(),
                         selected.getHargaJual()
                 );
-
-                // Cari contentArea di Scene sekarang
-                AnchorPane contentArea = (AnchorPane) tableBarang.getScene().lookup("#contentArea");
-                if (contentArea != null) {
-                    contentArea.getChildren().setAll(view);
-
-                    // Tarik view ke pojok-pojok biar nempel (Fit to Parent)
-                    AnchorPane.setTopAnchor(view, 0.0);
-                    AnchorPane.setBottomAnchor(view, 0.0);
-                    AnchorPane.setLeftAnchor(view, 0.0);
-                    AnchorPane.setRightAnchor(view, 0.0);
-                }
-
-            } catch (IOException e) {
-                e.printStackTrace();
-                showAlert("Error", "Gagal memuat halaman Detail: " + e.getMessage());
             }
-        } else {
-            showAlert("Peringatan", "Pilih barang di tabel terlebih dahulu!");
         }
     }
 
     @FXML
     private void handleTambahBarang() {
-        try {
-            Parent root = FXMLLoader.load(getClass().getResource("/FXML/TambahBarang.fxml"));
-            AnchorPane contentArea = (AnchorPane) tableBarang.getScene().lookup("#contentArea");
-
-            if (contentArea != null) {
-                contentArea.getChildren().setAll(root);
-
-                AnchorPane.setTopAnchor(root, 0.0);
-                AnchorPane.setBottomAnchor(root, 0.0);
-                AnchorPane.setLeftAnchor(root, 0.0);
-                AnchorPane.setRightAnchor(root, 0.0);
-            } else {
-                showAlert("Error", "Kontainer 'contentArea' tidak ditemukan!");
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            showAlert("Error", "Gagal memuat halaman Tambah: " + e.getMessage());
+        if (MainController.getInstance() != null) {
+            MainController.getInstance().panggilHalaman("TambahBarang");
         }
-    }
-
-    private void showAlert(String title, String content) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(content);
-        alert.showAndWait();
     }
 }

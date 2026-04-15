@@ -21,7 +21,7 @@ public class UserSession {
 
     public void setCurrentUser(User user) {
         this.currentUser = user;
-        System.out.println("[UserSession] User logged in: " + user.getUsername() + " (" + user.getRole() + ")");
+        System.out.println("[UserSession] User logged in: " + user.getIdUser() + " (" + user.getRole() + ")");
     }
 
     public User getCurrentUser() {
@@ -29,7 +29,7 @@ public class UserSession {
     }
 
     public String getUserId() {
-        return currentUser != null ? currentUser.getUsername() : null;
+        return currentUser != null ? currentUser.getIdUser() : null;
     }
 
     public String getUserRole() {
@@ -45,7 +45,7 @@ public class UserSession {
     }
 
     public void logout() {
-        System.out.println("[UserSession] User logged out: " + (currentUser != null ? currentUser.getUsername() : "Unknown"));
+        System.out.println("[UserSession] User logged out: " + (currentUser != null ? currentUser.getIdUser() : "Unknown"));
         currentUser = null;
     }
 

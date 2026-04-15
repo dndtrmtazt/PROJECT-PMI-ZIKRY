@@ -74,31 +74,42 @@ public class LoginController {
 
     private void navigateToDashboard(ActionEvent event, User user) {
         try {
-            // 1. LOAD MainLayout (initialize() di MainController akan berjalan di sini)
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/FXML/MainLayout.fxml"));
+            String fxmlPath;
+            if ("kasir".equalsIgnoreCase(user.getRole())) {
+                fxmlPath = "/FXML/Kasir/KasirDashboardView.fxml";
+            } else {
+                fxmlPath = "/FXML/Admin/MainLayout.fxml";
+            }
+
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
             Parent root = loader.load();
 
-            // 2. Hubungkan ke MainController buat jalankan Hak Akses
-            MainController mainController = loader.getController();
+            // Jika bukan kasir, set hak akses di MainController
+            if (!"kasir".equalsIgnoreCase(user.getRole())) {
+                MainController mainController = loader.getController();
+                mainController.setHakAkses(user.getRole());
+            }
 
-            // 3. JALANKAN SATPAM: Sembunyikan menu & redirect halaman otomatis
-            // Kalau Kasir -> Langsung ke Transaksi. Kalau Admin -> Langsung ke Dashboard.
-            mainController.setHakAkses(user.getRole());
-
-            // 4. Tampilkan Stage baru
+            // Tampilkan Stage baru
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             Scene scene = new Scene(root);
             stage.setScene(scene);
 
-            // Set ukuran jendela sesuai desain (1100x650)
-            stage.setWidth(1100);
-            stage.setHeight(650);
+            // Set ukuran jendela sesuai desain
+            if ("kasir".equalsIgnoreCase(user.getRole())) {
+                stage.setWidth(1000);
+                stage.setHeight(700);
+            } else {
+                stage.setWidth(1100);
+                stage.setHeight(650);
+            }
+            
             stage.setTitle("Toko Zikry - " + user.getRole().toUpperCase());
             stage.centerOnScreen();
             stage.show();
 
         } catch (IOException e) {
-            errorLabel.setText("Gagal masuk ke Layout Utama!");
+            errorLabel.setText("Gagal masuk ke Dashboard!");
             errorLabel.setVisible(true);
             e.printStackTrace();
         }
@@ -184,5 +195,12 @@ public class LoginController {
         // Memberitahu Java kalau tombol login adalah tombol default
         // Pas user tekan ENTER, method handleLogin() bakal langsung jalan
         loginButton.setDefaultButton(true);
+        
+        // Sesuaikan tema awal dengan state global
+        if (MainController.isDarkMode) {
+            setDarkMode();
+        } else {
+            setLightMode();
+        }
     }
 }

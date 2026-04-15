@@ -28,7 +28,7 @@ public class UserDAO {
             // 4. Ambil data baris demi baris dari database
             while (rs.next()) {
                 User user = new User();
-                user.setUsername(rs.getString("id_user"));
+                user.setIdUser(rs.getString("id_user"));
                 user.setPassword(rs.getString("user_password"));
                 user.setRole(rs.getString("role"));
 
@@ -62,7 +62,7 @@ public class UserDAO {
             if (rs.next()) {
                 // 4. Kalau ketemu, bungkus datanya jadi objek User
                 User user = new User();
-                user.setUsername(rs.getString("id_user"));
+                user.setIdUser(rs.getString("id_user"));
                 user.setPassword(rs.getString("user_password"));
                 user.setRole(rs.getString("role"));
                 return user; // Berhasil Login
@@ -92,7 +92,7 @@ public class UserDAO {
             if (rs.next()) {
                 // 4. Pindahkan data dari database ke objek User
                 User user = new User();
-                user.setUsername(rs.getString("id_user"));
+                user.setIdUser(rs.getString("id_user"));
                 user.setPassword(rs.getString("user_password"));
                 user.setRole(rs.getString("role"));
                 return user;

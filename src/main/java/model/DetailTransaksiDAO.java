@@ -7,6 +7,22 @@ import java.util.List;
 
 public class DetailTransaksiDAO {
 
+    public static String getNextIdDetail() {
+        String query = "SELECT id_detail FROM detail_transaksi ORDER BY id_detail DESC LIMIT 1";
+        try (Connection conn = koneksi.koneksiDB();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(query)) {
+            if (rs.next()) {
+                String lastId = rs.getString("id_detail");
+                int lastNum = Integer.parseInt(lastId.substring(3));
+                return String.format("DTL%03d", lastNum + 1);
+            }
+        } catch (SQLException | NumberFormatException e) {
+            System.err.println("Error generating next id_detail: " + e.getMessage());
+        }
+        return "DTL001";
+    }
+
     public static List<Detail_Transaksi> getDetailByTransaksi(String idTransaksi) {
         List<Detail_Transaksi> listDetail = new ArrayList<>();
         String query = "SELECT id_detail, id_transaksi, id_barang, jumlah, harga_satuan, subtotal FROM detail_transaksi WHERE id_transaksi = ?";

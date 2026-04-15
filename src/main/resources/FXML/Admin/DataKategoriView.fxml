@@ -10,9 +10,9 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox fx:id="vboxMainContent" style="-fx-background-color: #F4F4F4;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.KategoriController">
+<VBox fx:id="paneRoot" style="-fx-background-color: #F4F4F4;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.KategoriController">
     <children>
-        <HBox alignment="CENTER_LEFT" prefHeight="60.0" style="-fx-background-color: #4A76A8;">
+        <HBox fx:id="vboxHeader" alignment="CENTER_LEFT" prefHeight="60.0" style="-fx-background-color: #4A76A8;">
             <children>
                 <Label fx:id="lblTitle" text="Data Kategori" textFill="WHITE">
                     <font><Font name="System Bold" size="24.0" /></font>
@@ -27,12 +27,12 @@
                 <HBox fx:id="hboxSearch" alignment="CENTER_LEFT" prefHeight="80.0" spacing="15.0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 10, 0, 0, 5);" VBox.vgrow="ALWAYS">
                     <padding><Insets left="20.0" right="20.0" /></padding>
                     <children>
-                        <TextField fx:id="txtSearchKategori" prefHeight="35.0" promptText="Cari Kategori..." style="-fx-background-radius: 8;" HBox.hgrow="ALWAYS" />
+                        <TextField fx:id="txtSearchKategori" prefHeight="35.0" promptText="Cari Kategori..." style="-fx-background-color: white; -fx-border-color: #E0E0E0; -fx-border-radius: 8; -fx-background-radius: 8; -fx-prompt-text-fill: #757575;" HBox.hgrow="ALWAYS" />
                         <Button fx:id="btnSearchKategori" prefHeight="35.0" prefWidth="140.0" style="-fx-background-color: #4A76A8; -fx-text-fill: white; -fx-background-radius: 8;" text="Temukan Kategori" />
                     </children>
                 </HBox>
 
-                <VBox spacing="15.0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 10, 0, 0, 5);" VBox.vgrow="ALWAYS">
+                <VBox fx:id="vboxContent" spacing="15.0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 10, 0, 0, 5);" VBox.vgrow="ALWAYS">
                     <padding><Insets bottom="20.0" left="20.0" right="20.0" top="20.0" /></padding>
                     <children>
                         <HBox alignment="CENTER_LEFT">
@@ -43,7 +43,7 @@
                             </children>
                         </HBox>
 
-                        <HBox prefHeight="40.0" spacing="10.0" style="-fx-background-color: #F8F9FA; -fx-background-radius: 5; -fx-border-color: #E0E0E0; -fx-border-width: 0 0 1 0;">
+                        <HBox fx:id="hboxTableHead" prefHeight="40.0" spacing="10.0" style="-fx-background-color: #F8F9FA; -fx-background-radius: 5; -fx-border-color: #E0E0E0; -fx-border-width: 0 0 1 0;">
                             <padding><Insets left="15.0" right="15.0" /></padding>
                             <children>
                                 <Label prefHeight="17.0" prefWidth="91.0" style="-fx-font-weight: bold;" text="No" />

@@ -8,6 +8,22 @@ import java.util.List;
 
 public class TransaksiDAO {
 
+    public static String getNextIdTransaksi() {
+        String query = "SELECT id_transaksi FROM transaksi ORDER BY id_transaksi DESC LIMIT 1";
+        try (Connection conn = koneksi.koneksiDB();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(query)) {
+            if (rs.next()) {
+                String lastId = rs.getString("id_transaksi");
+                int lastNum = Integer.parseInt(lastId.substring(3));
+                return String.format("TRK%03d", lastNum + 1);
+            }
+        } catch (SQLException | NumberFormatException e) {
+            System.err.println("Error generating next id_transaksi: " + e.getMessage());
+        }
+        return "TRK001";
+    }
+
     public static List<Transaksi> getAllTransaksi() {
         List<Transaksi> listTransaksi = new ArrayList<>();
         String query = "SELECT id_transaksi, tgl_transaksi, id_user, total FROM transaksi";

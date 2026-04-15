@@ -74,9 +74,9 @@ public class OwnerDashboardController {
     private void initializeUserInfo() {
         User currentUser = UserSession.getInstance().getCurrentUser();
         if (currentUser != null) {
-            usernameLabel.setText("User: " + currentUser.getUsername());
+            usernameLabel.setText("User: " + currentUser.getIdUser());
             roleLabel.setText("Role: PEMILIK");
-            System.out.println("[OwnerDashboard] Initialized for user: " + currentUser.getUsername());
+            System.out.println("[OwnerDashboard] Initialized for user: " + currentUser.getIdUser());
         }
     }
 
