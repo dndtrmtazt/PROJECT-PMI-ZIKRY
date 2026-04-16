@@ -61,6 +61,7 @@ public class KasirDashboardController {
     private List<Barang> allBarang;
     private ObservableList<Detail_Transaksi> cartItems = FXCollections.observableArrayList();
     private double totalBelanja = 0;
+    private KasirDashboardController currentContentController;
 
     private final NumberFormat nfIndo = NumberFormat.getInstance(new Locale("id", "ID"));
 
@@ -68,18 +69,54 @@ public class KasirDashboardController {
     @FXML
     public void initialize() {
         nfIndo.setMaximumFractionDigits(0);
-
         boolean isDarkMode = MainController.isDarkMode;
-        loadProducts(isDarkMode);
-        setupSearch(isDarkMode);
-        setupPayment();
-        setupRealTimeClock();
 
-        if (btnLightMode != null) btnLightMode.setOnAction(e -> setDarkMode(false));
-        if (btnDarkMode != null) btnDarkMode.setOnAction(e -> setDarkMode(true));
-        if (btnLogout != null) setupLogout();
+        if (vboxSidebar != null) {
+            // Jika kita berada di Dashboard (Shell/Layout utama)
+            setupSidebarActions();
+            // Load TransaksiView sebagai halaman default
+            loadPage("/FXML/Kasir/TransaksiView.fxml");
+        } else {
+            // Jika kita berada di dalam view konten (seperti TransaksiView)
+            loadProducts(isDarkMode);
+            setupSearch(isDarkMode);
+            setupPayment();
+            setupRealTimeClock();
+        }
 
         setDarkMode(isDarkMode);
+    }
+
+    private void setupSidebarActions() {
+        if (btnTransaksi != null) {
+            btnTransaksi.setOnAction(e -> loadPage("/FXML/Kasir/TransaksiView.fxml"));
+        }
+        if (btnLightMode != null) btnLightMode.setOnAction(e -> setDarkMode(false));
+        if (btnDarkMode != null)  btnDarkMode.setOnAction(e -> setDarkMode(true));
+        if (btnLogout != null)    setupLogout();
+    }
+
+    private void loadPage(String fxmlPath) {
+        if (vboxMainContent == null) return;
+        try {
+            vboxMainContent.getChildren().clear();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+            Parent root = loader.load();
+
+            // Agar konten mengisi seluruh area VBox
+            VBox.setVgrow(root, Priority.ALWAYS);
+
+            vboxMainContent.getChildren().add(root);
+
+            // Sinkronisasi tema ke controller yang baru dimuat
+            currentContentController = loader.getController();
+            if (currentContentController != null) {
+                currentContentController.setDarkMode(MainController.isDarkMode);
+            }
+        } catch (IOException e) {
+            System.err.println("Gagal memuat halaman: " + fxmlPath);
+            e.printStackTrace();
+        }
     }
 
     // --- LOGOUT ---
@@ -104,6 +141,11 @@ public class KasirDashboardController {
     // --- DARK MODE ---
     public void setDarkMode(boolean enabled) {
         MainController.isDarkMode = enabled;
+
+        // Propagasi ke controller konten yang sedang aktif
+        if (currentContentController != null) {
+            currentContentController.setDarkMode(enabled);
+        }
 
         String bgMain     = enabled ? "#121212" : "#efefef";
         String bgSidebar  = enabled ? "#1e1e1e" : "#f8f8f8";
@@ -242,7 +284,7 @@ public class KasirDashboardController {
         HBox row = new HBox(10);
         row.setAlignment(Pos.CENTER_LEFT);
         row.setPrefHeight(55);
-        row.setPadding(new Insets(5, 15, 5, 15));
+        row.setPadding(new Insets(5, 20, 5, 20));
 
         Label name = new Label(barang.getNamaBarang());
         name.setMaxWidth(Double.MAX_VALUE);
@@ -251,17 +293,17 @@ public class KasirDashboardController {
 
         // Tampilkan stok yang sudah dikurangi qty keranjang
         Label stok = new Label(String.valueOf(displayStok));
-        stok.setMinWidth(100);
-        stok.setPrefWidth(100);
-        stok.setMaxWidth(100);
+        stok.setMinWidth(80);
+        stok.setPrefWidth(80);
+        stok.setMaxWidth(80);
         stok.setAlignment(Pos.CENTER);
         // Warna merah jika stok habis
         stok.setStyle((displayStok <= 0 ? "-fx-text-fill: #e74c3c;" : textColor) + "-fx-font-size: 11.5px;");
 
         Label harga = new Label("Rp " + nfIndo.format(barang.getHargaJual()));
-        harga.setMinWidth(140);
-        harga.setPrefWidth(140);
-        harga.setMaxWidth(140);
+        harga.setMinWidth(120);
+        harga.setPrefWidth(120);
+        harga.setMaxWidth(120);
         harga.setAlignment(Pos.CENTER);
         harga.setStyle(textColor + "-fx-font-size: 11.5px; -fx-font-weight: bold;");
 
