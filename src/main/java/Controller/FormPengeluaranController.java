@@ -32,7 +32,7 @@ public class FormPengeluaranController implements Initializable {
         dpTanggal.setValue(LocalDate.now());
 
         // Membuat Tooltip peringatan visual
-        Tooltip tipNominal = new Tooltip("SHanya angka yang diperbolehkan!");
+        Tooltip tipNominal = new Tooltip("Hanya angka yang diperbolehkan!");
         tipNominal.setStyle("-fx-background-color: #E74C3C; -fx-text-fill: white; -fx-font-weight: bold;");
 
         // Validasi input nominal: Hanya angka yang diperbolehkan
