@@ -35,7 +35,7 @@
                             <children>
                                 <Label fx:id="lblSubTitle" style="-fx-font-family: 'Inter Medium'; -fx-font-size: 18; -fx-font-weight: bold;" text="Riwayat Pengeluaran" />
                                 <Region HBox.hgrow="ALWAYS" />
-                                <Button fx:id="btnTambahPengeluaran" mnemonicParsing="false" prefHeight="35.0" prefWidth="240.0" style="-fx-background-color: #3498DB; -fx-text-fill: white; -fx-background-radius: 8;" text="+ Tambahkan Data Pengeluaran" />
+                                <Button fx:id="btnTambahPengeluaran" mnemonicParsing="false" onAction="#handleTambahPengeluaran" prefHeight="35.0" prefWidth="240.0" style="-fx-background-color: #3498DB; -fx-text-fill: white; -fx-background-radius: 8;" text="+ Tambahkan Data Pengeluaran" />
                             </children>
                         </HBox>
 

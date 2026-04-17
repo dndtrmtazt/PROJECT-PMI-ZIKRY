@@ -211,8 +211,10 @@ public class OwnerDashboardController {
             nominalCol.setCellValueFactory(cellData -> new javafx.beans.property.SimpleObjectProperty<>(cellData.getValue().getNominal()));
             
             pengeluaranTable.getColumns().addAll(idCol, dateCol, jenisCol, nominalCol);
-            
-            pengeluaranList = FXCollections.observableArrayList(PengeluaranDAO.getAllPengeluaran());
+
+            // Buat instance objeknya dulu
+            PengeluaranDAO dao = new PengeluaranDAO();
+            pengeluaranList = FXCollections.observableArrayList(dao.getAllPengeluaran());
             pengeluaranTable.setItems(pengeluaranList);
             
             vbox.getChildren().addAll(titleLabel, formBox, pengeluaranTable);

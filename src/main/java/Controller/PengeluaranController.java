@@ -4,20 +4,21 @@ import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.Button;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextField;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import model.Pengeluaran;
 import model.PengeluaranDAO;
 import java.time.format.DateTimeFormatter;
@@ -37,59 +38,56 @@ public class PengeluaranController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         muatDataPengeluaran();
+        // Pastikan MainController.isDarkMode dapat diakses
         setDarkMode(MainController.isDarkMode);
     }
 
-    public void setDarkMode(boolean enabled) {
-        String bgMain = enabled ? "#121212" : "#F4F4F4";
-        String bgCard = enabled ? "#1e1e1e" : "white";
-        String textColor = enabled ? "white" : "#2C3E50";
-        String borderColor = enabled ? "#333333" : "#E0E0E0";
-        String inputBg = enabled ? "#2C2C2C" : "white";
+    /**
+     * PERBAIKAN UTAMA: Nama method disamakan dengan FXML
+     */
+    @FXML
+    private void handleTambahPengeluaran() {
+        showPengeluaranDialog(null);
+    }
 
-        if (vboxMainContent != null) vboxMainContent.setStyle("-fx-background-color: " + bgMain + ";");
-        if (lblTitle != null) {
-            lblTitle.getParent().setStyle("-fx-background-color: #4A76A8;");
-            lblTitle.setStyle("-fx-text-fill: white;");
-        }
+    /**
+     * Membuka pop-up form pengeluaran
+     */
+    private void showPengeluaranDialog(Pengeluaran p) {
+        try {
+            // Path disesuaikan dengan struktur folder resources kamu
+            URL fxmlLocation = getClass().getResource("/FXML/Admin/FormPengeluaran.fxml");
 
-        if (hboxSearch != null) hboxSearch.setStyle("-fx-background-color: " + bgCard + "; -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 10, 0, 0, 5);");
-        
-        if (txtSearchPengeluaran != null) {
-            txtSearchPengeluaran.setStyle("-fx-background-color: " + bgCard + "; -fx-text-fill: " + textColor + "; -fx-prompt-text-fill: " + (enabled ? "#BBBBBB" : "#757575") + "; -fx-border-color: " + borderColor + "; -fx-border-radius: 8; -fx-background-radius: 8;");
-        }
-        
-        if (dpFilterTanggal != null) {
-            dpFilterTanggal.setStyle("-fx-control-inner-background: " + bgCard + "; -fx-background-color: " + bgCard + "; -fx-text-fill: " + textColor + "; -fx-border-color: " + borderColor + "; -fx-border-radius: 8; -fx-background-radius: 8;");
-            // Also apply style to the text field inside DatePicker if possible via prompt text fill
-            dpFilterTanggal.getEditor().setStyle("-fx-background-color: transparent; -fx-text-fill: " + textColor + "; -fx-prompt-text-fill: " + (enabled ? "#BBBBBB" : "#757575") + ";");
-        }
-
-        if (hboxTableHead != null) {
-            hboxTableHead.setStyle("-fx-background-color: " + (enabled ? "#333333" : "#F8F9FA") + "; -fx-background-radius: 5; -fx-border-color: " + borderColor + "; -fx-border-width: 0 0 1 0;");
-            hboxTableHead.getChildren().forEach(node -> {
-                if (node instanceof Label) {
-                    ((Label) node).setStyle("-fx-text-fill: " + textColor + "; -fx-font-weight: bold;");
-                }
-            });
-        }
-
-        // Find the second VBox which is the card for the list
-        if (vboxMainContent != null && vboxMainContent.getChildren().size() > 1) {
-            VBox contentBox = (VBox) vboxMainContent.getChildren().get(1); // The wrapper for cards
-            if (contentBox.getChildren().size() > 1) {
-                VBox listCard = (VBox) contentBox.getChildren().get(1);
-                listCard.setStyle("-fx-background-color: " + bgCard + "; -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 10, 0, 0, 5);");
+            if (fxmlLocation == null) {
+                System.err.println("File FormPengeluaran.fxml tidak ditemukan!");
+                return;
             }
-        }
 
-        if (lblSubTitle != null) lblSubTitle.setStyle("-fx-font-family: 'Inter Medium'; -fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: " + textColor + ";");
-        
-        muatDataPengeluaran(); // Refresh list with theme
+            FXMLLoader loader = new FXMLLoader(fxmlLocation);
+            Parent root = loader.load();
+
+            // Mengirim data ke FormPengeluaranController
+            FormPengeluaranController controller = loader.getController();
+            controller.setData(p);
+
+            Stage stage = new Stage();
+            stage.setTitle(p == null ? "Tambah Data Pengeluaran" : "Edit Data Pengeluaran");
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setScene(new Scene(root));
+            stage.showAndWait();
+
+            // Refresh tabel setelah jendela ditutup
+            muatDataPengeluaran();
+        } catch (Exception e) {
+            System.err.println("Gagal membuka Form Pengeluaran: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     private void muatDataPengeluaran() {
+        if (vboxPengeluaranList == null) return;
         vboxPengeluaranList.getChildren().clear();
+
         List<Pengeluaran> list = pengeluaranDAO.getAllPengeluaran();
         boolean isDark = MainController.isDarkMode;
         String textColor = isDark ? "white" : "#2C3E50";
@@ -106,56 +104,81 @@ public class PengeluaranController implements Initializable {
             baris.setStyle("-fx-background-color: " + rowBg + "; -fx-border-color: " + borderColor + "; -fx-border-width: 0 0 1 0;");
 
             Label lblNo = new Label(String.valueOf(no++));
-            lblNo.setMinWidth(40.0); lblNo.setPrefWidth(40.0);
-            lblNo.setStyle("-fx-text-fill: " + textColor + ";");
+            lblNo.setMinWidth(40.0); lblNo.setStyle("-fx-text-fill: " + textColor + ";");
 
             Label lblId = new Label(p.getIdPengeluaran());
-            lblId.setMinWidth(100.0); lblId.setPrefWidth(100.0);
-            lblId.setStyle("-fx-text-fill: " + textColor + ";");
+            lblId.setMinWidth(100.0); lblId.setStyle("-fx-text-fill: " + textColor + ";");
 
             String tglFormat = (p.getTglPengeluaran() != null) ? p.getTglPengeluaran().format(formatter) : "-";
             Label lblTgl = new Label(tglFormat);
-            lblTgl.setMinWidth(110.0); lblTgl.setPrefWidth(110.0);
-            lblTgl.setStyle("-fx-text-fill: " + textColor + ";");
+            lblTgl.setMinWidth(110.0); lblTgl.setStyle("-fx-text-fill: " + textColor + ";");
 
             Label lblNominal = new Label("Rp " + String.format("%,.0f", p.getNominal()).replace(',', '.'));
-            lblNominal.setMinWidth(130.0); lblNominal.setPrefWidth(130.0);
-            lblNominal.setStyle("-fx-text-fill: #E67E22; -fx-font-weight: bold;");
+            lblNominal.setMinWidth(130.0); lblNominal.setStyle("-fx-text-fill: #E67E22; -fx-font-weight: bold;");
 
             Label lblJenis = new Label(p.getJenis());
-            lblJenis.setMinWidth(120.0); lblJenis.setPrefWidth(120.0);
-            lblJenis.setStyle("-fx-text-fill: " + textColor + ";");
+            lblJenis.setMinWidth(120.0); lblJenis.setStyle("-fx-text-fill: " + textColor + ";");
 
             Label lblUser = new Label(p.getIdUser());
-            lblUser.setMinWidth(100.0); lblUser.setPrefWidth(100.0);
-            lblUser.setStyle("-fx-text-fill: " + textColor + ";");
+            lblUser.setMinWidth(100.0); lblUser.setStyle("-fx-text-fill: " + textColor + ";");
 
             Region spacer = new Region();
             HBox.setHgrow(spacer, Priority.ALWAYS);
-HBox actionBox = new HBox(8);
-actionBox.setMinWidth(160.0); actionBox.setAlignment(Pos.CENTER);
 
-// Tombol Edit
-Button btnEdit = new Button("Edit");
-try {
-    ImageView ivEdit = new ImageView(new Image(getClass().getResourceAsStream("/Images/pencil_white.png")));
-    ivEdit.setFitHeight(14); ivEdit.setFitWidth(14);
-    btnEdit.setGraphic(ivEdit);
-} catch (Exception e) {}
-btnEdit.setStyle("-fx-background-color: #3498DB; -fx-text-fill: white; -fx-background-radius: 6; -fx-cursor: hand; -fx-font-weight: bold; -fx-font-size: 11px; -fx-padding: 6 12 6 12;");
+            HBox actionBox = new HBox(8);
+            actionBox.setMinWidth(160.0); actionBox.setAlignment(Pos.CENTER);
 
-// Tombol Hapus
-Button btnHapus = new Button("Hapus");
-try {
-    ImageView ivTrash = new ImageView(new Image(getClass().getResourceAsStream("/Images/trash_white.png")));
-    ivTrash.setFitHeight(14); ivTrash.setFitWidth(14);
-    btnHapus.setGraphic(ivTrash);
-} catch (Exception e) {}
-btnHapus.setStyle("-fx-background-color: #E74C3C; -fx-text-fill: white; -fx-background-radius: 6; -fx-cursor: hand; -fx-font-weight: bold; -fx-font-size: 11px; -fx-padding: 6 12 6 12;");
+            // Listener Edit
+            Button btnEdit = createActionButton("Edit", "#3498DB", "/Images/pencil_white.png");
+            btnEdit.setOnAction(e -> showPengeluaranDialog(p));
 
-actionBox.getChildren().addAll(btnEdit, btnHapus);
+            // Listener Hapus
+            Button btnHapus = createActionButton("Hapus", "#E74C3C", "/Images/trash_white.png");
+            btnHapus.setOnAction(e -> handleHapus(p));
+
+            actionBox.getChildren().addAll(btnEdit, btnHapus);
             baris.getChildren().addAll(lblNo, lblId, lblTgl, lblNominal, lblJenis, lblUser, spacer, actionBox);
             vboxPengeluaranList.getChildren().add(baris);
         }
+    }
+
+    private void handleHapus(Pengeluaran p) {
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+        confirm.setTitle("Konfirmasi Hapus");
+        confirm.setHeaderText(null);
+        confirm.setContentText("Hapus data pengeluaran '" + p.getIdPengeluaran() + "'?");
+
+        confirm.showAndWait().ifPresent(response -> {
+            if (response == ButtonType.OK) {
+                if (pengeluaranDAO.deletePengeluaran(p.getIdPengeluaran())) {
+                    muatDataPengeluaran();
+                }
+            }
+        });
+    }
+
+    private Button createActionButton(String text, String color, String iconPath) {
+        Button btn = new Button(text);
+        try {
+            ImageView iv = new ImageView(new Image(getClass().getResourceAsStream(iconPath)));
+            iv.setFitHeight(14); iv.setFitWidth(14);
+            btn.setGraphic(iv);
+        } catch (Exception e) {}
+        btn.setStyle("-fx-background-color: " + color + "; -fx-text-fill: white; -fx-background-radius: 6; -fx-cursor: hand; -fx-font-weight: bold; -fx-font-size: 11px; -fx-padding: 6 12 6 12;");
+        return btn;
+    }
+
+    public void setDarkMode(boolean enabled) {
+        String bgMain = enabled ? "#121212" : "#F4F4F4";
+        String bgCard = enabled ? "#1e1e1e" : "white";
+        String textColor = enabled ? "white" : "#2C3E50";
+        String borderColor = enabled ? "#333333" : "#E0E0E0";
+
+        if (vboxMainContent != null) vboxMainContent.setStyle("-fx-background-color: " + bgMain + ";");
+        if (hboxSearch != null) hboxSearch.setStyle("-fx-background-color: " + bgCard + "; -fx-background-radius: 10;");
+        if (lblSubTitle != null) lblSubTitle.setStyle("-fx-text-fill: " + textColor + "; -fx-font-weight: bold;");
+
+        // Refresh konten agar warna baris berubah
+        muatDataPengeluaran();
     }
 }
