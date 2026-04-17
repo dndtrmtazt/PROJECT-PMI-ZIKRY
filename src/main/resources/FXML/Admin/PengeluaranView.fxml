@@ -43,7 +43,7 @@
                             <padding><Insets left="15.0" right="15.0" /></padding>
                             <children>
                                 <Label fx:id="No" prefWidth="40.0" style="-fx-font-weight: bold;" text="No" />
-                                <Label prefWidth="100.0" style="-fx-font-weight: bold;" text="ID Peng." />
+                                <Label prefWidth="100.0" style="-fx-font-weight: bold;" text="ID Pengeluaran" />
                                 <Label prefWidth="110.0" style="-fx-font-weight: bold;" text="Tanggal" />
                                 <Label prefWidth="130.0" style="-fx-font-weight: bold;" text="Nominal" />
                                 <Label prefWidth="120.0" style="-fx-font-weight: bold;" text="Jenis" />
