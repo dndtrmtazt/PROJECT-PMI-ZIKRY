@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox fx:id="rootPane" maxHeight="380.0" maxWidth="420.0" minHeight="380.0" minWidth="420.0"
+      prefHeight="380.0" prefWidth="420.0" spacing="15.0"
+      style="-fx-background-color: white; -fx-background-radius: 12;"
+      xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="Controller.FormKategoriController"> <children>
+    <Label fx:id="lblHeader" text="Tambah Data Kategori">
+        <font>
+            <Font name="System Bold" size="22.0" />
+        </font>
+    </Label>
+
+    <VBox spacing="5.0">
+        <children>
+            <Label text="ID Kategori *" style="-fx-font-weight: bold; -fx-text-fill: #444444;" />
+            <TextField fx:id="txtIdKategori" prefHeight="40.0" promptText="Contoh: ESK001"
+                       style="-fx-background-radius: 8; -fx-border-color: #DCDCDC; -fx-border-radius: 8;" />
+        </children>
+    </VBox>
+
+    <VBox spacing="5.0">
+        <children>
+            <Label text="Nama Kategori *" style="-fx-font-weight: bold; -fx-text-fill: #444444;" />
+            <TextField fx:id="txtNamaKategori" prefHeight="40.0" promptText="Contoh: Es Krim"
+                       style="-fx-background-radius: 8; -fx-border-color: #DCDCDC; -fx-border-radius: 8;" />
+        </children>
+    </VBox>
+
+    <Label fx:id="lblError" text="⚠️ ID dan Nama wajib diisi!" textFill="RED" visible="false">
+        <font>
+            <Font size="13.0" />
+        </font>
+    </Label>
+
+    <HBox alignment="CENTER_RIGHT" spacing="12.0">
+        <children>
+            <Button mnemonicParsing="false" onAction="#handleBatal" prefHeight="40.0" prefWidth="90.0"
+                    style="-fx-background-color: #F3F4F6; -fx-background-radius: 8; -fx-cursor: hand;" text="Batal" />
+            <Button fx:id="btnSimpan" mnemonicParsing="false" onAction="#handleSimpan" prefHeight="40.0" prefWidth="120.0"
+                    style="-fx-background-color: #4A90E2; -fx-text-fill: white; -fx-background-radius: 8; -fx-font-weight: bold; -fx-cursor: hand;" text="Simpan" />
+        </children>
+        <VBox.margin>
+            <Insets top="10.0" />
+        </VBox.margin>
+    </HBox>
+</children>
+    <padding>
+        <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
+    </padding>
+</VBox>
