@@ -19,6 +19,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+import javafx.application.Platform;
 import javafx.util.Duration;
 import model.User;
 import model.UserDAO;
@@ -93,19 +94,22 @@ public class LoginController {
             // Tampilkan Stage baru
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             Scene scene = new Scene(root);
-            stage.setScene(scene);
-
-            // Set ukuran jendela sesuai desain
             if ("kasir".equalsIgnoreCase(user.getRole())) {
-                stage.setWidth(1000);
-                stage.setHeight(700);
+                stage.setScene(scene);
+                stage.setMaximized(true);
+                Platform.runLater(() -> {
+                    stage.setMaximized(false);
+                    stage.setMaximized(true);
+                });
             } else {
+                stage.setScene(scene);
+                stage.setMaximized(false);
                 stage.setWidth(1100);
                 stage.setHeight(650);
+                stage.centerOnScreen();
             }
             
             stage.setTitle("Toko Zikry - " + user.getRole().toUpperCase());
-            stage.centerOnScreen();
             stage.show();
 
         } catch (IOException e) {

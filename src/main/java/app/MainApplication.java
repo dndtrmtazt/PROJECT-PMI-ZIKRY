@@ -13,9 +13,7 @@ public class MainApplication extends Application {
         Scene scene = new Scene(fxmlLoader.load());
         stage.setTitle("PMI Toko Zikry - Login");
         stage.setScene(scene);
-        stage.setWidth(900);
-        stage.setHeight(600);
-        stage.centerOnScreen();
+        stage.setMaximized(true);
         stage.show();
     }
 

@@ -1,5 +1,6 @@
 package Controller;
 
+import javafx.animation.FadeTransition;
 import java.text.NumberFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -13,6 +14,7 @@ import javafx.scene.Scene;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.collections.FXCollections;
@@ -62,6 +64,7 @@ public class KasirDashboardController {
     private ObservableList<Detail_Transaksi> cartItems = FXCollections.observableArrayList();
     private double totalBelanja = 0;
     private KasirDashboardController currentContentController;
+    private boolean isThemeTransitionRunning = false;
 
     private final NumberFormat nfIndo = NumberFormat.getInstance(new Locale("id", "ID"));
 
@@ -90,9 +93,11 @@ public class KasirDashboardController {
     private void setupSidebarActions() {
         if (btnTransaksi != null) {
             btnTransaksi.setOnAction(e -> loadPage("/FXML/Kasir/TransaksiView.fxml"));
+            btnTransaksi.setOnMouseEntered(e -> updateTransaksiButtonStyle(MainController.isDarkMode, true));
+            btnTransaksi.setOnMouseExited(e -> updateTransaksiButtonStyle(MainController.isDarkMode, false));
         }
-        if (btnLightMode != null) btnLightMode.setOnAction(e -> setDarkMode(false));
-        if (btnDarkMode != null)  btnDarkMode.setOnAction(e -> setDarkMode(true));
+        if (btnLightMode != null) btnLightMode.setOnAction(e -> animateThemeTransition(false));
+        if (btnDarkMode != null)  btnDarkMode.setOnAction(e -> animateThemeTransition(true));
         if (btnLogout != null)    setupLogout();
     }
 
@@ -131,6 +136,7 @@ public class KasirDashboardController {
                 Stage loginStage = new Stage();
                 loginStage.setScene(new Scene(root));
                 loginStage.setTitle("PMI Toko Zikry - Login");
+                loginStage.setMaximized(true);
                 loginStage.show();
             } catch (IOException ex) {
                 ex.printStackTrace();
@@ -200,6 +206,7 @@ public class KasirDashboardController {
         if (hboxThemeToggle != null) hboxThemeToggle.setStyle("-fx-background-color: " + bgCard + "; -fx-border-color: #cfcfcf; -fx-border-radius: 20; -fx-background-radius: 20;");
         if (btnLightMode != null)    btnLightMode.setStyle("-fx-background-color: " + (enabled ? "transparent" : "#efefef") + "; -fx-background-radius: 18; -fx-cursor: hand;");
         if (btnDarkMode != null)     btnDarkMode.setStyle("-fx-background-color: " + (enabled ? "#444444" : "transparent") + "; -fx-background-radius: 18; -fx-cursor: hand;");
+        if (btnTransaksi != null)    updateTransaksiButtonStyle(enabled, btnTransaksi.isHover());
         if (btnLogout != null)       btnLogout.setStyle("-fx-background-color: transparent; " + textColor + "-fx-font-size: 12px; -fx-padding: 0;");
 
         try {
@@ -211,6 +218,72 @@ public class KasirDashboardController {
 
         displayProducts(allBarang, enabled);
         updateCartUI();
+    }
+
+    private void animateThemeTransition(boolean enabled) {
+        if (MainController.isDarkMode == enabled || isThemeTransitionRunning) return;
+        if (paneRoot == null) {
+            setDarkMode(enabled);
+            return;
+        }
+
+        isThemeTransitionRunning = true;
+        setThemeButtonsDisabled(true);
+
+        FadeTransition fadeOut = new FadeTransition(Duration.millis(170), paneRoot);
+        fadeOut.setFromValue(1.0);
+        fadeOut.setToValue(0.72);
+        fadeOut.setInterpolator(Interpolator.EASE_BOTH);
+        fadeOut.setOnFinished(event -> {
+            setDarkMode(enabled);
+
+            FadeTransition fadeIn = new FadeTransition(Duration.millis(170), paneRoot);
+            fadeIn.setFromValue(0.72);
+            fadeIn.setToValue(1.0);
+            fadeIn.setInterpolator(Interpolator.EASE_BOTH);
+            fadeIn.setOnFinished(finishEvent -> {
+                isThemeTransitionRunning = false;
+                setThemeButtonsDisabled(false);
+            });
+            fadeIn.play();
+        });
+        fadeOut.play();
+    }
+
+    private void setThemeButtonsDisabled(boolean disabled) {
+        if (btnLightMode != null) btnLightMode.setDisable(disabled);
+        if (btnDarkMode != null) btnDarkMode.setDisable(disabled);
+    }
+
+    private void updateTransaksiButtonStyle(boolean darkMode, boolean hovered) {
+        if (btnTransaksi == null) return;
+
+        String backgroundColor;
+        String borderColor;
+        String textColor;
+
+        if (darkMode) {
+            backgroundColor = hovered ? "#202020" : "#151515";
+            borderColor = hovered ? "#353535" : "#2a2a2a";
+            textColor = "#4da3ff";
+        } else {
+            backgroundColor = hovered ? "#cfe1f5" : "#dce9f7";
+            borderColor = hovered ? "#c1d7ef" : "transparent";
+            textColor = "#3b6ea7";
+        }
+
+        btnTransaksi.setStyle(
+                "-fx-background-color: " + backgroundColor + "; "
+                        + "-fx-background-radius: 10; "
+                        + "-fx-border-color: " + borderColor + "; "
+                        + "-fx-border-width: 1; "
+                        + "-fx-border-radius: 10; "
+                        + "-fx-text-fill: " + textColor + "; "
+                        + "-fx-font-size: 12px; "
+                        + "-fx-font-weight: normal; "
+                        + "-fx-padding: 0 0 0 10; "
+                        + "-fx-cursor: hand;"
+        );
     }
 
     // --- JAM REAL-TIME ---
