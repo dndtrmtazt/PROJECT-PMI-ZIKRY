@@ -28,6 +28,7 @@ public class BarangController {
     @FXML private TableColumn<Barang, String> colId, colNama, colKategori;
     @FXML private TableColumn<Barang, Integer> colStok;
     @FXML private TableColumn<Barang, Double> colHargaBeli, colHargaJual;
+    @FXML private TableColumn<Barang, String> colSatuan;
     @FXML private TextField txtCari;
     @FXML private Label lblDaftarBarang, lblTitle;
 
@@ -39,6 +40,7 @@ public class BarangController {
         colId.setCellValueFactory(new PropertyValueFactory<>("idBarang"));
         colNama.setCellValueFactory(new PropertyValueFactory<>("namaBarang"));
         colKategori.setCellValueFactory(new PropertyValueFactory<>("idKategori"));
+        colSatuan.setCellValueFactory(new PropertyValueFactory<>("satuan"));
         colStok.setCellValueFactory(new PropertyValueFactory<>("stok"));
 
         tableBarang.getColumns().forEach(column -> column.setStyle("-fx-alignment: CENTER-LEFT;"));
@@ -96,23 +98,32 @@ public class BarangController {
 
     private void loadData() {
         listBarang.clear();
-        String query = "SELECT * FROM barang";
+
+        // 1. PASTIKAN QUERY PAKE LEFT JOIN
+        String query = "SELECT b.*, k.nama_kategori FROM barang b " +
+                "LEFT JOIN kategori k ON b.id_kategori = k.id_kategori";
+
         try (Connection conn = koneksi.koneksiDB();
              Statement st = conn.createStatement();
              ResultSet rs = st.executeQuery(query)) {
 
             while (rs.next()) {
+                // 2. MASUKKAN 8 DATA (HARUS URUT!)
                 listBarang.add(new Barang(
                         rs.getString("id_barang"),
                         rs.getString("nama_barang"),
                         rs.getString("id_kategori"),
+                        rs.getString("nama_kategori") == null ? "-" : rs.getString("nama_kategori"),
                         rs.getInt("stok"),
+                        rs.getString("satuan") == null ? "Pcs" : rs.getString("satuan"),
                         rs.getDouble("harga_beli"),
                         rs.getDouble("harga_jual")
                 ));
             }
+            System.out.println("✓ Berhasil memuat " + listBarang.size() + " data barang.");
         } catch (SQLException e) {
             System.err.println("✗ Gagal tarik data: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -153,13 +164,17 @@ public class BarangController {
             FXMLLoader loader = MainController.getInstance().panggilHalaman("EditBarang");
             if (loader != null) {
                 EditBarangController controller = loader.getController();
+
+                // KIRIM 8 PARAMETER (Harus urut sesuai method di EditBarangController)
                 controller.initData(
-                        selected.getIdBarang(),
-                        selected.getNamaBarang(),
-                        selected.getIdKategori(),
-                        selected.getStok(),
-                        selected.getHargaBeli(),
-                        selected.getHargaJual()
+                        selected.getIdBarang(),      // 1
+                        selected.getNamaBarang(),    // 2
+                        selected.getIdKategori(),    // 3
+                        selected.getNamaKategori(),  // 4 (DATA BARU)
+                        selected.getStok(),          // 5
+                        selected.getSatuan(),       // 6 (DATA BARU)
+                        selected.getHargaBeli(),     // 7
+                        selected.getHargaJual()      // 8
                 );
             }
         }

@@ -4,69 +4,51 @@ public class Barang {
     private String idBarang;
     private String namaBarang;
     private String idKategori;
+    private String namaKategori; // Tambahan: buat nyimpan nama kategori hasil JOIN
     private int stok;
+    private String satuan;       // Tambahan: buat nyimpan satuan (Pcs, Kg, dll)
     private double hargaBeli;
     private double hargaJual;
 
     public Barang() {
     }
 
-    public Barang(String idBarang, String namaBarang, String idKategori, int stok, double hargaBeli, double hargaJual) {
+    // Constructor lengkap (sudah ditambah satuan dan namaKategori)
+    public Barang(String idBarang, String namaBarang, String idKategori, String namaKategori, int stok, String satuan, double hargaBeli, double hargaJual) {
         this.idBarang = idBarang;
         this.namaBarang = namaBarang;
         this.idKategori = idKategori;
+        this.namaKategori = namaKategori;
         this.stok = stok;
+        this.satuan = satuan;
         this.hargaBeli = hargaBeli;
         this.hargaJual = hargaJual;
     }
 
-    public String getIdBarang() {
-        return idBarang;
-    }
+    // Getter dan Setter
+    public String getIdBarang() { return idBarang; }
+    public void setIdBarang(String idBarang) { this.idBarang = idBarang; }
 
-    public void setIdBarang(String idBarang) {
-        this.idBarang = idBarang;
-    }
+    public String getNamaBarang() { return namaBarang; }
+    public void setNamaBarang(String namaBarang) { this.namaBarang = namaBarang; }
 
-    public String getNamaBarang() {
-        return namaBarang;
-    }
+    public String getIdKategori() { return idKategori; }
+    public void setIdKategori(String idKategori) { this.idKategori = idKategori; }
 
-    public void setNamaBarang(String namaBarang) {
-        this.namaBarang = namaBarang;
-    }
+    public String getNamaKategori() { return namaKategori; }
+    public void setNamaKategori(String namaKategori) { this.namaKategori = namaKategori; }
 
-    public String getIdKategori() {
-        return idKategori;
-    }
+    public int getStok() { return stok; }
+    public void setStok(int stok) { this.stok = stok; }
 
-    public void setIdKategori(String idKategori) {
-        this.idKategori = idKategori;
-    }
+    public String getSatuan() { return satuan; }
+    public void setSatuan(String satuan) { this.satuan = satuan; }
 
-    public int getStok() {
-        return stok;
-    }
+    public double getHargaBeli() { return hargaBeli; }
+    public void setHargaBeli(double hargaBeli) { this.hargaBeli = hargaBeli; }
 
-    public void setStok(int stok) {
-        this.stok = stok;
-    }
-
-    public double getHargaBeli() {
-        return hargaBeli;
-    }
-
-    public void setHargaBeli(double hargaBeli) {
-        this.hargaBeli = hargaBeli;
-    }
-
-    public double getHargaJual() {
-        return hargaJual;
-    }
-
-    public void setHargaJual(double hargaJual) {
-        this.hargaJual = hargaJual;
-    }
+    public double getHargaJual() { return hargaJual; }
+    public void setHargaJual(double hargaJual) { this.hargaJual = hargaJual; }
 
     @Override
     public String toString() {

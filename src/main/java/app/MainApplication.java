@@ -18,6 +18,10 @@ public class MainApplication extends Application {
     }
 
     public static void main(String[] args) {
-        launch();
+        // 1. Set property DULU sebelum aplikasi jalan
+        System.setProperty("glass.accessible.force", "false");
+
+        // 2. Baru panggil launch
+        launch(args);
     }
 }

@@ -61,6 +61,7 @@
                                 <TableColumn fx:id="colId" prefWidth="80.0" text="ID Barang" />
                                 <TableColumn fx:id="colNama" prefWidth="150.0" text="Nama Barang" />
                                 <TableColumn fx:id="colKategori" prefWidth="100.0" text="ID Kategori" />
+                                <TableColumn fx:id="colSatuan" prefWidth="80.0" text="Satuan" />
                                 <TableColumn fx:id="colStok" prefWidth="60.0" text="Stok" />
                                 <TableColumn fx:id="colHargaBeli" prefWidth="100.0" text="Harga Beli" />
                                 <TableColumn fx:id="colHargaJual" prefWidth="100.0" text="Harga Jual" />
