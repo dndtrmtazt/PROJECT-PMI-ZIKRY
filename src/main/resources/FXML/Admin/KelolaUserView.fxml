@@ -26,7 +26,7 @@
                             <children>
                                 <Label fx:id="lblSubTitle" style="-fx-font-family: 'Inter Medium'; -fx-font-size: 18; -fx-font-weight: bold;" text="Daftar Pengguna Sistem" />
                                 <Region HBox.hgrow="ALWAYS" />
-                                <Button fx:id="btnTambahUser" mnemonicParsing="false" prefHeight="35.0" prefWidth="180.0" style="-fx-background-color: #3498DB; -fx-text-fill: white; -fx-background-radius: 8;" text="+ Tambah User Baru" />
+                                <Button fx:id="btnTambahUser" mnemonicParsing="false" onAction="#handleTambahUser" prefHeight="35.0" prefWidth="180.0" style="-fx-background-color: #3498DB; -fx-text-fill: white; -fx-background-radius: 8;" text="+ Tambah User Baru" />
                             </children>
                         </HBox>
 

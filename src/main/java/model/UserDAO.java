@@ -5,150 +5,102 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * UserDAO (Data Access Object)
- * Kelas ini berfungsi sebagai jembatan antara aplikasi dan tabel 'user' di database.
- */
 public class UserDAO {
 
-    /**
-     * Ambil SEMUA data user dari database.
-     */
     public static List<User> getAllUsers() {
-        // 1. Siapkan list kosong buat menampung data user
         List<User> listUser = new ArrayList<>();
-        // 2. Tulis perintah SQL untuk mengambil semua kolom
-        String query = "SELECT id_user, user_password, role FROM user";
+        String query = "SELECT id_user, nama_lengkap, role FROM user";
 
-        // 3. Buka koneksi dan jalankan perintahnya (Try-with-resources)
         try (Connection conn = koneksi.koneksiDB();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(query)) {
 
-            // 4. Ambil data baris demi baris dari database
             while (rs.next()) {
                 User user = new User();
                 user.setIdUser(rs.getString("id_user"));
-                user.setPassword(rs.getString("user_password"));
+                user.setNamaLengkap(rs.getString("nama_lengkap"));
                 user.setRole(rs.getString("role"));
-
-                // 5. Masukkan objek user ke dalam list
                 listUser.add(user);
             }
         } catch (SQLException e) {
-            // Tampilkan pesan jika gagal mengambil data
-            System.err.println("Gagal ambil semua data user: " + e.getMessage());
             e.printStackTrace();
         }
         return listUser;
     }
 
-    /**
-     * Cek kecocokan ID dan Password (Login).
-     */
     public static User validateUser(String idUser, String password) {
-        // 1. Tulis perintah SQL dengan tanda tanya (?) sebagai pengaman (SQL Injection)
-        String query = "SELECT id_user, user_password, role FROM user WHERE id_user = ? AND user_password = ?";
-
+        String query = "SELECT * FROM user WHERE id_user = ? AND user_password = ?";
         try (Connection conn = koneksi.koneksiDB();
              PreparedStatement ps = conn.prepareStatement(query)) {
-
-            // 2. Masukkan ID dan Password yang diketik user ke tanda tanya tadi
             ps.setString(1, idUser);
             ps.setString(2, password);
-
-            // 3. Jalankan perintah dan cek hasilnya
             ResultSet rs = ps.executeQuery();
+
             if (rs.next()) {
-                // 4. Kalau ketemu, bungkus datanya jadi objek User
                 User user = new User();
                 user.setIdUser(rs.getString("id_user"));
-                user.setPassword(rs.getString("user_password"));
                 user.setRole(rs.getString("role"));
-                return user; // Berhasil Login
-            }
-        } catch (SQLException e) {
-            System.err.println("Gagal validasi login: " + e.getMessage());
-            e.printStackTrace();
-        }
-        return null; // Balikin null kalau user tidak ditemukan
-    }
-
-    /**
-     * Cari detail satu user berdasarkan ID.
-     */
-    public static User getUserById(String idUser) {
-        // 1. Siapkan perintah SQL pencarian spesifik ID
-        String query = "SELECT id_user, user_password, role FROM user WHERE id_user = ?";
-
-        try (Connection conn = koneksi.koneksiDB();
-             PreparedStatement ps = conn.prepareStatement(query)) {
-
-            // 2. Isi tanda tanya dengan ID yang dicari
-            ps.setString(1, idUser);
-
-            // 3. Jalankan pencarian
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                // 4. Pindahkan data dari database ke objek User
-                User user = new User();
-                user.setIdUser(rs.getString("id_user"));
-                user.setPassword(rs.getString("user_password"));
-                user.setRole(rs.getString("role"));
+                user.setNamaLengkap(rs.getString("nama_lengkap"));
                 return user;
             }
         } catch (SQLException e) {
-            System.err.println("Gagal cari user pakai ID: " + e.getMessage());
             e.printStackTrace();
         }
         return null;
     }
 
-    /**
-     * Daftarkan user baru ke tabel.
-     */
-    public static boolean insertUser(String idUser, String password, String role) {
-        // 1. Siapkan perintah INSERT
-        String query = "INSERT INTO user (id_user, user_password, role) VALUES (?, ?, ?)";
+    public static boolean insertUser(String idUser, String nama, String role, String password) {
+        String query = "INSERT INTO user (id_user, nama_lengkap, role, user_password) VALUES (?, ?, ?, ?)";
 
         try (Connection conn = koneksi.koneksiDB();
              PreparedStatement ps = conn.prepareStatement(query)) {
 
-            // 2. Isi data user baru ke tanda tanya
             ps.setString(1, idUser);
-            ps.setString(2, password);
-            ps.setString(3, role);
+            ps.setString(2, nama);
+            ps.setString(3, role.toLowerCase());
+            ps.setString(4, password);
 
-            // 3. Jalankan perintah simpan (executeUpdate)
-            int result = ps.executeUpdate();
-            return result > 0; // Kembalikan true jika ada baris yang tersimpan
+            return ps.executeUpdate() > 0;
         } catch (SQLException e) {
-            System.err.println("Gagal nambah user baru: " + e.getMessage());
             e.printStackTrace();
+            return false;
         }
-        return false;
     }
 
     /**
-     * Update/Ganti password user.
+     * DI SINI PERBAIKANNYA: Method sekarang menerima 5 parameter agar ID bisa diedit
      */
-    public static boolean updateUserPassword(String idUser, String newPassword) {
-        // 1. Siapkan perintah UPDATE berdasarkan ID
-        String query = "UPDATE user SET user_password = ? WHERE id_user = ?";
+    public static boolean updateUser(String idLama, String idBaru, String nama, String role, String pass) {
+        // Query ini mengubah id_user yang lama menjadi id_user yang baru
+        String query = "UPDATE user SET id_user = ?, nama_lengkap = ?, role = ?, user_password = ? WHERE id_user = ?";
 
         try (Connection conn = koneksi.koneksiDB();
              PreparedStatement ps = conn.prepareStatement(query)) {
 
-            // 2. Masukkan password baru dan ID target
-            ps.setString(1, newPassword);
-            ps.setString(2, idUser);
+            ps.setString(1, idBaru);   // ID Baru yang diketik di aplikasi
+            ps.setString(2, nama);
+            ps.setString(3, role.toLowerCase());
+            ps.setString(4, pass);
+            ps.setString(5, idLama);   // ID Asli yang dipakai sebagai patokan WHERE
 
-            // 3. Jalankan update dan cek apakah berhasil
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
-            System.err.println("Gagal update password: " + e.getMessage());
             e.printStackTrace();
+            return false;
         }
-        return false;
+    }
+
+    public static boolean deleteUser(String idUser) {
+        String query = "DELETE FROM user WHERE id_user = ?";
+
+        try (Connection conn = koneksi.koneksiDB();
+             PreparedStatement ps = conn.prepareStatement(query)) {
+
+            ps.setString(1, idUser);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }

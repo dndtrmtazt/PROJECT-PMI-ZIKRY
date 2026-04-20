@@ -1,10 +1,17 @@
 package Controller;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Optional; // Tambahkan ini untuk konfirmasi hapus
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType; // Tambahkan ini
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
@@ -13,6 +20,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import model.User;
 import model.UserDAO;
 
@@ -41,32 +50,18 @@ public class UserController {
             lblTitle.getParent().setStyle("-fx-background-color: #4A76A8;");
             lblTitle.setStyle("-fx-text-fill: white;");
         }
-
-        // Card styling
         if (LyrUsr != null) {
-            LyrUsr.setStyle("-fx-background-color: " + bgCard + "; -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 10, 0, 0, 5);");
+            LyrUsr.setStyle("-fx-background-color: " + bgCard + "; -fx-background-radius: 10;");
         }
-
         if (scrollUser != null) {
             scrollUser.setStyle("-fx-background: transparent; -fx-background-color: transparent;");
-            // To ensure the viewport also doesn't have a background that clashes
-            if (scrollUser.lookup(".viewport") != null) {
-                scrollUser.lookup(".viewport").setStyle("-fx-background-color: transparent;");
-            }
         }
-
         if (hboxTableHead != null) {
-            hboxTableHead.setStyle("-fx-background-color: " + (enabled ? "#333333" : "#F8F9FA") + "; -fx-background-radius: 5; -fx-border-color: " + borderColor + "; -fx-border-width: 0 0 1 0;");
-            hboxTableHead.getChildren().forEach(node -> {
-                if (node instanceof Label) {
-                    ((Label) node).setStyle("-fx-text-fill: " + textColor + "; -fx-font-weight: bold;");
-                }
-            });
+            hboxTableHead.setStyle("-fx-background-color: " + (enabled ? "#333333" : "#F8F9FA") + "; -fx-border-color: " + borderColor + "; -fx-border-width: 0 0 1 0;");
         }
+        if (lblSubTitle != null) lblSubTitle.setStyle("-fx-text-fill: " + textColor + ";");
 
-        if (lblSubTitle != null) lblSubTitle.setStyle("-fx-font-family: 'Inter Medium'; -fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: " + textColor + ";");
-        
-        muatDataUser(); // Refresh user list with current theme
+        muatDataUser();
     }
 
     private void muatDataUser() {
@@ -92,18 +87,13 @@ public class UserController {
             lblId.setPrefWidth(120);
             lblId.setStyle("-fx-text-fill: " + textColor + ";");
 
-            Label lblNama = new Label(u.getIdUser());
+            Label lblNama = new Label(u.getNamaLengkap());
             lblNama.setPrefWidth(180);
             lblNama.setStyle("-fx-font-weight: bold; -fx-text-fill: " + textColor + ";");
 
             Label lblRole = new Label(u.getRole().toUpperCase());
             lblRole.setPrefWidth(120);
-
-            if (u.getRole().equalsIgnoreCase("admin")) {
-                lblRole.setStyle("-fx-text-fill: #E74C3C; -fx-font-weight: bold;");
-            } else {
-                lblRole.setStyle("-fx-text-fill: #27AE60; -fx-font-weight: bold;");
-            }
+            lblRole.setStyle("-fx-text-fill: " + (u.getRole().equalsIgnoreCase("admin") ? "#E74C3C" : "#27AE60") + "; -fx-font-weight: bold;");
 
             Region spacer = new Region();
             HBox.setHgrow(spacer, Priority.ALWAYS);
@@ -111,21 +101,15 @@ public class UserController {
             HBox actionBox = new HBox(8);
             actionBox.setMinWidth(160.0); actionBox.setAlignment(Pos.CENTER);
 
+            // TOMBOL EDIT
             Button btnEdit = new Button("Edit");
-            try {
-                ImageView ivEdit = new ImageView(new Image(getClass().getResourceAsStream("/Images/pencil_white.png")));
-                ivEdit.setFitHeight(14); ivEdit.setFitWidth(14);
-                btnEdit.setGraphic(ivEdit);
-            } catch (Exception e) {}
-            btnEdit.setStyle("-fx-background-color: #3498DB; -fx-text-fill: white; -fx-background-radius: 6; -fx-cursor: hand; -fx-font-weight: bold; -fx-font-size: 11px; -fx-padding: 6 12 6 12;");
-            
+            btnEdit.setStyle("-fx-background-color: #3498DB; -fx-text-fill: white; -fx-cursor: hand; -fx-font-weight: bold; -fx-background-radius: 5;");
+            btnEdit.setOnAction(e -> handleEditUser(u)); // Panggil fungsi edit
+
+            // TOMBOL HAPUS
             Button btnHapus = new Button("Hapus");
-            try {
-                ImageView ivTrash = new ImageView(new Image(getClass().getResourceAsStream("/Images/trash_white.png")));
-                ivTrash.setFitHeight(14); ivTrash.setFitWidth(14);
-                btnHapus.setGraphic(ivTrash);
-            } catch (Exception e) {}
-            btnHapus.setStyle("-fx-background-color: #E74C3C; -fx-text-fill: white; -fx-background-radius: 6; -fx-cursor: hand; -fx-font-weight: bold; -fx-font-size: 11px; -fx-padding: 6 12 6 12;");
+            btnHapus.setStyle("-fx-background-color: #E74C3C; -fx-text-fill: white; -fx-cursor: hand; -fx-font-weight: bold; -fx-background-radius: 5;");
+            btnHapus.setOnAction(e -> handleHapusUser(u)); // Panggil fungsi hapus
 
             actionBox.getChildren().addAll(btnEdit, btnHapus);
             row.getChildren().addAll(lblNo, lblId, lblNama, lblRole, spacer, actionBox);
@@ -133,8 +117,75 @@ public class UserController {
         }
     }
 
+    // LOGIKA EDIT USER
+    private void handleEditUser(User user) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/FXML/Admin/TambahUserView.fxml"));
+            Parent root = loader.load();
+
+            Stage stage = new Stage();
+            stage.setTitle("Edit User: " + user.getIdUser());
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setScene(new Scene(root));
+
+            // Ambil controller pop-up dan kirim data untuk di-edit
+            TambahUserController controller = loader.getController();
+            controller.setEditMode(user); // Kamu perlu membuat method setEditMode di TambahUserController
+
+            stage.showAndWait();
+
+            if (controller.isSaved()) {
+                muatDataUser(); // Refresh tabel
+            }
+        } catch (IOException e) {
+            alertError("Gagal membuka jendela edit: " + e.getMessage());
+        }
+    }
+
+    // LOGIKA HAPUS USER
+    private void handleHapusUser(User user) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Konfirmasi Hapus");
+        alert.setHeaderText(null);
+        alert.setContentText("Apakah Anda yakin ingin menghapus user: " + user.getNamaLengkap() + "?");
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            if (UserDAO.deleteUser(user.getIdUser())) { // Panggil method di DAO
+                muatDataUser(); // Refresh tabel
+            } else {
+                alertError("Gagal menghapus user dari database.");
+            }
+        }
+    }
+
     @FXML
     private void handleTambahUser() {
-        System.out.println("Form tambah user...");
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/FXML/Admin/TambahUserView.fxml"));
+            Parent root = loader.load();
+
+            Stage stage = new Stage();
+            stage.setTitle("Tambah User Baru");
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setScene(new Scene(root));
+
+            TambahUserController controller = loader.getController();
+            stage.showAndWait();
+
+            if (controller != null && controller.isSaved()) {
+                muatDataUser();
+            }
+        } catch (Exception e) {
+            alertError("Gagal membuka jendela: " + e.getMessage());
+        }
+    }
+
+    private void alertError(String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Error");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 }

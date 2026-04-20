@@ -1,19 +1,24 @@
 package model;
 
 public class User {
-    private String idUser;    // id_user
-    private String password;  // user_password
-    private String role;      // admin, kasir, pemilik, dll
+    private String idUser;      // Mapping ke kolom 'id_user'
+    private String namaLengkap; // Mapping ke kolom 'nama_lengkap'
+    private String role;        // Mapping ke kolom 'role'
+    private String password;    // Mapping ke kolom 'user_password'
 
+    // Konstruktor Kosong
     public User() {
     }
 
-    public User(String idUser, String password, String role) {
+    // Konstruktor Lengkap (Gunakan ini saat mengambil data dari DB)
+    public User(String idUser, String namaLengkap, String role, String password) {
         this.idUser = idUser;
-        this.password = password;
+        this.namaLengkap = namaLengkap;
         this.role = role;
+        this.password = password;
     }
 
+    // Getter dan Setter untuk idUser
     public String getIdUser() {
         return idUser;
     }
@@ -22,14 +27,16 @@ public class User {
         this.idUser = idUser;
     }
 
-    public String getPassword() {
-        return password;
+    // Getter dan Setter untuk namaLengkap (PENTING: Menghilangkan error merah)
+    public String getNamaLengkap() {
+        return namaLengkap;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setNamaLengkap(String namaLengkap) {
+        this.namaLengkap = namaLengkap;
     }
 
+    // Getter dan Setter untuk role
     public String getRole() {
         return role;
     }
@@ -38,10 +45,20 @@ public class User {
         this.role = role;
     }
 
+    // Getter dan Setter untuk password
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     @Override
     public String toString() {
         return "User{" +
                 "idUser='" + idUser + '\'' +
+                ", namaLengkap='" + namaLengkap + '\'' +
                 ", role='" + role + '\'' +
                 '}';
     }

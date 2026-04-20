@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<VBox fx:id="vboxMainContent" prefHeight="600.0" prefWidth="817.0" style="-fx-background-color: #F4F4F4;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.PengaturanTokoController">
+<VBox fx:id="vboxMainContent" prefHeight="600.0" prefWidth="817.0" style="-fx-background-color: #F4F4F4;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.PengaturanController">
     <children>
         <HBox fx:id="hboxHeader" alignment="CENTER_LEFT" minHeight="60.0" prefHeight="60.0" style="-fx-background-color: #4A76A8;">
             <children>
@@ -30,33 +30,30 @@
                                 <HBox alignment="CENTER_LEFT" spacing="20.0">
                                     <children>
                                         <VBox alignment="CENTER" minHeight="40.0" minWidth="40.0" prefHeight="40.0" prefWidth="40.0" style="-fx-background-color: #4A76A8; -fx-background-radius: 8;">
-                                            <children><ImageView fitHeight="40.0" fitWidth="40.0"><image><Image url="@../../Images/ICON29.png" /></image></ImageView></children>
+                                            <children><ImageView fitHeight="30.0" fitWidth="30.0"><image><Image url="@../../Images/ICON29.png" /></image></ImageView></children>
                                         </VBox>
-                                        <Label fx:id="lblNamaToko" minWidth="120.0" prefWidth="120.0" style="-fx-font-family: 'Inter'; -fx-font-size: 14;" text="Nama Toko" />
-                                        <Label text=":" style="-fx-font-size: 14;" />
-                                        <Label fx:id="txtNamaToko" maxWidth="1.7976931348623157E308" style="-fx-font-family: 'Inter Bold'; -fx-font-size: 14; -fx-font-weight: bold;" text="Toko Zikry" HBox.hgrow="ALWAYS" />
+                                        <Label minWidth="120.0" text="Nama Toko" />
+                                        <TextField fx:id="txtNamaToko" editable="false" prefHeight="35.0" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-font-weight: bold;" text="Toko Zikry" HBox.hgrow="ALWAYS" />
                                     </children>
                                 </HBox>
 
                                 <HBox alignment="CENTER_LEFT" spacing="20.0">
                                     <children>
                                         <VBox alignment="CENTER" minHeight="40.0" minWidth="40.0" prefHeight="40.0" prefWidth="40.0" style="-fx-background-color: #4A76A8; -fx-background-radius: 8;">
-                                            <children><ImageView fitHeight="40.0" fitWidth="40.0"><image><Image url="@../../Images/ICON30.png" /></image></ImageView></children>
+                                            <children><ImageView fitHeight="30.0" fitWidth="30.0"><image><Image url="@../../Images/ICON30.png" /></image></ImageView></children>
                                         </VBox>
-                                        <Label fx:id="lblTelp" minWidth="120.0" prefWidth="120.0" style="-fx-font-family: 'Inter'; -fx-font-size: 14;" text="Nomor Telepon" />
-                                        <Label text=":" style="-fx-font-size: 14;" />
-                                        <Label fx:id="txtTelp" maxWidth="1.7976931348623157E308" style="-fx-font-family: 'Inter Bold'; -fx-font-size: 14; -fx-font-weight: bold;" text="+62 812-3456-7890" HBox.hgrow="ALWAYS" />
+                                        <Label minWidth="120.0" text="Nomor Telepon" />
+                                        <TextField fx:id="txtTelp" editable="false" prefHeight="35.0" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-font-weight: bold;" text="+62 812-3456-7890" HBox.hgrow="ALWAYS" />
                                     </children>
                                 </HBox>
 
                                 <HBox alignment="CENTER_LEFT" spacing="20.0">
                                     <children>
                                         <VBox alignment="CENTER" minHeight="40.0" minWidth="40.0" prefHeight="40.0" prefWidth="40.0" style="-fx-background-color: #4A76A8; -fx-background-radius: 8;">
-                                            <children><ImageView fitHeight="40.0" fitWidth="40.0"><image><Image url="@../../Images/ICON31.png" /></image></ImageView></children>
+                                            <children><ImageView fitHeight="30.0" fitWidth="30.0"><image><Image url="@../../Images/ICON31.png" /></image></ImageView></children>
                                         </VBox>
-                                        <Label fx:id="lblAlamat" minWidth="120.0" prefWidth="120.0" style="-fx-font-family: 'Inter'; -fx-font-size: 14;" text="Alamat" />
-                                        <Label text=":" style="-fx-font-size: 14;" />
-                                        <Label fx:id="txtAlamat" maxWidth="1.7976931348623157E308" style="-fx-font-family: 'Inter Bold'; -fx-font-size: 14; -fx-font-weight: bold;" text="Jl. Mawar No. 123, Jakarta" HBox.hgrow="ALWAYS" />
+                                        <Label minWidth="120.0" text="Alamat" />
+                                        <TextField fx:id="txtAlamat" editable="false" prefHeight="35.0" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-font-weight: bold;" text="Jl. Mawar No. 123, Jakarta" HBox.hgrow="ALWAYS" />
                                     </children>
                                 </HBox>
 
@@ -65,9 +62,8 @@
                                         <VBox alignment="CENTER" minHeight="40.0" minWidth="40.0" prefHeight="40.0" prefWidth="40.0" style="-fx-background-color: #4A76A8; -fx-background-radius: 8;">
                                             <children><ImageView fitHeight="25.0" fitWidth="25.0"><image><Image url="@../../Images/ICON32.png" /></image></ImageView></children>
                                         </VBox>
-                                        <Label fx:id="lblEmail" minWidth="120.0" prefWidth="120.0" style="-fx-font-family: 'Inter'; -fx-font-size: 14;" text="Email" />
-                                        <Label text=":" style="-fx-font-size: 14;" />
-                                        <Label fx:id="txtEmail" maxWidth="1.7976931348623157E308" style="-fx-font-family: 'Inter Bold'; -fx-font-size: 14; -fx-font-weight: bold;" text="tokozikry123@gmail.com" HBox.hgrow="ALWAYS" />
+                                        <Label minWidth="120.0" text="Email" />
+                                        <TextField fx:id="txtEmail" editable="false" prefHeight="35.0" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-font-weight: bold;" text="tokozikry123@gmail.com" HBox.hgrow="ALWAYS" />
                                     </children>
                                 </HBox>
                             </children>
@@ -75,7 +71,7 @@
 
                         <HBox alignment="CENTER_RIGHT">
                             <children>
-                                <Button fx:id="btnSimpanInfo" prefHeight="35.0" prefWidth="150.0" style="-fx-background-color: #3498DB; -fx-text-fill: white; -fx-background-radius: 8; -fx-font-family: 'Inter Medium'; -fx-cursor: hand;" text="Edit" />
+                                <Button fx:id="btnEdit" onAction="#handleEdit" prefHeight="35.0" prefWidth="150.0" style="-fx-background-color: #3498DB; -fx-text-fill: white; -fx-background-radius: 8; -fx-font-family: 'Inter Medium'; -fx-cursor: hand;" text="Edit" />
                             </children>
                         </HBox>
                     </children>
