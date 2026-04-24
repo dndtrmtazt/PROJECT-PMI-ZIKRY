@@ -3,6 +3,7 @@ package model;
 import config.koneksi;
 import java.sql.*;
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,10 +21,7 @@ public class PengeluaranDAO {
             while (rs.next()) {
                 Pengeluaran p = new Pengeluaran();
                 p.setIdPengeluaran(rs.getString("id_pengeluaran"));
-                Date sqlDate = rs.getDate("tgl_pengeluaran");
-                if (sqlDate != null) {
-                    p.setTglPengeluaran(sqlDate.toLocalDate());
-                }
+                p.setTglPengeluaran(readLocalDate(rs, "tgl_pengeluaran"));
                 p.setNominal(rs.getDouble("nominal"));
                 p.setJenis(rs.getString("jenis"));
                 p.setIdUser(rs.getString("id_user"));
@@ -42,7 +40,7 @@ public class PengeluaranDAO {
              PreparedStatement ps = conn.prepareStatement(query)) {
 
             ps.setString(1, p.getIdPengeluaran());
-            ps.setDate(2, Date.valueOf(p.getTglPengeluaran()));
+            ps.setString(2, p.getTglPengeluaran().toString());
             ps.setDouble(3, p.getNominal());
             ps.setString(4, p.getJenis());
             ps.setString(5, p.getIdUser());
@@ -61,7 +59,7 @@ public class PengeluaranDAO {
              PreparedStatement ps = conn.prepareStatement(query)) {
 
             ps.setString(1, p.getIdPengeluaran());
-            ps.setDate(2, Date.valueOf(p.getTglPengeluaran()));
+            ps.setString(2, p.getTglPengeluaran().toString());
             ps.setDouble(3, p.getNominal());
             ps.setString(4, p.getJenis());
             ps.setString(5, p.getIdUser());
@@ -84,6 +82,20 @@ public class PengeluaranDAO {
         } catch (SQLException e) {
             System.err.println("Gagal Hapus Pengeluaran: " + e.getMessage());
             return false;
+        }
+    }
+
+    private static LocalDate readLocalDate(ResultSet rs, String columnName) throws SQLException {
+        String value = rs.getString(columnName);
+        if (value == null || value.isBlank()) {
+            return null;
+        }
+
+        try {
+            return LocalDate.parse(value);
+        } catch (DateTimeParseException e) {
+            Date sqlDate = rs.getDate(columnName);
+            return sqlDate != null ? sqlDate.toLocalDate() : null;
         }
     }
 }

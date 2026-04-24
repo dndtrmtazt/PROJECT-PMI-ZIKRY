@@ -3,10 +3,13 @@ package model;
 import config.koneksi;
 import java.sql.*;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class TransaksiDAO {
+    private static final DateTimeFormatter SQL_DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public static String getNextIdTransaksi() {
         String query = "SELECT id_transaksi FROM transaksi ORDER BY id_transaksi DESC LIMIT 1";
@@ -33,7 +36,7 @@ public class TransaksiDAO {
             while (rs.next()) {
                 Transaksi transaksi = new Transaksi();
                 transaksi.setIdTransaksi(rs.getString("id_transaksi"));
-                transaksi.setTglTransaksi(rs.getTimestamp("tgl_transaksi").toLocalDateTime());
+                transaksi.setTglTransaksi(readDateTime(rs, "tgl_transaksi"));
                 transaksi.setIdUser(rs.getString("id_user"));
                 transaksi.setTotal(rs.getDouble("total"));
                 listTransaksi.add(transaksi);
@@ -55,7 +58,7 @@ public class TransaksiDAO {
             if (rs.next()) {
                 Transaksi transaksi = new Transaksi();
                 transaksi.setIdTransaksi(rs.getString("id_transaksi"));
-                transaksi.setTglTransaksi(rs.getTimestamp("tgl_transaksi").toLocalDateTime());
+                transaksi.setTglTransaksi(readDateTime(rs, "tgl_transaksi"));
                 transaksi.setIdUser(rs.getString("id_user"));
                 transaksi.setTotal(rs.getDouble("total"));
                 return transaksi;
@@ -78,7 +81,7 @@ public class TransaksiDAO {
             while (rs.next()) {
                 Transaksi transaksi = new Transaksi();
                 transaksi.setIdTransaksi(rs.getString("id_transaksi"));
-                transaksi.setTglTransaksi(rs.getTimestamp("tgl_transaksi").toLocalDateTime());
+                transaksi.setTglTransaksi(readDateTime(rs, "tgl_transaksi"));
                 transaksi.setIdUser(rs.getString("id_user"));
                 transaksi.setTotal(rs.getDouble("total"));
                 listTransaksi.add(transaksi);
@@ -95,7 +98,7 @@ public class TransaksiDAO {
         try (Connection conn = koneksi.koneksiDB();
              PreparedStatement ps = conn.prepareStatement(query)) {
             ps.setString(1, transaksi.getIdTransaksi());
-            ps.setTimestamp(2, Timestamp.valueOf(transaksi.getTglTransaksi()));
+            ps.setString(2, formatDateTime(transaksi.getTglTransaksi()));
             ps.setString(3, transaksi.getIdUser());
             ps.setDouble(4, transaksi.getTotal());
             
@@ -113,7 +116,7 @@ public class TransaksiDAO {
         String query = "UPDATE transaksi SET tgl_transaksi = ?, id_user = ?, total = ? WHERE id_transaksi = ?";
         try (Connection conn = koneksi.koneksiDB();
              PreparedStatement ps = conn.prepareStatement(query)) {
-            ps.setTimestamp(1, Timestamp.valueOf(transaksi.getTglTransaksi()));
+            ps.setString(1, formatDateTime(transaksi.getTglTransaksi()));
             ps.setString(2, transaksi.getIdUser());
             ps.setDouble(3, transaksi.getTotal());
             ps.setString(4, transaksi.getIdTransaksi());
@@ -140,5 +143,31 @@ public class TransaksiDAO {
             e.printStackTrace();
         }
         return false;
+    }
+
+    private static LocalDateTime readDateTime(ResultSet rs, String columnName) throws SQLException {
+        String value = rs.getString(columnName);
+        if (value == null || value.isBlank()) {
+            return null;
+        }
+
+        String normalizedValue = value.replace('T', ' ');
+        if (normalizedValue.length() == 16) {
+            normalizedValue += ":00";
+        }
+
+        try {
+            return LocalDateTime.parse(normalizedValue, SQL_DATE_TIME_FORMATTER);
+        } catch (DateTimeParseException e) {
+            Timestamp timestamp = rs.getTimestamp(columnName);
+            return timestamp != null ? timestamp.toLocalDateTime() : null;
+        }
+    }
+
+    private static String formatDateTime(LocalDateTime value) {
+        if (value == null) {
+            return null;
+        }
+        return value.format(SQL_DATE_TIME_FORMATTER);
     }
 }

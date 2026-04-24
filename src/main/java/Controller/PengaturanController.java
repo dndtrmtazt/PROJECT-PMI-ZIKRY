@@ -4,9 +4,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Alert;
+import model.Toko;
 import model.TokoDAO;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 public class PengaturanController {
 
@@ -21,17 +20,12 @@ public class PengaturanController {
     }
 
     private void muatDataToko() {
-        // Menggunakan try-with-resources pada ResultSet agar memori efisien
-        try (ResultSet rs = TokoDAO.getDataToko()) {
-            if (rs != null && rs.next()) {
-                txtNamaToko.setText(rs.getString("nama_toko"));
-                txtTelp.setText(rs.getString("nomor_telepon"));
-                txtAlamat.setText(rs.getString("alamat"));
-                txtEmail.setText(rs.getString("email"));
-            }
-        } catch (SQLException e) {
-            System.err.println("Gagal memuat data toko: " + e.getMessage());
-            e.printStackTrace();
+        Toko toko = TokoDAO.getDataToko();
+        if (toko != null) {
+            txtNamaToko.setText(toko.getNamaToko());
+            txtTelp.setText(toko.getNomorTelepon());
+            txtAlamat.setText(toko.getAlamat());
+            txtEmail.setText(toko.getEmail());
         }
     }
 

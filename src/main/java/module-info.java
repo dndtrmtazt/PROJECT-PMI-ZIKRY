@@ -3,6 +3,7 @@ module com.example.pmitokozikry {
     requires javafx.fxml;
     requires javafx.graphics;
     requires java.sql;
+    requires org.xerial.sqlitejdbc;
 
     exports app;
     exports model; // Pastikan ini ada agar module lain bisa lihat class Barang

@@ -12,9 +12,9 @@ public class LaporanDao {
         List<Laporan> listLaporan = new ArrayList<>();
         String query = "SELECT " +
                        "    t.tanggal, " +
-                       "    IFNULL(p.total_penjualan, 0) as total_penjualan, " +
-                       "    IFNULL(exp.total_pengeluaran, 0) as total_pengeluaran, " +
-                       "    IFNULL(p.jumlah_transaksi, 0) as jumlah_transaksi " +
+                       "    COALESCE(p.total_penjualan, 0) as total_penjualan, " +
+                       "    COALESCE(exp.total_pengeluaran, 0) as total_pengeluaran, " +
+                       "    COALESCE(p.jumlah_transaksi, 0) as jumlah_transaksi " +
                        "FROM ( " +
                        "    SELECT DATE(tgl_transaksi) as tanggal FROM transaksi " +
                        "    UNION " +
@@ -55,9 +55,9 @@ public class LaporanDao {
         List<Laporan> listLaporan = new ArrayList<>();
         String query = "SELECT " +
                        "    t.tanggal, " +
-                       "    IFNULL(p.total_penjualan, 0) as total_penjualan, " +
-                       "    IFNULL(exp.total_pengeluaran, 0) as total_pengeluaran, " +
-                       "    IFNULL(p.jumlah_transaksi, 0) as jumlah_transaksi " +
+                       "    COALESCE(p.total_penjualan, 0) as total_penjualan, " +
+                       "    COALESCE(exp.total_pengeluaran, 0) as total_pengeluaran, " +
+                       "    COALESCE(p.jumlah_transaksi, 0) as jumlah_transaksi " +
                        "FROM ( " +
                        "    SELECT DATE(tgl_transaksi) as tanggal FROM transaksi " +
                        "    UNION " +
@@ -78,8 +78,8 @@ public class LaporanDao {
 
         try (Connection conn = koneksi.koneksiDB();
              PreparedStatement ps = conn.prepareStatement(query)) {
-            ps.setDate(1, Date.valueOf(startDate));
-            ps.setDate(2, Date.valueOf(endDate));
+            ps.setString(1, startDate.toString());
+            ps.setString(2, endDate.toString());
             
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
