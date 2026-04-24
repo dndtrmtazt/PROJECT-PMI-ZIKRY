@@ -22,8 +22,8 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import dao.UserDAO;
 import model.User;
-import model.UserDAO;
 
 public class UserController {
 
@@ -58,8 +58,14 @@ public class UserController {
         }
         if (hboxTableHead != null) {
             hboxTableHead.setStyle("-fx-background-color: " + (enabled ? "#333333" : "#F8F9FA") + "; -fx-border-color: " + borderColor + "; -fx-border-width: 0 0 1 0;");
+            hboxTableHead.getChildren().forEach(node -> {
+                if (node instanceof Label) {
+                    Label label = (Label) node;
+                    label.setStyle("-fx-font-weight: bold; -fx-text-fill: " + textColor + ";");
+                }
+            });
         }
-        if (lblSubTitle != null) lblSubTitle.setStyle("-fx-text-fill: " + textColor + ";");
+        if (lblSubTitle != null) lblSubTitle.setStyle("-fx-text-fill: " + textColor + "; -fx-font-weight: bold;");
 
         muatDataUser();
     }

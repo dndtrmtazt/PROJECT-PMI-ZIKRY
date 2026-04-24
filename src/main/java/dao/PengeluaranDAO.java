@@ -1,4 +1,4 @@
-package model;
+package dao;
 
 import config.koneksi;
 import java.sql.*;
@@ -6,13 +6,14 @@ import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
+import model.Pengeluaran;
 
 public class PengeluaranDAO {
 
     // 1. Tambahkan 'static' agar bisa dipanggil langsung tanpa 'new'
     public static List<Pengeluaran> getAllPengeluaran() {
         List<Pengeluaran> listPengeluaran = new ArrayList<>();
-        String query = "SELECT * FROM pengeluaran ORDER BY tgl_pengeluaran DESC";
+        String query = "SELECT * FROM pengeluaran ORDER BY tgl_pengeluaran DESC, id_pengeluaran ASC";
 
         try (Connection conn = koneksi.koneksiDB();
              Statement stmt = conn.createStatement();
@@ -83,6 +84,21 @@ public class PengeluaranDAO {
             System.err.println("Gagal Hapus Pengeluaran: " + e.getMessage());
             return false;
         }
+    }
+
+    public static double getTotalPengeluaranByDate(LocalDate tanggal) {
+        String query = "SELECT COALESCE(SUM(nominal), 0) FROM pengeluaran WHERE tgl_pengeluaran = ?";
+        try (Connection conn = koneksi.koneksiDB();
+             PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setString(1, tanggal.toString());
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getDouble(1);
+            }
+        } catch (SQLException e) {
+            System.err.println("Gagal Mengambil Total Pengeluaran Harian: " + e.getMessage());
+        }
+        return 0;
     }
 
     private static LocalDate readLocalDate(ResultSet rs, String columnName) throws SQLException {

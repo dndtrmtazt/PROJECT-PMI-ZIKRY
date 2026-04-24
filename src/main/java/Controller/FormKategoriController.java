@@ -6,12 +6,15 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import dao.KategoriDAO;
 import model.Kategori;
-import model.KategoriDAO;
 
 public class FormKategoriController {
 
+    @FXML private VBox rootPane;
     @FXML private Label lblHeader, lblError;
     @FXML private TextField txtIdKategori, txtNamaKategori;
     @FXML private Button btnSimpan;
@@ -21,6 +24,11 @@ public class FormKategoriController {
 
     // --- PERBAIKAN 1: Tambahkan variabel ini agar baris 59 tidak merah lagi ---
     private String idLama;
+
+    @FXML
+    public void initialize() {
+        setDarkMode(MainController.isDarkMode);
+    }
 
     /**
      * Method ini dipanggil dari KategoriController untuk mengirim data.
@@ -88,5 +96,49 @@ public class FormKategoriController {
     private void closeWindow(ActionEvent event) {
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.close();
+    }
+
+    public void setDarkMode(boolean enabled) {
+        String bgMain = enabled ? "#1E1E1E" : "white";
+        String textColor = enabled ? "white" : "#1F2937";
+        String mutedText = enabled ? "#D1D5DB" : "#444444";
+        String borderColor = enabled ? "#3A3A3A" : "#DCDCDC";
+        String inputBg = enabled ? "#2C2C2C" : "white";
+
+        if (rootPane != null) {
+            rootPane.setStyle("-fx-background-color: " + bgMain + "; -fx-background-radius: 12;");
+            rootPane.getChildren().forEach(node -> {
+                if (node instanceof VBox) {
+                    VBox section = (VBox) node;
+                    section.getChildren().forEach(child -> {
+                        if (child instanceof Label) {
+                            Label label = (Label) child;
+                            if (label != lblHeader && label != lblError) {
+                                label.setStyle("-fx-font-weight: bold; -fx-text-fill: " + mutedText + ";");
+                            }
+                        } else if (child instanceof TextField) {
+                            TextField field = (TextField) child;
+                            field.setStyle("-fx-background-radius: 8; -fx-border-color: " + borderColor + "; -fx-border-radius: 8; -fx-background-color: " + inputBg + "; -fx-text-fill: " + textColor + "; -fx-prompt-text-fill: " + (enabled ? "#9CA3AF" : "#9AA0A6") + ";");
+                        }
+                    });
+                } else if (node instanceof HBox) {
+                    HBox buttonRow = (HBox) node;
+                    buttonRow.getChildren().forEach(child -> {
+                        if (child instanceof Button) {
+                            Button button = (Button) child;
+                            if (button == btnSimpan) {
+                                button.setStyle("-fx-background-color: #4A90E2; -fx-text-fill: white; -fx-background-radius: 8; -fx-font-weight: bold; -fx-cursor: hand;");
+                            } else {
+                                button.setStyle("-fx-background-color: " + (enabled ? "#B8BEC6" : "#F3F4F6") + "; -fx-text-fill: " + (enabled ? "#111111" : "#374151") + "; -fx-background-radius: 8; -fx-cursor: hand;");
+                            }
+                        }
+                    });
+                }
+            });
+        }
+
+        if (lblHeader != null) {
+            lblHeader.setStyle("-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: " + textColor + ";");
+        }
     }
 }

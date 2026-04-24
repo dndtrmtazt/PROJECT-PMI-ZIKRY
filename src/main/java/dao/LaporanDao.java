@@ -1,10 +1,11 @@
-package model;
+package dao;
 
 import config.koneksi;
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import model.Laporan;
 
 public class LaporanDao {
 

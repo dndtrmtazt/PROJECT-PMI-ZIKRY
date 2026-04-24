@@ -20,8 +20,8 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality; // Tambahkan ini
 import javafx.stage.Stage; // Tambahkan ini
+import dao.KategoriDAO;
 import model.Kategori;
-import model.KategoriDAO;
 
 public class KategoriController implements Initializable {
 
@@ -155,7 +155,37 @@ public class KategoriController implements Initializable {
     }
 
     public void setDarkMode(boolean enabled) {
-        // Implementasi gaya visual dark mode kamu...
+        String bgMain = enabled ? "#121212" : "#F4F4F4";
+        String bgCard = enabled ? "#1E1E1E" : "white";
+        String textColor = enabled ? "white" : "#2C3E50";
+        String borderColor = enabled ? "#333333" : "#E0E0E0";
+        String headerBg = enabled ? "#2C2C2C" : "#F8FAFC";
+        String inputBg = enabled ? "#2C2C2C" : "white";
+
+        if (paneRoot != null) paneRoot.setStyle("-fx-background-color: " + bgMain + ";");
+        if (vboxHeader != null) vboxHeader.setStyle("-fx-background-color: #4A76A8;");
+        if (lblTitle != null) lblTitle.setStyle("-fx-text-fill: white; -fx-font-weight: bold;");
+        if (hboxSearch != null) {
+            hboxSearch.setStyle("-fx-background-color: " + bgCard + "; -fx-background-radius: 10; -fx-border-color: " + borderColor + "; -fx-border-radius: 10;");
+        }
+        if (txtSearchKategori != null) {
+            txtSearchKategori.setStyle("-fx-background-radius: 8; -fx-border-radius: 8; -fx-background-color: " + inputBg + "; -fx-border-color: " + borderColor + "; -fx-text-fill: " + textColor + "; -fx-prompt-text-fill: " + (enabled ? "#A1A1AA" : "#9CA3AF") + ";");
+        }
+        if (vboxContent != null) {
+            vboxContent.setStyle("-fx-background-color: " + bgCard + "; -fx-background-radius: 10; -fx-border-color: " + borderColor + "; -fx-border-radius: 10;");
+        }
+        if (lblDaftarKategori != null) {
+            lblDaftarKategori.setStyle("-fx-font-family: 'Inter Medium'; -fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: " + textColor + ";");
+        }
+        if (hboxTableHead != null) {
+            hboxTableHead.setStyle("-fx-background-color: " + headerBg + "; -fx-background-radius: 5; -fx-border-color: " + borderColor + "; -fx-border-width: 0 0 1 0;");
+            hboxTableHead.getChildren().forEach(node -> {
+                if (node instanceof Label) {
+                    Label label = (Label) node;
+                    label.setStyle("-fx-font-weight: bold; -fx-text-fill: " + textColor + ";");
+                }
+            });
+        }
         loadDataKategori();
     }
 }

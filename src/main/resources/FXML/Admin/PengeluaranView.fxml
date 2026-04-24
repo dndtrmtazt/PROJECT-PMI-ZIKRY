@@ -24,11 +24,11 @@
                     <children>
                         <TextField fx:id="txtSearchPengeluaran" prefHeight="35.0" prefWidth="500.0" promptText="Cari data pengeluaran..." style="-fx-background-radius: 8;" HBox.hgrow="ALWAYS" />
                         <DatePicker fx:id="dpFilterTanggal" prefHeight="35.0" prefWidth="200.0" promptText="Filter Tanggal" />
-                        <Button fx:id="btnSearch" prefHeight="35.0" prefWidth="100.0" style="-fx-background-color: #4A76A8; -fx-text-fill: white; -fx-background-radius: 8;" text="Cari" />
+                        <Button fx:id="btnSearch" mnemonicParsing="false" onAction="#handleCariPengeluaran" prefHeight="35.0" prefWidth="100.0" style="-fx-background-color: #4A76A8; -fx-text-fill: white; -fx-background-radius: 8;" text="Cari" />
                     </children>
                 </HBox>
 
-                <VBox spacing="15.0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 10, 0, 0, 5);" VBox.vgrow="ALWAYS">
+                <VBox fx:id="LyrPengeluaran" spacing="15.0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 10, 0, 0, 5);" VBox.vgrow="ALWAYS">
                     <padding><Insets bottom="20.0" left="20.0" right="20.0" top="20.0" /></padding>
                     <children>
                         <HBox alignment="CENTER_LEFT">

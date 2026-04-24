@@ -1,11 +1,14 @@
-package model;
+package dao;
 
 import config.koneksi;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import model.Barang;
 
 public class BarangDAO {
+    private static final int BARANG_ID_NUMBER_WIDTH = 3;
+
 
     public static List<Barang> getAllBarang() {
         List<Barang> listBarang = new ArrayList<>();
@@ -151,18 +154,50 @@ public class BarangDAO {
                 String numericPart = lastId.substring(prefix.length());
                 try {
                     int nextNum = Integer.parseInt(numericPart) + 1;
-                    return prefix + String.format("%03d", nextNum);
+                    return formatBarangId(prefix, nextNum);
                 } catch (NumberFormatException e) {
-                    return prefix + "001";
+                    return formatBarangId(prefix, 1);
                 }
             } else {
-                return prefix + "001";
+                return formatBarangId(prefix, 1);
             }
         } catch (SQLException e) {
             System.err.println("Error getting next barang id: " + e.getMessage());
             e.printStackTrace();
         }
-        return prefix + "001";
+        return formatBarangId(prefix, 1);
+    }
+
+    public static String getPrefixFromKategoriId(String idKategori) {
+        if (idKategori == null) {
+            return "";
+        }
+
+        String trimmedId = idKategori.trim().toUpperCase();
+        if (trimmedId.length() < 3) {
+            return trimmedId;
+        }
+
+        return trimmedId.substring(0, 3);
+    }
+
+    public static boolean isBarangIdMatchKategori(String idBarang, String idKategori) {
+        String prefix = getPrefixFromKategoriId(idKategori);
+        if (prefix.isEmpty() || idBarang == null) {
+            return false;
+        }
+
+        String normalizedIdBarang = idBarang.trim().toUpperCase();
+        if (!normalizedIdBarang.startsWith(prefix)) {
+            return false;
+        }
+
+        String numericPart = normalizedIdBarang.substring(prefix.length());
+        return numericPart.matches("\\d{" + BARANG_ID_NUMBER_WIDTH + ",}");
+    }
+
+    public static String formatBarangId(String prefix, int number) {
+        return prefix + String.format("%0" + BARANG_ID_NUMBER_WIDTH + "d", number);
     }
 
     public static boolean deleteBarang(String idBarang) {
@@ -178,5 +213,33 @@ public class BarangDAO {
             e.printStackTrace();
         }
         return false;
+    }
+
+    public static List<Barang> getBarangStokMenipis(int batasStok, int limit) {
+        List<Barang> listBarang = new ArrayList<>();
+        String query = "SELECT id_barang, nama_barang, id_kategori, stok, satuan, harga_beli, harga_jual " +
+                "FROM barang WHERE stok <= ? ORDER BY stok ASC, nama_barang ASC LIMIT ?";
+        try (Connection conn = koneksi.koneksiDB();
+             PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setInt(1, batasStok);
+            ps.setInt(2, limit);
+
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Barang barang = new Barang();
+                barang.setIdBarang(rs.getString("id_barang"));
+                barang.setNamaBarang(rs.getString("nama_barang"));
+                barang.setIdKategori(rs.getString("id_kategori"));
+                barang.setStok(rs.getInt("stok"));
+                barang.setSatuan(rs.getString("satuan"));
+                barang.setHargaBeli(rs.getDouble("harga_beli"));
+                barang.setHargaJual(rs.getDouble("harga_jual"));
+                listBarang.add(barang);
+            }
+        } catch (SQLException e) {
+            System.err.println("Error getting barang stok menipis: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return listBarang;
     }
 }

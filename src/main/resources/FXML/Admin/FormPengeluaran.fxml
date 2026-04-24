@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefWidth="400.0" spacing="20.0" style="-fx-background-color: white; -fx-background-radius: 10;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.FormPengeluaranController">
+<VBox fx:id="rootPane" prefWidth="400.0" spacing="20.0" style="-fx-background-color: white; -fx-background-radius: 10;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.FormPengeluaranController">
     <children>
         <HBox alignment="CENTER" prefHeight="50.0" style="-fx-background-color: #4A76A8; -fx-background-radius: 10 10 0 0;">
             <children>

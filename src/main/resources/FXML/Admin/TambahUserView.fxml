@@ -4,9 +4,9 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox spacing="15.0" style="-fx-background-color: white; -fx-background-radius: 10;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.TambahUserController">
+<VBox fx:id="rootPane" spacing="15.0" style="-fx-background-color: white; -fx-background-radius: 10;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.TambahUserController">
     <children>
-        <Label style="-fx-font-weight: bold; -fx-font-size: 18;" text="Tambah User" />
+        <Label fx:id="lblFormTitle" style="-fx-font-weight: bold; -fx-font-size: 18;" text="Tambah User" />
         <GridPane hgap="10.0" vgap="10.0">
             <columnConstraints>
                 <ColumnConstraints minWidth="100.0" />
@@ -32,7 +32,7 @@
         <HBox alignment="CENTER_RIGHT" spacing="10.0">
             <children>
                 <Button fx:id="btnBatal" onAction="#handleBatal" style="-fx-background-color: #E0E0E0;" text="Batal" />
-                <Button fx:id="btnSimoan" onAction="#handleSimpan" style="-fx-background-color: #4A90E2; -fx-text-fill: white;" text="Simpan" />
+                <Button fx:id="btnSimpan" onAction="#handleSimpan" style="-fx-background-color: #4A90E2; -fx-text-fill: white;" text="Simpan" />
             </children>
         </HBox>
     </children>

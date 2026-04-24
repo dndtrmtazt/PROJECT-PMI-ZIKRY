@@ -8,8 +8,8 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import dao.LaporanDao;
 import model.Laporan;
-import model.LaporanDao;
 
 import java.net.URL;
 import java.text.NumberFormat;

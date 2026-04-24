@@ -9,13 +9,16 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import dao.PengeluaranDAO;
 import model.Pengeluaran;
-import model.PengeluaranDAO;
 import java.time.LocalDate;
 
 public class FormPengeluaranController implements Initializable {
 
+    @FXML private VBox rootPane;
     @FXML private Label lblHeader;
     @FXML private TextField txtId, txtNominal, txtJenis;
     @FXML private DatePicker dpTanggal;
@@ -30,6 +33,7 @@ public class FormPengeluaranController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         dpTanggal.setValue(LocalDate.now());
+        setDarkMode(MainController.isDarkMode);
 
         // Membuat Tooltip peringatan visual
         Tooltip tipNominal = new Tooltip("Hanya angka yang diperbolehkan!");
@@ -140,6 +144,78 @@ public class FormPengeluaranController implements Initializable {
         alert.setHeaderText(null);
         alert.setContentText(pesan);
         alert.showAndWait();
+    }
+
+    public void setDarkMode(boolean enabled) {
+        String bgMain = enabled ? "#1E1E1E" : "white";
+        String textColor = enabled ? "white" : "#1F2937";
+        String mutedText = enabled ? "#D1D5DB" : "#374151";
+        String borderColor = enabled ? "#3A3A3A" : "#DCDCDC";
+        String inputBg = enabled ? "#2C2C2C" : "white";
+        String promptColor = enabled ? "#9CA3AF" : "#9AA0A6";
+        String datePickerStyle = "-fx-background-color: " + inputBg + "; "
+                + "-fx-control-inner-background: " + inputBg + "; "
+                + "-fx-border-color: " + borderColor + "; "
+                + "-fx-border-radius: 5; "
+                + "-fx-background-radius: 5;";
+        String dateEditorStyle = "-fx-background-color: " + inputBg + "; "
+                + "-fx-control-inner-background: " + inputBg + "; "
+                + "-fx-border-color: transparent; "
+                + "-fx-background-insets: 0; "
+                + "-fx-text-fill: " + textColor + "; "
+                + "-fx-prompt-text-fill: " + promptColor + ";";
+
+        if (rootPane != null) {
+            rootPane.setStyle("-fx-background-color: " + bgMain + "; -fx-background-radius: 10;");
+            rootPane.getChildren().forEach(node -> {
+                if (node instanceof VBox) {
+                    VBox contentBox = (VBox) node;
+                    contentBox.getChildren().forEach(child -> {
+                        if (child instanceof VBox) {
+                            VBox fieldBox = (VBox) child;
+                            fieldBox.getChildren().forEach(grandChild -> {
+                                if (grandChild instanceof Label) {
+                                    Label label = (Label) grandChild;
+                                    label.setStyle("-fx-text-fill: " + mutedText + ";");
+                                } else if (grandChild instanceof TextField) {
+                                    TextField field = (TextField) grandChild;
+                                    field.setStyle("-fx-background-color: " + inputBg + "; -fx-border-color: " + borderColor + "; -fx-border-radius: 5; -fx-background-radius: 5; -fx-text-fill: " + textColor + "; -fx-prompt-text-fill: " + (enabled ? "#9CA3AF" : "#9AA0A6") + ";");
+                                } else if (grandChild instanceof DatePicker) {
+                                    DatePicker picker = (DatePicker) grandChild;
+                                    picker.setStyle(datePickerStyle);
+                                    if (picker.getEditor() != null) {
+                                        picker.getEditor().setStyle(dateEditorStyle);
+                                    }
+                                }
+                            });
+                        } else if (child instanceof HBox) {
+                            HBox buttonRow = (HBox) child;
+                            buttonRow.getChildren().forEach(buttonNode -> {
+                                if (buttonNode instanceof Button) {
+                                    Button button = (Button) buttonNode;
+                                    if (button == btnSimpan) {
+                                        button.setStyle("-fx-background-color: #2ECC71; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand; -fx-background-radius: 6;");
+                                    } else {
+                                        button.setStyle("-fx-background-color: " + (enabled ? "#B8BEC6" : "#BDC3C7") + "; -fx-text-fill: white; -fx-cursor: hand; -fx-background-radius: 6;");
+                                    }
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+        }
+
+        if (lblHeader != null) {
+            lblHeader.setStyle("-fx-text-fill: white; -fx-font-size: 18px; -fx-font-weight: bold;");
+        }
+
+        if (dpTanggal != null) {
+            dpTanggal.setStyle(datePickerStyle);
+            if (dpTanggal.getEditor() != null) {
+                dpTanggal.getEditor().setStyle(dateEditorStyle);
+            }
+        }
     }
 
 }

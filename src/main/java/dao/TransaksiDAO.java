@@ -1,12 +1,14 @@
-package model;
+package dao;
 
 import config.koneksi;
 import java.sql.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
+import model.Transaksi;
 
 public class TransaksiDAO {
     private static final DateTimeFormatter SQL_DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -143,6 +145,38 @@ public class TransaksiDAO {
             e.printStackTrace();
         }
         return false;
+    }
+
+    public static double getTotalPenjualanByDate(LocalDate tanggal) {
+        String query = "SELECT COALESCE(SUM(total), 0) FROM transaksi WHERE DATE(tgl_transaksi) = ?";
+        try (Connection conn = koneksi.koneksiDB();
+             PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setString(1, tanggal.toString());
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getDouble(1);
+            }
+        } catch (SQLException e) {
+            System.err.println("Error getting total penjualan by date: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public static int getJumlahTransaksiByDate(LocalDate tanggal) {
+        String query = "SELECT COUNT(*) FROM transaksi WHERE DATE(tgl_transaksi) = ?";
+        try (Connection conn = koneksi.koneksiDB();
+             PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setString(1, tanggal.toString());
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            System.err.println("Error getting jumlah transaksi by date: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return 0;
     }
 
     private static LocalDateTime readDateTime(ResultSet rs, String columnName) throws SQLException {

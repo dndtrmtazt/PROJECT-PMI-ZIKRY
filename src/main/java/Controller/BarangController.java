@@ -5,6 +5,7 @@ import model.Barang;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -44,6 +45,9 @@ public class BarangController {
         colStok.setCellValueFactory(new PropertyValueFactory<>("stok"));
 
         tableBarang.getColumns().forEach(column -> column.setStyle("-fx-alignment: CENTER-LEFT;"));
+        colId.setSortable(true);
+        colNama.setSortable(true);
+        colStok.setSortable(true);
         tableBarang.setItems(listBarang);
 
         // 2. FITUR DOUBLE CLICK PADA BARIS TABEL
@@ -137,7 +141,10 @@ public class BarangController {
                         barang.getIdBarang().toLowerCase().contains(lowerCaseFilter);
             });
         });
-        tableBarang.setItems(filteredData);
+
+        SortedList<Barang> sortedData = new SortedList<>(filteredData);
+        sortedData.comparatorProperty().bind(tableBarang.comparatorProperty());
+        tableBarang.setItems(sortedData);
     }
 
     private void setupFormatRupiah(TableColumn<Barang, Double> col, String property) {

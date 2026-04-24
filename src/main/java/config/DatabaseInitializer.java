@@ -53,10 +53,6 @@ public final class DatabaseInitializer {
                 statement.execute(sql);
             }
 
-            for (String sql : getSeedStatements()) {
-                statement.execute(sql);
-            }
-
             statement.executeUpdate(
                     "INSERT OR IGNORE INTO pengaturan_toko (id, nama_toko, nomor_telepon, alamat, email) " +
                             "VALUES (1, 'Toko Zikry', '-', '-', '-')"

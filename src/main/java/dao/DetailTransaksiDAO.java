@@ -1,9 +1,10 @@
-package model;
+package dao;
 
 import config.koneksi;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import model.Detail_Transaksi;
 
 public class DetailTransaksiDAO {
 

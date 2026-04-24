@@ -34,6 +34,10 @@ public class MainController {
     @FXML private HBox hboxThemeToggle;
 
     private Object currentController;
+    private HBox activeWrapper;
+    private Region activeIndicator;
+    private ImageView activeIconView;
+    private String activeIconName;
 
     // --- BUTTONS ---
     @FXML private Button btnDashboard, btnTransaksi, btnDataBarang, btnLaporan,
@@ -80,28 +84,24 @@ public class MainController {
         Object source = event.getSource();
 
         if (source == btnDashboard) {
-            setActiveState(wrapperDashboard, indDashboard, imgDashboard, "icon39.png");
-            panggilHalaman("DashboardAdminView");
+            bukaDashboard();
         }
         else if (source == btnTransaksi) {
             setActiveState(wrapperTransaksi, indTransaksi, imgTransaksi, "ICON5.png");
             panggilHalaman("TransaksiView");
         }
         else if (source == btnDataBarang) {
-            setActiveState(wrapperDataBarang, indDataBarang, imgDataBarang, "icon40.png");
-            panggilHalaman("BarangView");
+            bukaDataBarang();
         }
         else if (source == btnLaporan) {
-            setActiveState(wrapperLaporan, indLaporan, imgLaporan, "icon42.png");
-            panggilHalaman("LaporanView");
+            bukaLaporan();
         }
         else if (source == btnDataKategori) {
             setActiveState(wrapperKategori, indKategori, imgKategori, "icon43.png");
             panggilHalaman("KategoriView");
         }
         else if (source == btnKelolaPengeluaran) {
-            setActiveState(wrapperPengeluaran, indPengeluaran, imgPengeluaran, "icon41.png");
-            panggilHalaman("PengeluaranView");
+            bukaPengeluaran();
         }
         else if (source == btnUser) {
             setActiveState(wrapperUser, indUser, imgUser, "icon 37.png");
@@ -176,14 +176,42 @@ public class MainController {
     private void setActiveState(HBox wrapper, Region indicator, ImageView iconView, String iconName) {
         if (wrapper == null || indicator == null || iconView == null) return;
         resetAllMenus();
-        
+
+        activeWrapper = wrapper;
+        activeIndicator = indicator;
+        activeIconView = iconView;
+        activeIconName = iconName;
+        applyActiveMenuStyle(wrapper, indicator, iconView, iconName);
+    }
+
+    public void bukaDashboard() {
+        setActiveState(wrapperDashboard, indDashboard, imgDashboard, "icon39.png");
+        panggilHalaman("DashboardAdminView");
+    }
+
+    public void bukaLaporan() {
+        setActiveState(wrapperLaporan, indLaporan, imgLaporan, "icon42.png");
+        panggilHalaman("LaporanView");
+    }
+
+    public void bukaPengeluaran() {
+        setActiveState(wrapperPengeluaran, indPengeluaran, imgPengeluaran, "icon41.png");
+        panggilHalaman("PengeluaranView");
+    }
+
+    public void bukaDataBarang() {
+        setActiveState(wrapperDataBarang, indDataBarang, imgDataBarang, "icon40.png");
+        panggilHalaman("BarangView");
+    }
+
+    private void applyActiveMenuStyle(HBox wrapper, Region indicator, ImageView iconView, String iconName) {
         wrapper.setMaxWidth(200);
         wrapper.setPrefHeight(42);
         wrapper.setStyle("-fx-background-color: " + (isDarkMode ? "#2c3e50" : "#E3F2FD") + "; -fx-background-radius: 0 12 12 0;");
-        
+
         indicator.setPrefWidth(4); indicator.setPrefHeight(24);
         indicator.setStyle("-fx-background-color: #4072A5; -fx-background-radius: 5;");
-        
+
         if (wrapper.getChildren().size() >= 2 && wrapper.getChildren().get(1) instanceof Button) {
             Button btn = (Button) wrapper.getChildren().get(1);
             btn.setStyle("-fx-background-color: transparent; -fx-text-fill: #4072A5; -fx-font-weight: bold; -fx-font-size: 13px; -fx-padding: 0 0 0 10;");
@@ -193,6 +221,14 @@ public class MainController {
             iconView.setFitWidth(18); iconView.setFitHeight(18);
             iconView.setImage(new Image(getClass().getResourceAsStream("/Images/" + iconName)));
         } catch (Exception e) {}
+    }
+
+    private void restoreActiveMenu() {
+        if (activeWrapper == null || activeIndicator == null || activeIconView == null || activeIconName == null) {
+            return;
+        }
+
+        applyActiveMenuStyle(activeWrapper, activeIndicator, activeIconView, activeIconName);
     }
 
     private void resetAllMenus() {
@@ -262,6 +298,7 @@ public class MainController {
         if (btnLogout != null) btnLogout.setStyle("-fx-background-color: transparent; -fx-text-fill: white; -fx-cursor: hand;");
         
         resetAllMenus();
+        restoreActiveMenu();
         notifyControllerTheme();
     }
 
@@ -285,6 +322,7 @@ public class MainController {
         if (btnLogout != null) btnLogout.setStyle("-fx-background-color: transparent; -fx-text-fill: black; -fx-cursor: hand;");
         
         resetAllMenus();
+        restoreActiveMenu();
         notifyControllerTheme();
     }
 

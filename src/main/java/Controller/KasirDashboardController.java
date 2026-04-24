@@ -4,6 +4,7 @@ import javafx.animation.FadeTransition;
 import java.text.NumberFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
@@ -36,16 +37,22 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
+import dao.BarangDAO;
+import dao.DetailTransaksiDAO;
+import dao.TransaksiDAO;
 import model.Barang;
-import model.BarangDAO;
 import model.Detail_Transaksi;
-import model.DetailTransaksiDAO;
 import model.Transaksi;
-import model.TransaksiDAO;
 import config.UserSession;
 import java.io.IOException;
 
 public class KasirDashboardController {
+    private enum SortField {
+        NONE,
+        NAMA,
+        STOK,
+        HARGA
+    }
 
     // --- KOMPONEN UI (Sesuai ID di FXML) ---
     @FXML private AnchorPane paneRoot;
@@ -65,6 +72,8 @@ public class KasirDashboardController {
     private double totalBelanja = 0;
     private KasirDashboardController currentContentController;
     private boolean isThemeTransitionRunning = false;
+    private SortField activeSortField = SortField.NONE;
+    private boolean sortAscending = true;
 
     private final NumberFormat nfIndo = NumberFormat.getInstance(new Locale("id", "ID"));
 
@@ -81,6 +90,7 @@ public class KasirDashboardController {
             loadPage("/FXML/Kasir/TransaksiView.fxml");
         } else {
             // Jika kita berada di dalam view konten (seperti TransaksiView)
+            setupSortHeaders();
             loadProducts(isDarkMode);
             setupSearch(isDarkMode);
             setupPayment();
@@ -176,9 +186,9 @@ public class KasirDashboardController {
 
         if (vboxProductCard != null)   vboxProductCard.setStyle("-fx-background-color: " + bgCard + "; -fx-background-radius: 10; -fx-border-color: " + borderColor + "; -fx-border-radius: 10;");
         if (hboxProductHeader != null) hboxProductHeader.setStyle("-fx-background-color: " + bgHeader + ";");
-        if (lblHeaderNama != null)     lblHeaderNama.setStyle("-fx-font-weight: bold; " + textColor);
-        if (lblHeaderStok != null)     lblHeaderStok.setStyle("-fx-font-weight: bold; " + textColor);
-        if (lblHeaderHarga != null)    lblHeaderHarga.setStyle("-fx-font-weight: bold; " + textColor);
+        if (lblHeaderNama != null)     lblHeaderNama.setStyle("-fx-font-weight: bold; -fx-cursor: hand; " + textColor);
+        if (lblHeaderStok != null)     lblHeaderStok.setStyle("-fx-font-weight: bold; -fx-cursor: hand; " + textColor);
+        if (lblHeaderHarga != null)    lblHeaderHarga.setStyle("-fx-font-weight: bold; -fx-cursor: hand; " + textColor);
 
         if (scrollProduct != null)  scrollProduct.setStyle("-fx-background: " + bgCard + "; -fx-background-color: transparent;");
         if (vboxProdukList != null) vboxProdukList.setStyle("-fx-background-color: " + bgCard + ";");
@@ -306,7 +316,7 @@ public class KasirDashboardController {
         if (txtSearch != null && !txtSearch.getText().isEmpty()) {
             filterProducts(txtSearch.getText(), isDarkMode);
         } else {
-            displayProducts(allBarang, isDarkMode);
+            displayProducts(getSortedProducts(allBarang), isDarkMode);
         }
     }
 
@@ -316,7 +326,109 @@ public class KasirDashboardController {
                 .filter(b -> b.getNamaBarang().toLowerCase().contains(query.toLowerCase())
                         || b.getIdBarang().toLowerCase().contains(query.toLowerCase()))
                 .collect(Collectors.toList());
-        displayProducts(filtered, isDarkMode);
+        displayProducts(getSortedProducts(filtered), isDarkMode);
+    }
+
+    private void setupSortHeaders() {
+        if (lblHeaderNama != null) {
+            lblHeaderNama.setOnMouseClicked(event -> toggleSort(SortField.NAMA));
+        }
+        if (lblHeaderStok != null) {
+            lblHeaderStok.setOnMouseClicked(event -> toggleSort(SortField.STOK));
+        }
+        if (lblHeaderHarga != null) {
+            lblHeaderHarga.setOnMouseClicked(event -> toggleSort(SortField.HARGA));
+        }
+        updateSortHeaderText();
+    }
+
+    private void toggleSort(SortField sortField) {
+        if (activeSortField == sortField) {
+            sortAscending = !sortAscending;
+        } else {
+            activeSortField = sortField;
+            sortAscending = true;
+        }
+
+        updateSortHeaderText();
+        if (txtSearch != null && !txtSearch.getText().isBlank()) {
+            filterProducts(txtSearch.getText(), MainController.isDarkMode);
+        } else {
+            displayProducts(getSortedProducts(allBarang), MainController.isDarkMode);
+        }
+    }
+
+    private List<Barang> getSortedProducts(List<Barang> products) {
+        if (products == null) {
+            return List.of();
+        }
+
+        Comparator<Barang> comparator;
+        switch (activeSortField) {
+            case NONE:
+                return products;
+            case STOK:
+                comparator = Comparator.comparingInt(this::getDisplayStock)
+                        .thenComparing(barang -> barang.getNamaBarang().toLowerCase());
+                break;
+            case HARGA:
+                comparator = Comparator.comparingDouble(Barang::getHargaJual)
+                        .thenComparing(barang -> barang.getNamaBarang().toLowerCase());
+                break;
+            case NAMA:
+            default:
+                comparator = Comparator.comparing(barang -> barang.getNamaBarang().toLowerCase());
+                break;
+        }
+
+        if (!sortAscending) {
+            comparator = comparator.reversed();
+        }
+
+        return products.stream()
+                .sorted(comparator)
+                .collect(Collectors.toList());
+    }
+
+    private int getDisplayStock(Barang barang) {
+        if (barang == null) {
+            return 0;
+        }
+
+        String barangId = barang.getIdBarang() == null ? "" : barang.getIdBarang().trim();
+        int qtyInCart = 0;
+        for (Detail_Transaksi item : cartItems) {
+            String itemBarangId = item.getIdBarang() == null ? "" : item.getIdBarang().trim();
+            if (itemBarangId.equalsIgnoreCase(barangId)) {
+                qtyInCart += item.getJumlah();
+            }
+        }
+
+        return barang.getStok() - qtyInCart;
+    }
+
+    private void updateSortHeaderText() {
+        if (lblHeaderNama != null) {
+            lblHeaderNama.setText(buildHeaderText("Nama Produk", SortField.NAMA));
+        }
+        if (lblHeaderStok != null) {
+            lblHeaderStok.setText(buildHeaderText("Stok", SortField.STOK));
+        }
+        if (lblHeaderHarga != null) {
+            lblHeaderHarga.setText(buildHeaderText("Harga", SortField.HARGA));
+        }
+    }
+
+    private String buildHeaderText(String title, SortField field) {
+        if (activeSortField == SortField.NONE) {
+            return title;
+        }
+
+        if (activeSortField != field) {
+            return title + " ↕";
+        }
+
+        return title + (sortAscending ? " ↑" : " ↓");
     }
 
     // --- TAMPILKAN LIST PRODUK ---
@@ -328,19 +440,7 @@ public class KasirDashboardController {
 
         if (products == null) return;
         for (Barang barang : products) {
-            String bId = (barang.getIdBarang() != null) ? barang.getIdBarang().trim() : "";
-            
-            // Hitung qty barang yang sudah ada di keranjang (Gunakan loop manual agar pasti sinkron)
-            int qtyInCart = 0;
-            for (Detail_Transaksi item : cartItems) {
-                String itemBarangId = (item.getIdBarang() != null) ? item.getIdBarang().trim() : "";
-                if (itemBarangId.equalsIgnoreCase(bId)) {
-                    qtyInCart += item.getJumlah();
-                }
-            }
-
-            // Stok tampilan = stok asli DB dikurangi qty keranjang
-            int displayStok = barang.getStok() - qtyInCart;
+            int displayStok = getDisplayStock(barang);
 
             vboxProdukList.getChildren().add(createProductRow(barang, displayStok, textColor));
 

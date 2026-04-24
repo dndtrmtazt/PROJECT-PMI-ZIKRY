@@ -1,16 +1,24 @@
 package Controller;
 
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.event.ActionEvent;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import dao.UserDAO;
 import model.User;
-import model.UserDAO;
 
 public class TambahUserController {
 
+    @FXML private VBox rootPane;
+    @FXML private Label lblFormTitle;
     @FXML private TextField txtNama, txtID, txtPass;
     @FXML private ComboBox<String> cbRole;
     @FXML private Button btnSimpan, btnBatal;
@@ -22,11 +30,16 @@ public class TambahUserController {
     @FXML
     public void initialize() {
         cbRole.getItems().addAll("PEMILIK", "KASIR");
+        setDarkMode(MainController.isDarkMode);
     }
 
     public void setEditMode(User user) {
         this.isEdit = true;
         this.idLama = user.getIdUser(); // Simpan ID asli di sini
+
+        if (lblFormTitle != null) {
+            lblFormTitle.setText("Edit User");
+        }
 
         txtID.setText(user.getIdUser());
         txtID.setEditable(true); // Sekarang bisa diedit sesukamu
@@ -35,12 +48,11 @@ public class TambahUserController {
         if (user.getRole() != null) {
             cbRole.setValue(user.getRole().toUpperCase());
         }
-
-        txtID.setStyle("-fx-background-color: white; -fx-border-color: #BABABA; -fx-border-radius: 5;");
+        setDarkMode(MainController.isDarkMode);
     }
 
     @FXML
-    private void handleSimpan() {
+    private void handleSimpan(ActionEvent event) {
         String idBaru = txtID.getText();
         String nama = txtNama.getText();
         String role = (cbRole.getValue() != null) ? cbRole.getValue().toLowerCase() : "";
@@ -61,19 +73,19 @@ public class TambahUserController {
 
         if (sukses) {
             this.saved = true;
-            closeWindow();
+            closeWindow(event);
         } else {
             alertError("Gagal menyimpan! Pastikan ID baru belum digunakan.");
         }
     }
 
     @FXML
-    private void handleBatal() {
-        closeWindow();
+    private void handleBatal(ActionEvent event) {
+        closeWindow(event);
     }
 
-    private void closeWindow() {
-        Stage stage = (Stage) btnSimpan.getScene().getWindow();
+    private void closeWindow(ActionEvent event) {
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         if (stage != null) stage.close();
     }
 
@@ -85,5 +97,54 @@ public class TambahUserController {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setContentText(msg);
         alert.showAndWait();
+    }
+
+    public void setDarkMode(boolean enabled) {
+        String bgMain = enabled ? "#1E1E1E" : "white";
+        String textColor = enabled ? "white" : "#1F2937";
+        String mutedText = enabled ? "#D1D5DB" : "#374151";
+        String borderColor = enabled ? "#3A3A3A" : "#DCDCDC";
+        String inputBg = enabled ? "#2C2C2C" : "white";
+
+        if (rootPane != null) {
+            rootPane.setStyle("-fx-background-color: " + bgMain + "; -fx-background-radius: 10;");
+            rootPane.getChildren().forEach(node -> {
+                if (node instanceof GridPane) {
+                    GridPane grid = (GridPane) node;
+                    grid.getChildren().forEach(child -> {
+                        if (child instanceof Label) {
+                            Label label = (Label) child;
+                            label.setStyle("-fx-text-fill: " + mutedText + ";");
+                        } else if (child instanceof TextField) {
+                            TextField field = (TextField) child;
+                            field.setStyle("-fx-background-color: " + inputBg + "; -fx-border-color: " + borderColor + "; -fx-border-radius: 5; -fx-background-radius: 5; -fx-text-fill: " + textColor + "; -fx-prompt-text-fill: " + (enabled ? "#9CA3AF" : "#9AA0A6") + ";");
+                        } else if (child instanceof ComboBox) {
+                            ComboBox<?> comboBox = (ComboBox<?>) child;
+                            comboBox.setStyle("-fx-background-color: " + inputBg + "; -fx-border-color: " + borderColor + "; -fx-border-radius: 5; -fx-background-radius: 5; -fx-text-fill: " + textColor + ";");
+                        }
+                    });
+                } else if (node instanceof HBox) {
+                    HBox buttonRow = (HBox) node;
+                    buttonRow.getChildren().forEach(child -> {
+                        if (child instanceof Button) {
+                            Button button = (Button) child;
+                            if (button == btnSimpan) {
+                                button.setStyle("-fx-background-color: #4A90E2; -fx-text-fill: white; -fx-background-radius: 6;");
+                            } else {
+                                button.setStyle("-fx-background-color: " + (enabled ? "#B8BEC6" : "#E0E0E0") + "; -fx-text-fill: " + (enabled ? "#111111" : "#374151") + "; -fx-background-radius: 6;");
+                            }
+                        }
+                    });
+                }
+            });
+        }
+
+        if (lblFormTitle != null) {
+            lblFormTitle.setStyle("-fx-font-weight: bold; -fx-font-size: 18; -fx-text-fill: " + textColor + ";");
+        }
+
+        if (isEdit && txtID != null) {
+            txtID.setStyle("-fx-background-color: " + inputBg + "; -fx-border-color: " + borderColor + "; -fx-border-radius: 5; -fx-background-radius: 5; -fx-text-fill: " + textColor + "; -fx-prompt-text-fill: " + (enabled ? "#9CA3AF" : "#9AA0A6") + ";");
+        }
     }
 }

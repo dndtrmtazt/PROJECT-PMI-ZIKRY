@@ -19,9 +19,13 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import dao.PengeluaranDAO;
 import model.Pengeluaran;
-import model.PengeluaranDAO;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
+import java.util.Locale;
+import java.util.stream.Collectors;
 
 public class PengeluaranController implements Initializable {
 
@@ -32,12 +36,19 @@ public class PengeluaranController implements Initializable {
     @FXML private DatePicker dpFilterTanggal;
     @FXML private Button btnSearch, btnTambahPengeluaran;
     @FXML private ScrollPane scrollPengeluaran;
+    @FXML private VBox LyrPengeluaran;
 
     private PengeluaranDAO pengeluaranDAO = new PengeluaranDAO();
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         muatDataPengeluaran();
+        if (txtSearchPengeluaran != null) {
+            txtSearchPengeluaran.setOnAction(event -> muatDataPengeluaran());
+        }
+        if (dpFilterTanggal != null) {
+            dpFilterTanggal.setOnAction(event -> muatDataPengeluaran());
+        }
         // Pastikan MainController.isDarkMode dapat diakses
         setDarkMode(MainController.isDarkMode);
     }
@@ -88,7 +99,10 @@ public class PengeluaranController implements Initializable {
         if (vboxPengeluaranList == null) return;
         vboxPengeluaranList.getChildren().clear();
 
-        List<Pengeluaran> list = pengeluaranDAO.getAllPengeluaran();
+        List<Pengeluaran> list = getFilteredPengeluaran();
+        list.sort(Comparator
+                .comparing(Pengeluaran::getTglPengeluaran, Comparator.nullsLast(Comparator.reverseOrder()))
+                .thenComparing(Pengeluaran::getIdPengeluaran, Comparator.nullsLast(String::compareToIgnoreCase)));
         boolean isDark = MainController.isDarkMode;
         String textColor = isDark ? "white" : "#2C3E50";
         String rowBg = isDark ? "#1e1e1e" : "#FFFFFF";
@@ -142,6 +156,47 @@ public class PengeluaranController implements Initializable {
         }
     }
 
+    private List<Pengeluaran> getFilteredPengeluaran() {
+        List<Pengeluaran> allPengeluaran = pengeluaranDAO.getAllPengeluaran();
+        String keyword = txtSearchPengeluaran != null && txtSearchPengeluaran.getText() != null
+                ? txtSearchPengeluaran.getText().trim().toLowerCase(Locale.ROOT)
+                : "";
+        LocalDate selectedDate = dpFilterTanggal != null ? dpFilterTanggal.getValue() : null;
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+        return allPengeluaran.stream()
+                .filter(p -> {
+                    if (selectedDate == null) {
+                        return true;
+                    }
+                    return selectedDate.equals(p.getTglPengeluaran());
+                })
+                .filter(p -> {
+                    if (keyword.isEmpty()) {
+                        return true;
+                    }
+
+                    String tanggalText = p.getTglPengeluaran() != null ? p.getTglPengeluaran().format(formatter) : "";
+                    String nominalText = String.format(Locale.US, "%.0f", p.getNominal());
+
+                    return containsIgnoreCase(p.getIdPengeluaran(), keyword)
+                            || containsIgnoreCase(p.getJenis(), keyword)
+                            || containsIgnoreCase(p.getIdUser(), keyword)
+                            || containsIgnoreCase(tanggalText, keyword)
+                            || nominalText.contains(keyword);
+                })
+                .collect(Collectors.toList());
+    }
+
+    private boolean containsIgnoreCase(String value, String keyword) {
+        return value != null && value.toLowerCase(Locale.ROOT).contains(keyword);
+    }
+
+    @FXML
+    private void handleCariPengeluaran() {
+        muatDataPengeluaran();
+    }
+
     private void handleHapus(Pengeluaran p) {
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
         confirm.setTitle("Konfirmasi Hapus");
@@ -173,10 +228,42 @@ public class PengeluaranController implements Initializable {
         String bgCard = enabled ? "#1e1e1e" : "white";
         String textColor = enabled ? "white" : "#2C3E50";
         String borderColor = enabled ? "#333333" : "#E0E0E0";
+        String headerBg = enabled ? "#2C2C2C" : "#F8F9FA";
+        String inputBg = enabled ? "#2C2C2C" : "white";
+        String promptColor = enabled ? "#A1A1AA" : "#9CA3AF";
+        String datePickerStyle = "-fx-background-radius: 8; -fx-border-radius: 8; "
+                + "-fx-background-color: " + inputBg + "; "
+                + "-fx-control-inner-background: " + inputBg + "; "
+                + "-fx-border-color: " + borderColor + ";";
+        String dateEditorStyle = "-fx-background-color: " + inputBg + "; "
+                + "-fx-control-inner-background: " + inputBg + "; "
+                + "-fx-border-color: transparent; "
+                + "-fx-background-insets: 0; "
+                + "-fx-text-fill: " + textColor + "; "
+                + "-fx-prompt-text-fill: " + promptColor + ";";
 
         if (vboxMainContent != null) vboxMainContent.setStyle("-fx-background-color: " + bgMain + ";");
-        if (hboxSearch != null) hboxSearch.setStyle("-fx-background-color: " + bgCard + "; -fx-background-radius: 10;");
+        if (hboxSearch != null) hboxSearch.setStyle("-fx-background-color: " + bgCard + "; -fx-background-radius: 10; -fx-border-color: " + borderColor + "; -fx-border-radius: 10;");
+        if (txtSearchPengeluaran != null) txtSearchPengeluaran.setStyle("-fx-background-radius: 8; -fx-border-radius: 8; -fx-background-color: " + inputBg + "; -fx-border-color: " + borderColor + "; -fx-text-fill: " + textColor + "; -fx-prompt-text-fill: " + promptColor + ";");
+        if (dpFilterTanggal != null) {
+            dpFilterTanggal.setStyle(datePickerStyle);
+            if (dpFilterTanggal.getEditor() != null) {
+                dpFilterTanggal.getEditor().setStyle(dateEditorStyle);
+            }
+        }
+        if (btnSearch != null) btnSearch.setStyle("-fx-background-color: #4A76A8; -fx-text-fill: white; -fx-background-radius: 8; -fx-cursor: hand;");
+        if (LyrPengeluaran != null) LyrPengeluaran.setStyle("-fx-background-color: " + bgCard + "; -fx-background-radius: 10; -fx-border-color: " + borderColor + "; -fx-border-radius: 10;");
         if (lblSubTitle != null) lblSubTitle.setStyle("-fx-text-fill: " + textColor + "; -fx-font-weight: bold;");
+        if (hboxTableHead != null) {
+            hboxTableHead.setStyle("-fx-background-color: " + headerBg + "; -fx-background-radius: 5; -fx-border-color: " + borderColor + "; -fx-border-width: 0 0 1 0;");
+            hboxTableHead.getChildren().forEach(node -> {
+                if (node instanceof Label) {
+                    Label label = (Label) node;
+                    label.setStyle("-fx-font-weight: bold; -fx-text-fill: " + textColor + ";");
+                }
+            });
+        }
+        if (scrollPengeluaran != null) scrollPengeluaran.setStyle("-fx-background: transparent; -fx-background-color: transparent;");
 
         // Refresh konten agar warna baris berubah
         muatDataPengeluaran();

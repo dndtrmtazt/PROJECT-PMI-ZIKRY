@@ -2,17 +2,28 @@ package Controller;
 
 import config.koneksi;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
+import dao.BarangDAO;
+import dao.KategoriDAO;
 import model.Barang;
-import model.BarangDAO;
 import model.Kategori;
-import model.KategoriDAO;
 import javafx.scene.control.ListCell;
 
 import java.sql.Connection;
@@ -45,19 +56,13 @@ public class TambahBarangController {
     public void initialize() {
         setDarkMode(MainController.isDarkMode);
         loadKategori();
+        if (txtIdBarang != null) {
+            txtIdBarang.setEditable(false);
+        }
 
         // Listener saat kategori dipilih
         cmbKategori.setOnAction(event -> {
-            String selected = cmbKategori.getValue();
-            if (selected != null && selected.contains(" - ")) {
-                String fullIdKat = selected.split(" - ")[0];
-                // Ambil 3 huruf pertama sebagai prefix (misal ESK000 -> ESK)
-                if (fullIdKat.length() >= 3) {
-                    String prefix = fullIdKat.substring(0, 3);
-                    String nextId = BarangDAO.getNextBarangId(prefix);
-                    txtIdBarang.setText(nextId);
-                }
-            }
+            updateGeneratedBarangId();
         });
         javafx.collections.ObservableList<String> listSatuan = javafx.collections.FXCollections.observableArrayList(
                 "Pcs", "Liter", "Butir", "Kg", "Gram", "Box"
@@ -107,7 +112,28 @@ public class TambahBarangController {
         }
         if (!cmbKategori.getItems().isEmpty()) {
             cmbKategori.getSelectionModel().selectFirst();
+            updateGeneratedBarangId();
         }
+    }
+
+    private void updateGeneratedBarangId() {
+        String idKategori = getSelectedKategoriId();
+        if (idKategori.isBlank()) {
+            txtIdBarang.clear();
+            return;
+        }
+
+        String prefix = BarangDAO.getPrefixFromKategoriId(idKategori);
+        txtIdBarang.setText(BarangDAO.getNextBarangId(prefix));
+    }
+
+    private String getSelectedKategoriId() {
+        String selected = cmbKategori.getValue();
+        if (selected == null || !selected.contains(" - ")) {
+            return "";
+        }
+
+        return selected.split(" - ")[0].trim();
     }
 
     public void setDarkMode(boolean enabled) {
@@ -195,7 +221,7 @@ public class TambahBarangController {
                 pstmt.setDouble(7, Double.parseDouble(txtHargaJual.getText()));
 
                 pstmt.executeUpdate();
-                showAlert(Alert.AlertType.INFORMATION, "Sukses", "Data Barang Berhasil Disimpan!");
+                showSuccessDialog("Berhasil ditambahkan");
                 pindahKeHalamanUtama();
 
             } catch (SQLException e) {
@@ -235,6 +261,14 @@ public class TambahBarangController {
             return false;
         }
 
+        String idKategori = getSelectedKategoriId();
+        if (!BarangDAO.isBarangIdMatchKategori(txtIdBarang.getText(), idKategori)) {
+            showAlert(Alert.AlertType.WARNING, "Peringatan",
+                    "ID Barang harus mengikuti prefix ID Kategori yang dipilih.");
+            updateGeneratedBarangId();
+            return false;
+        }
+
         return true;
     }
 
@@ -244,5 +278,62 @@ public class TambahBarangController {
         alert.setHeaderText(null);
         alert.setContentText(content);
         alert.showAndWait();
+    }
+
+    private void showSuccessDialog(String titleText) {
+        Stage dialog = new Stage();
+        dialog.initModality(Modality.APPLICATION_MODAL);
+        if (btnTambah != null && btnTambah.getScene() != null) {
+            dialog.initOwner(btnTambah.getScene().getWindow());
+        }
+        dialog.initStyle(StageStyle.UNDECORATED);
+        dialog.setResizable(false);
+
+        BorderPane root = new BorderPane();
+        root.setPrefWidth(592);
+        root.setPrefHeight(307);
+        root.setStyle("-fx-background-color: white; -fx-background-radius: 14; -fx-border-radius: 14;");
+
+        VBox content = new VBox(22);
+        content.setAlignment(Pos.CENTER);
+        content.setPadding(new Insets(34, 30, 28, 30));
+
+        try {
+            ImageView iconView = new ImageView(new Image(getClass().getResourceAsStream("/Images/iconsukses.png")));
+            iconView.setFitWidth(74);
+            iconView.setFitHeight(74);
+            iconView.setPreserveRatio(true);
+            content.getChildren().add(iconView);
+        } catch (Exception ignored) {
+            StackPane fallback = new StackPane();
+            fallback.setPrefSize(74, 74);
+            fallback.setStyle("-fx-background-color: #4A90E2; -fx-background-radius: 999;");
+            Label check = new Label("✓");
+            check.setStyle("-fx-text-fill: white; -fx-font-size: 30px; -fx-font-weight: bold;");
+            fallback.getChildren().add(check);
+            content.getChildren().add(fallback);
+        }
+
+        Label titleLabel = new Label(titleText);
+        titleLabel.setStyle("-fx-text-fill: #111111; -fx-font-size: 28px; -fx-font-weight: bold;");
+        content.getChildren().add(titleLabel);
+        root.setCenter(content);
+
+        HBox footer = new HBox();
+        footer.setAlignment(Pos.CENTER);
+        footer.setPadding(new Insets(22, 0, 22, 0));
+        footer.setStyle("-fx-border-color: #D9D9D9 transparent transparent transparent; -fx-border-width: 1 0 0 0;");
+
+        Button btnOk = new Button("OK");
+        btnOk.setPrefSize(150, 50);
+        btnOk.setStyle("-fx-background-color: #4A90E2; -fx-text-fill: white; -fx-background-radius: 10; -fx-font-size: 17px; -fx-font-weight: bold; -fx-cursor: hand;");
+        btnOk.setOnAction(event -> dialog.close());
+        footer.getChildren().add(btnOk);
+        root.setBottom(footer);
+
+        Scene scene = new Scene(root);
+        scene.setFill(null);
+        dialog.setScene(scene);
+        dialog.showAndWait();
     }
 }

@@ -8,11 +8,20 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public class koneksi {
-    private static final Path DATABASE_PATH = Path.of(
-            System.getProperty("user.dir"),
-            "database",
-            "umkm.db"
-    );
+    private static final Path DATABASE_PATH = resolveDatabasePath();
+
+    private static Path resolveDatabasePath() {
+        Path currentPath = Path.of("").toAbsolutePath().normalize();
+
+        for (Path path = currentPath; path != null; path = path.getParent()) {
+            Path databaseDirectory = path.resolve("database");
+            if (Files.exists(path.resolve("pom.xml")) || Files.exists(databaseDirectory)) {
+                return databaseDirectory.resolve("umkm.db");
+            }
+        }
+
+        return currentPath.resolve("database").resolve("umkm.db");
+    }
 
     public static Connection koneksiDB() throws SQLException {
         try {
