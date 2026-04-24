@@ -1,4 +1,4 @@
-package dao;
+package DAO;
 
 import config.koneksi;
 import java.sql.*;
@@ -181,7 +181,7 @@ public class TransaksiDAO {
 
     private static LocalDateTime readDateTime(ResultSet rs, String columnName) throws SQLException {
         String value = rs.getString(columnName);
-        if (value == null || value.isBlank()) {
+        if (value == null || value.trim().isEmpty()) {
             return null;
         }
 

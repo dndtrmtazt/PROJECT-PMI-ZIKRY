@@ -8,7 +8,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import dao.LaporanDao;
+import DAO.LaporanDao;
 import model.Laporan;
 
 import java.net.URL;

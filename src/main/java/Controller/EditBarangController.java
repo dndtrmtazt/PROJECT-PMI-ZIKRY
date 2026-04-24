@@ -2,7 +2,6 @@ package Controller;
 
 import config.koneksi;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -19,7 +18,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import dao.KategoriDAO;
+import DAO.KategoriDAO;
 import model.Kategori;
 
 import java.sql.Connection;
@@ -27,7 +26,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
-import dao.BarangDAO;
+import DAO.BarangDAO;
 
 public class EditBarangController {
 

@@ -1,0 +1,60 @@
+.product-scroll-pane {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+    -fx-padding: 0 4 0 0;
+}
+
+.product-scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+
+.product-list-content {
+    -fx-padding: 0 16 0 0;
+}
+
+.product-scroll-pane .scroll-bar:vertical {
+    -fx-background-color: transparent;
+    -fx-pref-width: 10;
+    -fx-padding: 6 2 6 2;
+}
+
+.product-scroll-pane .scroll-bar:vertical .track {
+    -fx-background-color: #F1F5F9;
+    -fx-background-radius: 999;
+}
+
+.product-scroll-pane .scroll-bar:vertical .thumb {
+    -fx-background-color: #CBD5E1;
+    -fx-background-insets: 1;
+    -fx-background-radius: 999;
+}
+
+.product-scroll-pane .scroll-bar:vertical .thumb:hover {
+    -fx-background-color: #94A3B8;
+}
+
+.product-scroll-pane .scroll-bar:vertical .increment-button,
+.product-scroll-pane .scroll-bar:vertical .decrement-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+    -fx-pref-height: 0;
+    -fx-opacity: 0;
+}
+
+.product-scroll-pane .scroll-bar:vertical .increment-arrow,
+.product-scroll-pane .scroll-bar:vertical .decrement-arrow {
+    -fx-shape: "";
+    -fx-padding: 0;
+}
+
+.product-scroll-pane.dark .scroll-bar:vertical .track {
+    -fx-background-color: #262626;
+}
+
+.product-scroll-pane.dark .scroll-bar:vertical .thumb {
+    -fx-background-color: #565656;
+}
+
+.product-scroll-pane.dark .scroll-bar:vertical .thumb:hover {
+    -fx-background-color: #777777;
+}

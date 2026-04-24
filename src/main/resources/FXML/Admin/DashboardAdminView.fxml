@@ -35,7 +35,7 @@
                 <RowConstraints minHeight="10.0" prefHeight="240.0" valignment="CENTER" vgrow="SOMETIMES" />
             </rowConstraints>
             <children>
-                <VBox fx:id="card1" maxHeight="220.0" maxWidth="360.0" spacing="15.0" style="-fx-background-color: #EAF1FB; -fx-background-radius: 15; -fx-border-color: #2196F3; -fx-border-radius: 15; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5);">
+                <VBox fx:id="card1" maxHeight="220.0" maxWidth="360.0" spacing="15.0" style="-fx-background-color: #EAF1FB; -fx-background-radius: 16; -fx-border-color: #2196F3; -fx-border-radius: 16; -fx-border-width: 1.2; -fx-effect: dropshadow(three-pass-box, rgba(15,23,42,0.08), 12, 0, 0, 6);">
                     <padding><Insets bottom="20.0" left="25.0" right="25.0" top="20.0" /></padding>
                     <children>
                         <HBox alignment="CENTER_LEFT" spacing="12.0">
@@ -45,13 +45,13 @@
                             </children>
                         </HBox>
                         <Label fx:id="lblCard1Value" prefHeight="61.0" prefWidth="210.0" text="Rp 2.500.000"><font><Font name="System Bold" size="34.0" /></font></Label>
-                        <Button fx:id="btnCard1" contentDisplay="RIGHT" maxWidth="1.7976931348623157E308" prefHeight="38.0" style="-fx-background-color: white; -fx-background-radius: 8; -fx-border-color: #8B8B8B; -fx-border-radius: 8;" text="Lihat Laporan Harian">
+                        <Button fx:id="btnCard1" contentDisplay="RIGHT" maxWidth="1.7976931348623157E308" prefHeight="38.0" style="-fx-background-color: white; -fx-background-radius: 9; -fx-border-color: #D7DEE8; -fx-border-radius: 9; -fx-border-width: 1;" text="Lihat Laporan Harian">
                             <graphic><ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true"><image><Image url="@../../Images/PANAH.png" /></image></ImageView></graphic>
                         </Button>
                     </children>
                 </VBox>
 
-                <VBox fx:id="card2" maxHeight="220.0" maxWidth="360.0" spacing="15.0" style="-fx-background-color: white; -fx-background-radius: 15; -fx-border-color: #B0B0B0; -fx-border-radius: 15; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5)" GridPane.columnIndex="1">
+                <VBox fx:id="card2" maxHeight="220.0" maxWidth="360.0" spacing="15.0" style="-fx-background-color: white; -fx-background-radius: 16; -fx-border-color: #D7DEE8; -fx-border-radius: 16; -fx-border-width: 1.2; -fx-effect: dropshadow(three-pass-box, rgba(15,23,42,0.08), 12, 0, 0, 6)" GridPane.columnIndex="1">
                     <padding><Insets bottom="20.0" left="25.0" right="25.0" top="20.0" /></padding>
                     <children>
                         <HBox alignment="CENTER_LEFT" spacing="12.0">
@@ -61,13 +61,13 @@
                             </children>
                         </HBox>
                         <Label fx:id="lblCard2Value" prefHeight="62.0" prefWidth="210.0" text="Rp 1.500.000"><font><Font name="System Bold" size="34.0" /></font></Label>
-                        <Button fx:id="btnCard2" contentDisplay="RIGHT" maxWidth="1.7976931348623157E308" prefHeight="38.0" style="-fx-background-color: white; -fx-background-radius: 8; -fx-border-color: #8B8B8B; -fx-border-radius: 8;" text="Lihat Detail Pengeluaran">
+                        <Button fx:id="btnCard2" contentDisplay="RIGHT" maxWidth="1.7976931348623157E308" prefHeight="38.0" style="-fx-background-color: white; -fx-background-radius: 9; -fx-border-color: #D7DEE8; -fx-border-radius: 9; -fx-border-width: 1;" text="Lihat Detail Pengeluaran">
                             <graphic><ImageView fitHeight="15.0" fitWidth="15.0"><image><Image url="@../../Images/PANAH.png" /></image></ImageView></graphic>
                         </Button>
                     </children>
                 </VBox>
 
-                <VBox fx:id="card3" maxHeight="220.0" maxWidth="360.0" spacing="15.0" style="-fx-background-color: white; -fx-background-radius: 15; -fx-border-color: #2196F3; -fx-border-radius: 15; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5);" GridPane.rowIndex="1">
+                <VBox fx:id="card3" maxHeight="220.0" maxWidth="360.0" spacing="15.0" style="-fx-background-color: white; -fx-background-radius: 16; -fx-border-color: #2196F3; -fx-border-radius: 16; -fx-border-width: 1.2; -fx-effect: dropshadow(three-pass-box, rgba(15,23,42,0.08), 12, 0, 0, 6);" GridPane.rowIndex="1">
                     <padding><Insets bottom="20.0" left="25.0" right="25.0" top="20.0" /></padding>
                     <children>
                         <HBox alignment="CENTER_LEFT" spacing="12.0">
@@ -80,7 +80,7 @@
                     </children>
                 </VBox>
 
-                <VBox fx:id="card4" maxHeight="220.0" maxWidth="360.0" spacing="10.0" style="-fx-background-color: #E8F5E9; -fx-background-radius: 15; -fx-border-color: #328B51; -fx-border-radius: 15; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5);" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                <VBox fx:id="card4" maxHeight="220.0" maxWidth="360.0" spacing="10.0" style="-fx-background-color: #E8F5E9; -fx-background-radius: 16; -fx-border-color: #328B51; -fx-border-radius: 16; -fx-border-width: 1.2; -fx-effect: dropshadow(three-pass-box, rgba(15,23,42,0.08), 12, 0, 0, 6);" GridPane.columnIndex="1" GridPane.rowIndex="1">
                     <padding><Insets bottom="15.0" left="20.0" right="20.0" top="15.0" /></padding>
                     <children>
                         <HBox alignment="CENTER_LEFT" spacing="12.0">
@@ -99,7 +99,7 @@
                             </content>
                         </ScrollPane>
 
-                        <Button fx:id="btnCard4" contentDisplay="RIGHT" maxWidth="1.7976931348623157E308" prefHeight="38.0" style="-fx-background-color: white; -fx-background-radius: 8; -fx-border-color: #8B8B8B; -fx-border-radius: 8;" text="Kelola Stok">
+                        <Button fx:id="btnCard4" contentDisplay="RIGHT" maxWidth="1.7976931348623157E308" prefHeight="38.0" style="-fx-background-color: white; -fx-background-radius: 9; -fx-border-color: #D7DEE8; -fx-border-radius: 9; -fx-border-width: 1;" text="Kelola Stok">
                             <graphic><ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true"><image><Image url="@../../Images/PANAH.png" /></image></ImageView></graphic>
                         </Button>
                     </children>

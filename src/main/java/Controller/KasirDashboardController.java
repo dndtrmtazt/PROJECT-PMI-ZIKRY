@@ -37,9 +37,9 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
-import dao.BarangDAO;
-import dao.DetailTransaksiDAO;
-import dao.TransaksiDAO;
+import DAO.BarangDAO;
+import DAO.DetailTransaksiDAO;
+import DAO.TransaksiDAO;
 import model.Barang;
 import model.Detail_Transaksi;
 import model.Transaksi;
@@ -190,7 +190,13 @@ public class KasirDashboardController {
         if (lblHeaderStok != null)     lblHeaderStok.setStyle("-fx-font-weight: bold; -fx-cursor: hand; " + textColor);
         if (lblHeaderHarga != null)    lblHeaderHarga.setStyle("-fx-font-weight: bold; -fx-cursor: hand; " + textColor);
 
-        if (scrollProduct != null)  scrollProduct.setStyle("-fx-background: " + bgCard + "; -fx-background-color: transparent;");
+        if (scrollProduct != null) {
+            scrollProduct.setStyle("-fx-background: " + bgCard + "; -fx-background-color: transparent;");
+            scrollProduct.getStyleClass().remove("dark");
+            if (enabled) {
+                scrollProduct.getStyleClass().add("dark");
+            }
+        }
         if (vboxProdukList != null) vboxProdukList.setStyle("-fx-background-color: " + bgCard + ";");
 
         if (vboxCart != null)           vboxCart.setStyle("-fx-background-color: " + bgCard + "; -fx-background-radius: 10; -fx-border-color: " + borderColor + "; -fx-border-radius: 10;");
@@ -351,7 +357,7 @@ public class KasirDashboardController {
         }
 
         updateSortHeaderText();
-        if (txtSearch != null && !txtSearch.getText().isBlank()) {
+        if (txtSearch != null && !txtSearch.getText().trim().isEmpty()) {
             filterProducts(txtSearch.getText(), MainController.isDarkMode);
         } else {
             displayProducts(getSortedProducts(allBarang), MainController.isDarkMode);
@@ -758,6 +764,7 @@ public class KasirDashboardController {
             popupStage.initOwner(btnSimpanCetak.getScene().getWindow());
             popupStage.initStyle(StageStyle.UNDECORATED);
             popupStage.setScene(new Scene(root));
+            popupStage.centerOnScreen();
             popupStage.showAndWait();
 
             if (controller.isConfirmed()) {

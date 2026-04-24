@@ -10,7 +10,6 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent; // Tambahkan ini
 import javafx.scene.Scene; // Tambahkan ini
-import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -20,7 +19,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality; // Tambahkan ini
 import javafx.stage.Stage; // Tambahkan ini
-import dao.KategoriDAO;
+import DAO.KategoriDAO;
 import model.Kategori;
 
 public class KategoriController implements Initializable {

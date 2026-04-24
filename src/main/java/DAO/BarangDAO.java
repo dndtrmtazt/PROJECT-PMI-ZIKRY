@@ -1,4 +1,4 @@
-package dao;
+package DAO;
 
 import config.koneksi;
 import java.sql.*;
@@ -93,7 +93,7 @@ public class BarangDAO {
             ps.setString(2, barang.getNamaBarang());
             ps.setString(3, barang.getIdKategori());
             ps.setInt(4, barang.getStok());
-            ps.setString(5, barang.getSatuan() == null || barang.getSatuan().isBlank() ? "Pcs" : barang.getSatuan());
+            ps.setString(5, isBlank(barang.getSatuan()) ? "Pcs" : barang.getSatuan());
             ps.setDouble(6, barang.getHargaBeli());
             ps.setDouble(7, barang.getHargaJual());
             
@@ -114,7 +114,7 @@ public class BarangDAO {
             ps.setString(1, barang.getNamaBarang());
             ps.setString(2, barang.getIdKategori());
             ps.setInt(3, barang.getStok());
-            ps.setString(4, barang.getSatuan() == null || barang.getSatuan().isBlank() ? "Pcs" : barang.getSatuan());
+            ps.setString(4, isBlank(barang.getSatuan()) ? "Pcs" : barang.getSatuan());
             ps.setDouble(5, barang.getHargaBeli());
             ps.setDouble(6, barang.getHargaJual());
             ps.setString(7, barang.getIdBarang());
@@ -241,5 +241,9 @@ public class BarangDAO {
             e.printStackTrace();
         }
         return listBarang;
+    }
+
+    private static boolean isBlank(String value) {
+        return value == null || value.trim().isEmpty();
     }
 }

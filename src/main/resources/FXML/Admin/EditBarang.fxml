@@ -92,11 +92,14 @@
                             <VBox.margin><Insets bottom="30.0" left="40.0" right="40.0" top="30.0" /></VBox.margin>
                         </GridPane>
 
-                        <HBox fx:id="hboxFooter" alignment="CENTER" prefHeight="100.0" spacing="20.0" style="-fx-background-color: White; -fx-background-radius: 0 0 15 15;">
+                        <HBox fx:id="hboxFooter" alignment="CENTER" prefHeight="92.0" spacing="20.0" style="-fx-background-color: White; -fx-background-radius: 0 0 15 15;">
+                            <padding>
+                                <Insets bottom="30.0" left="40.0" right="40.0" top="12.0" />
+                            </padding>
                             <children>
-                                <Button fx:id="btnBatal" onAction="#handleBatal" prefHeight="45.0" prefWidth="120.0" style="-fx-background-color: #E5E7EB; -fx-text-fill: #374151; -fx-background-radius: 8; -fx-font-family: 'Inter Medium'; -fx-font-weight: bold; -fx-cursor: hand;" text="Batal" />
                                 <Button fx:id="btnSimpan" onAction="#handleSimpan" prefHeight="45.0" prefWidth="250.0" style="-fx-background-color: #4A76A8; -fx-text-fill: white; -fx-background-radius: 8; -fx-font-family: 'Inter Medium'; -fx-font-weight: bold; -fx-cursor: hand;" text="Simpan Perubahan" />
                                 <Button fx:id="btnHapus" onAction="#handleHapus" prefHeight="45.0" prefWidth="120.0" style="-fx-background-color: #D9534F; -fx-text-fill: white; -fx-background-radius: 8; -fx-font-family: 'Inter Medium'; -fx-font-weight: bold; -fx-cursor: hand;" text="Hapus" />
+                                <Button fx:id="btnBatal" onAction="#handleBatal" prefHeight="45.0" prefWidth="120.0" style="-fx-background-color: #E5E7EB; -fx-text-fill: #374151; -fx-background-radius: 8; -fx-font-family: 'Inter Medium'; -fx-font-weight: bold; -fx-cursor: hand;" text="Batal" />
                             </children>
                         </HBox>
                     </children>

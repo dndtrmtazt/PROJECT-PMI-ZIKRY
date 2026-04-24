@@ -1,9 +1,9 @@
 package Controller;
 
 // --- 1. IMPORT TOOLS (Alat bantu untuk UI dan Data) ---
-import dao.BarangDAO;
-import dao.PengeluaranDAO;
-import dao.TransaksiDAO;
+import DAO.BarangDAO;
+import DAO.PengeluaranDAO;
+import DAO.TransaksiDAO;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
@@ -116,35 +116,39 @@ public class DashboardController implements Initializable {
     public void setDarkMode(boolean enabled) {
         String bgMain = enabled ? "#121212" : "#f4f4f4";
         String bgCard = enabled ? "#1e1e1e" : "white";
-        String borderColor = enabled ? "#333333" : "#B0B0B0";
+        String borderColor = enabled ? "#3A3A3A" : "#D7DEE8";
+        String blueBorder = enabled ? "#2F9CF4" : "#2196F3";
+        String greenBorder = enabled ? "#3FA166" : "#328B51";
         String textColor = enabled ? "white" : "#2C3E50";
-        String mutedText = enabled ? "#bbbbbb" : "#555555";
 
         paneRoot.setStyle("-fx-background-color: " + bgMain + ";");
         hboxHeader.setStyle("-fx-background-color: #4A76A8;");
         lblDashboard.setStyle("-fx-text-fill: white;");
 
         // Card Styles
-        String cardBase = "-fx-background-radius: 15; -fx-border-radius: 15; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5);";
+        String cardShadow = enabled
+                ? "dropshadow(three-pass-box, rgba(0,0,0,0.22), 12, 0, 0, 6)"
+                : "dropshadow(three-pass-box, rgba(15,23,42,0.08), 12, 0, 0, 6)";
+        String cardBase = "-fx-background-radius: 16; -fx-border-radius: 16; -fx-border-width: 1.2; -fx-effect: " + cardShadow + ";";
         
-        card1.setStyle("-fx-background-color: " + (enabled ? "#1e2a3a" : "#EAF1FB") + "; -fx-border-color: #2196F3; -fx-cursor: hand; " + cardBase);
+        card1.setStyle("-fx-background-color: " + (enabled ? "#1e2a3a" : "#EAF1FB") + "; -fx-border-color: " + blueBorder + "; -fx-cursor: hand; " + cardBase);
         card2.setStyle("-fx-background-color: " + bgCard + "; -fx-border-color: " + borderColor + "; -fx-cursor: hand; " + cardBase);
-        card3.setStyle("-fx-background-color: " + bgCard + "; -fx-border-color: #2196F3; " + cardBase);
-        card4.setStyle("-fx-background-color: " + (enabled ? "#1b2e1f" : "#E8F5E9") + "; -fx-border-color: #328B51; -fx-cursor: hand; " + cardBase);
+        card3.setStyle("-fx-background-color: " + bgCard + "; -fx-border-color: " + blueBorder + "; " + cardBase);
+        card4.setStyle("-fx-background-color: " + (enabled ? "#1b2e1f" : "#E8F5E9") + "; -fx-border-color: " + greenBorder + "; -fx-cursor: hand; " + cardBase);
 
         lblCard1Title.setStyle("-fx-text-fill: " + (enabled ? "#64b5f6" : "#1976D2") + "; -fx-font-weight: bold;");
         lblCard1Value.setStyle("-fx-text-fill: " + textColor + "; -fx-font-weight: bold;");
-        btnCard1.setStyle("-fx-background-color: " + (enabled ? "#333333" : "white") + "; -fx-text-fill: " + textColor + "; -fx-border-color: " + borderColor + "; -fx-background-radius: 8; -fx-border-radius: 8;");
+        btnCard1.setStyle(getDashboardButtonStyle(enabled, textColor, borderColor));
 
         lblCard2Title.setStyle("-fx-text-fill: " + textColor + "; -fx-font-weight: bold;");
         lblCard2Value.setStyle("-fx-text-fill: " + textColor + "; -fx-font-weight: bold;");
-        btnCard2.setStyle("-fx-background-color: " + (enabled ? "#333333" : "white") + "; -fx-text-fill: " + textColor + "; -fx-border-color: " + borderColor + "; -fx-background-radius: 8; -fx-border-radius: 8;");
+        btnCard2.setStyle(getDashboardButtonStyle(enabled, textColor, borderColor));
 
         lblCard3Title.setStyle("-fx-text-fill: " + textColor + "; -fx-font-weight: bold;");
         lblCard3Value.setStyle("-fx-text-fill: " + textColor + "; -fx-font-weight: bold;");
 
         lblCard4Title.setStyle("-fx-text-fill: " + (enabled ? "#81c784" : "#2E7D32") + "; -fx-font-weight: bold;");
-        btnCard4.setStyle("-fx-background-color: " + (enabled ? "#333333" : "white") + "; -fx-text-fill: " + textColor + "; -fx-border-color: " + borderColor + "; -fx-background-radius: 8; -fx-border-radius: 8;");
+        btnCard4.setStyle(getDashboardButtonStyle(enabled, textColor, borderColor));
         updateActionButtonArrow(btnCard1, enabled);
         updateActionButtonArrow(btnCard2, enabled);
         updateActionButtonArrow(btnCard4, enabled);
@@ -182,13 +186,26 @@ public class DashboardController implements Initializable {
         hBox.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
         hBox.setStyle("-fx-background-color: " + (isDark ? "#2c2c2c" : "white") + "; " +
                 "-fx-background-radius: 10; " +
-                "-fx-border-color: " + (isDark ? "#444444" : "transparent") + "; -fx-border-radius: 10;");
+                "-fx-border-color: " + (isDark ? "#444444" : "#D7DEE8") + "; " +
+                "-fx-border-width: 1; " +
+                "-fx-border-radius: 10;");
 
         Label lblKosong = new Label("Belum ada barang dengan stok hampir habis.");
         lblKosong.setWrapText(true);
         lblKosong.setStyle("-fx-text-fill: " + (isDark ? "#d0d0d0" : "#4B5563") + "; -fx-font-weight: bold;");
         hBox.getChildren().add(lblKosong);
         return hBox;
+    }
+
+    private String getDashboardButtonStyle(boolean enabled, String textColor, String borderColor) {
+        String buttonBg = enabled ? "#333333" : "white";
+        return "-fx-background-color: " + buttonBg + "; " +
+                "-fx-text-fill: " + textColor + "; " +
+                "-fx-border-color: " + borderColor + "; " +
+                "-fx-border-width: 1; " +
+                "-fx-background-radius: 9; " +
+                "-fx-border-radius: 9; " +
+                "-fx-cursor: hand;";
     }
 
     private HBox buatBarisStok(String nama, int sisa, boolean isDark) {
@@ -198,12 +215,12 @@ public class DashboardController implements Initializable {
         hBox.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
 
         String bg = isDark ? "#2c2c2c" : "white";
-        String border = isDark ? "#444444" : "transparent";
+        String border = isDark ? "#444444" : "#D7DEE8";
         String text = isDark ? "white" : "#2C3E50";
 
         hBox.setStyle("-fx-background-color: " + bg + "; " +
                 "-fx-background-radius: 10; " +
-                "-fx-border-color: " + border + "; -fx-border-radius: 10; " +
+                "-fx-border-color: " + border + "; -fx-border-width: 1; -fx-border-radius: 10; " +
                 "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 5, 0, 0, 2);");
 
         Label lblNama = new Label(nama);

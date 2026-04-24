@@ -11,9 +11,9 @@ import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import config.UserSession;
-import dao.BarangDAO;
-import dao.PengeluaranDAO;
-import dao.TransaksiDAO;
+import DAO.BarangDAO;
+import DAO.PengeluaranDAO;
+import DAO.TransaksiDAO;
 import model.*;
 
 import java.io.IOException;

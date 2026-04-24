@@ -9,7 +9,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import dao.KategoriDAO;
+import DAO.KategoriDAO;
 import model.Kategori;
 
 public class FormKategoriController {

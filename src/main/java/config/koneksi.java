@@ -2,6 +2,7 @@ package config;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -11,7 +12,7 @@ public class koneksi {
     private static final Path DATABASE_PATH = resolveDatabasePath();
 
     private static Path resolveDatabasePath() {
-        Path currentPath = Path.of("").toAbsolutePath().normalize();
+        Path currentPath = Paths.get("").toAbsolutePath().normalize();
 
         for (Path path = currentPath; path != null; path = path.getParent()) {
             Path databaseDirectory = path.resolve("database");

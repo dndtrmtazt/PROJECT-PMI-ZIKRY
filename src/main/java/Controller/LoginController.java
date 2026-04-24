@@ -21,7 +21,7 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.application.Platform;
 import javafx.util.Duration;
-import dao.UserDAO;
+import DAO.UserDAO;
 import model.User;
 import config.UserSession;
 

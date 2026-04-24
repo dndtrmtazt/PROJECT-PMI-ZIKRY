@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane fx:id="paneRoot" prefHeight="650.0" prefWidth="1000.0" style="-fx-background-color: #efefef;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.KasirDashboardController">
+<AnchorPane fx:id="paneRoot" prefHeight="650.0" prefWidth="1000.0" style="-fx-background-color: #efefef;" stylesheets="@../../CSS/kasir-scroll.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.KasirDashboardController">
     <children>
         <HBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <children>
@@ -53,8 +53,8 @@
                                                         <Region maxWidth="105.0" minWidth="105.0" prefWidth="105.0" />
                                                     </children>
                                                 </HBox>
-                                                <ScrollPane fx:id="scrollProduct" fitToWidth="true" hbarPolicy="NEVER" style="-fx-background: white; -fx-background-color: white;" VBox.vgrow="ALWAYS">
-                                                    <content><VBox fx:id="vboxProdukList" style="-fx-background-color: #ffffff;" /></content>
+                                                <ScrollPane fx:id="scrollProduct" fitToWidth="true" hbarPolicy="NEVER" style="-fx-background: white; -fx-background-color: white;" styleClass="product-scroll-pane" VBox.vgrow="ALWAYS">
+                                                    <content><VBox fx:id="vboxProdukList" style="-fx-background-color: #ffffff;" styleClass="product-list-content" /></content>
                                                 </ScrollPane>
                                             </children>
                                         </VBox>
