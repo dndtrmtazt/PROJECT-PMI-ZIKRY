@@ -1,6 +1,7 @@
 package Controller;
 
 import javafx.animation.FadeTransition;
+import javafx.animation.PauseTransition;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -91,32 +92,36 @@ public class LoginController {
                 mainController.setHakAkses(user.getRole());
             }
 
-            // Tampilkan Stage baru
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             Scene scene = new Scene(root);
-            if ("kasir".equalsIgnoreCase(user.getRole())) {
-                stage.setScene(scene);
-                stage.setMaximized(true);
-                Platform.runLater(() -> {
-                    stage.setMaximized(false);
-                    stage.setMaximized(true);
-                });
-            } else {
-                stage.setScene(scene);
-                stage.setMaximized(false);
-                stage.setWidth(1100);
-                stage.setHeight(650);
-                stage.centerOnScreen();
-            }
-            
-            stage.setTitle("Toko Zikry - " + user.getRole().toUpperCase());
-            stage.show();
+            showDashboardMaximized(stage, scene, "Toko Zikry - " + user.getRole().toUpperCase());
 
         } catch (IOException e) {
             errorLabel.setText("Gagal masuk ke Dashboard!");
             errorLabel.setVisible(true);
             e.printStackTrace();
         }
+    }
+
+    private void showDashboardMaximized(Stage stage, Scene scene, String title) {
+        stage.setResizable(true);
+        stage.setMaximized(false); // Paksa JavaFX/Windows menerapkan ulang maximize setelah scene dashboard dipasang.
+        stage.setScene(scene);
+        stage.setTitle(title);
+        stage.show();
+        stage.setMaximized(true);
+
+        Platform.runLater(() -> {
+            stage.setResizable(true);
+            stage.setMaximized(true);
+
+            PauseTransition reapplyMaximized = new PauseTransition(Duration.millis(120));
+            reapplyMaximized.setOnFinished(event -> {
+                stage.setResizable(true);
+                stage.setMaximized(true);
+            });
+            reapplyMaximized.play();
+        });
     }
 
     // --- LOGIKA TEMA LOGIN (Visual Only) ---

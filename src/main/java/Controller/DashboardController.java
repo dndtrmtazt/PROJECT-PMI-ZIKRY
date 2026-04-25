@@ -159,7 +159,13 @@ public class DashboardController implements Initializable {
             if (imgLogout != null) imgLogout.setImage(new Image(getClass().getResourceAsStream(enabled ? "/Images/ICON33.png" : "/Images/ICON6.png")));
         } catch (Exception e) {}
 
-        scrollStok.setStyle("-fx-background: transparent; -fx-background-color: transparent;");
+        if (scrollStok != null) {
+            scrollStok.setStyle("-fx-background: transparent; -fx-background-color: transparent;");
+            scrollStok.getStyleClass().remove("dark");
+            if (enabled) {
+                scrollStok.getStyleClass().add("dark");
+            }
+        }
         
         muatDataStokHampirHabis(); // Re-render rows with theme
     }

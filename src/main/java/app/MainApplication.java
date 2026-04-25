@@ -12,9 +12,11 @@ public class MainApplication extends Application {
         FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource("/FXML/LoginView.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
         stage.setTitle("PMI Toko Zikry - Login");
+        stage.setResizable(true);
         stage.setScene(scene);
         stage.setMaximized(true);
         stage.show();
+        stage.setMaximized(true);
     }
 
     public static void main(String[] args) {

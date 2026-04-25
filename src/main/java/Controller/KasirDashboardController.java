@@ -139,15 +139,15 @@ public class KasirDashboardController {
         btnLogout.setOnAction(e -> {
             try {
                 Stage stage = (Stage) btnLogout.getScene().getWindow();
-                stage.close();
 
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/FXML/LoginView.fxml"));
                 Parent root = loader.load();
-                Stage loginStage = new Stage();
-                loginStage.setScene(new Scene(root));
-                loginStage.setTitle("PMI Toko Zikry - Login");
-                loginStage.setMaximized(true);
-                loginStage.show();
+                stage.setResizable(true);
+                stage.setMaximized(false);
+                stage.setScene(new Scene(root));
+                stage.setTitle("PMI Toko Zikry - Login");
+                stage.show();
+                stage.setMaximized(true);
             } catch (IOException ex) {
                 ex.printStackTrace();
             }

@@ -1,5 +1,8 @@
 package Controller;
 
+import javafx.animation.FadeTransition;
+import javafx.animation.Interpolator;
+import javafx.animation.SequentialTransition;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -9,12 +12,17 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.PixelReader;
+import javafx.scene.image.PixelWriter;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import java.io.IOException;
 
 public class MainController {
@@ -38,6 +46,11 @@ public class MainController {
     private Region activeIndicator;
     private ImageView activeIconView;
     private String activeIconName;
+    private static final Color ACTIVE_MENU_BLUE = Color.web("#4072A5");
+    private static final Color DARK_INACTIVE_ICON = Color.WHITE;
+    private static final Duration THEME_FADE_OUT_DURATION = Duration.millis(130);
+    private static final Duration THEME_FADE_IN_DURATION = Duration.millis(190);
+    private boolean themeTransitionRunning = false;
 
     // --- BUTTONS ---
     @FXML private Button btnDashboard, btnTransaksi, btnDataBarang, btnLaporan,
@@ -219,7 +232,7 @@ public class MainController {
         
         try {
             iconView.setFitWidth(18); iconView.setFitHeight(18);
-            iconView.setImage(new Image(getClass().getResourceAsStream("/Images/" + iconName)));
+            setSidebarIconBlue(iconView, iconName);
         } catch (Exception e) {}
     }
 
@@ -253,20 +266,44 @@ public class MainController {
                     try {
                         String iconName = originalIcons[i];
                         if (isDarkMode) {
-                            if (iconName.equals("icon39.png")) iconName = "icon44.png";
-                            else if (iconName.equals("icon40.png")) iconName = "icon45.png";
-                            else if (iconName.equals("icon42.png")) iconName = "icon46.png";
-                            else if (iconName.equals("icon41.png")) iconName = "icon47.png";
-                            else if (iconName.equals("icon 37.png")) iconName = "icon48.png";
-                            else if (iconName.equals("icon38.png")) iconName = "icon49.png";
-                            else if (iconName.equals("icon43.png")) iconName = "icon50.png";
-                            // Transaksi (ICON5.png) tetap ICON5.png
+                            setSidebarIconColor(icons[i], iconName, DARK_INACTIVE_ICON);
+                        } else if (icons[i] == imgDashboard) {
+                            setSidebarIconBlue(icons[i], iconName);
+                        } else {
+                            icons[i].setImage(new Image(getClass().getResourceAsStream("/Images/" + iconName)));
                         }
-                        icons[i].setImage(new Image(getClass().getResourceAsStream("/Images/" + iconName)));
                     } catch (Exception e) {}
                 }
             }
         }
+    }
+
+    private void setSidebarIconBlue(ImageView iconView, String iconName) {
+        setSidebarIconColor(iconView, iconName, ACTIVE_MENU_BLUE);
+    }
+
+    private void setSidebarIconColor(ImageView iconView, String iconName, Color color) {
+        if (iconView == null || iconName == null || color == null) return;
+
+        Image source = new Image(getClass().getResourceAsStream("/Images/" + iconName));
+        iconView.setImage(recolorIcon(source, color));
+    }
+
+    private Image recolorIcon(Image source, Color color) {
+        int width = (int) source.getWidth();
+        int height = (int) source.getHeight();
+        WritableImage tinted = new WritableImage(width, height);
+        PixelReader reader = source.getPixelReader();
+        PixelWriter writer = tinted.getPixelWriter();
+
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                Color pixel = reader.getColor(x, y);
+                writer.setColor(x, y, new Color(color.getRed(), color.getGreen(), color.getBlue(), pixel.getOpacity()));
+            }
+        }
+
+        return tinted;
     }
 
     private void aturVisibility(boolean tampil, HBox... wrappers) {
@@ -328,18 +365,63 @@ public class MainController {
 
     @FXML
     private void handleThemeChange(ActionEvent event) {
-        if (event.getSource() == btnDarkMode) applyDarkMode();
+        if (event.getSource() == btnDarkMode) switchThemeWithAnimation(true);
+        else switchThemeWithAnimation(false);
+    }
+
+    private void switchThemeWithAnimation(boolean darkModeTarget) {
+        if (themeTransitionRunning || isDarkMode == darkModeTarget) {
+            return;
+        }
+
+        if (mainPane == null) {
+            applyThemeInstantly(darkModeTarget);
+            return;
+        }
+
+        themeTransitionRunning = true;
+        setThemeButtonsBlocked(true);
+
+        FadeTransition fadeOut = new FadeTransition(THEME_FADE_OUT_DURATION, mainPane);
+        fadeOut.setFromValue(1.0);
+        fadeOut.setToValue(0.82);
+        fadeOut.setInterpolator(Interpolator.EASE_BOTH);
+        fadeOut.setOnFinished(event -> applyThemeInstantly(darkModeTarget));
+
+        FadeTransition fadeIn = new FadeTransition(THEME_FADE_IN_DURATION, mainPane);
+        fadeIn.setFromValue(0.82);
+        fadeIn.setToValue(1.0);
+        fadeIn.setInterpolator(Interpolator.EASE_BOTH);
+
+        SequentialTransition transition = new SequentialTransition(fadeOut, fadeIn);
+        transition.setOnFinished(event -> {
+            mainPane.setOpacity(1.0);
+            setThemeButtonsBlocked(false);
+            themeTransitionRunning = false;
+        });
+        transition.play();
+    }
+
+    private void applyThemeInstantly(boolean darkModeTarget) {
+        if (darkModeTarget) applyDarkMode();
         else applyLightMode();
+    }
+
+    private void setThemeButtonsBlocked(boolean blocked) {
+        if (btnLightMode != null) btnLightMode.setMouseTransparent(blocked);
+        if (btnDarkMode != null) btnDarkMode.setMouseTransparent(blocked);
     }
 
     private void handleLogout() {
         try {
             Stage stage = (Stage) btnLogout.getScene().getWindow();
-            stage.close();
             Parent root = FXMLLoader.load(getClass().getResource("/FXML/LoginView.fxml"));
-            Stage loginStage = new Stage();
-            loginStage.setScene(new Scene(root));
-            loginStage.show();
+            stage.setResizable(true);
+            stage.setMaximized(false);
+            stage.setScene(new Scene(root));
+            stage.setTitle("PMI Toko Zikry - Login");
+            stage.show();
+            stage.setMaximized(true);
         } catch (IOException e) { e.printStackTrace(); }
     }
 }

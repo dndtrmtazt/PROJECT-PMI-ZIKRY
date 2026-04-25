@@ -8,14 +8,21 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 import DAO.LaporanDao;
 import model.Laporan;
+import util.LaporanExportUtil;
 
+import java.io.File;
 import java.net.URL;
 import java.text.NumberFormat;
+import java.time.LocalDateTime;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class LaporanController implements Initializable {
@@ -188,11 +195,82 @@ public class LaporanController implements Initializable {
 
     @FXML
     public void handleCetak(ActionEvent event) {
-        System.out.println("Cetak laporan...");
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Cetak Laporan");
+        List<Laporan> dataExport = new ArrayList<>(tableLaporan.getItems());
+        if (dataExport.isEmpty()) {
+            showAlert(Alert.AlertType.WARNING, "Data Kosong", "Tidak ada data laporan untuk diexport.");
+            return;
+        }
+
+        ButtonType pdfButton = new ButtonType("Export ke PDF");
+        ButtonType excelButton = new ButtonType("Export ke Excel");
+        ButtonType cancelButton = new ButtonType("Batal", ButtonBar.ButtonData.CANCEL_CLOSE);
+
+        Alert dialog = new Alert(Alert.AlertType.CONFIRMATION);
+        dialog.setTitle("Cetak Laporan");
+        dialog.setHeaderText("Pilih format export laporan");
+        dialog.setContentText("Pilih format file yang ingin dibuat.");
+        dialog.getButtonTypes().setAll(pdfButton, excelButton, cancelButton);
+
+        Optional<ButtonType> selected = dialog.showAndWait();
+        if (!selected.isPresent() || selected.get() == cancelButton) {
+            return;
+        }
+
+        boolean exportPdf = selected.get() == pdfButton;
+        File targetFile = pilihLokasiExport(exportPdf);
+        if (targetFile == null) {
+            return;
+        }
+
+        String periode = getPeriodeExport();
+        try {
+            if (exportPdf) {
+                LaporanExportUtil.exportToPdf(targetFile, dataExport, periode);
+            } else {
+                LaporanExportUtil.exportToExcel(targetFile, dataExport, periode);
+            }
+            showAlert(Alert.AlertType.INFORMATION, "Export Berhasil",
+                    "Laporan berhasil disimpan:\n" + targetFile.getAbsolutePath());
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Export Gagal",
+                    "Gagal membuat file laporan:\n" + e.getMessage());
+        }
+    }
+
+    private File pilihLokasiExport(boolean pdf) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle(pdf ? "Simpan Laporan PDF" : "Simpan Laporan Excel");
+        String extension = pdf ? ".pdf" : ".xlsx";
+        String description = pdf ? "PDF Document (*.pdf)" : "Excel Workbook (*.xlsx)";
+        String pattern = pdf ? "*.pdf" : "*.xlsx";
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter(description, pattern));
+        fileChooser.setInitialFileName("laporan-penjualan-toko-zikry-" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd-HHmm")) + extension);
+
+        File selectedFile = fileChooser.showSaveDialog(tableLaporan.getScene().getWindow());
+        if (selectedFile == null) {
+            return null;
+        }
+
+        String path = selectedFile.getAbsolutePath().toLowerCase(Locale.ROOT);
+        if (!path.endsWith(extension)) {
+            selectedFile = new File(selectedFile.getAbsolutePath() + extension);
+        }
+        return selectedFile;
+    }
+
+    private String getPeriodeExport() {
+        if (datePicker != null && datePicker.getValue() != null) {
+            return datePicker.getValue().toString();
+        }
+        return "Semua Tanggal";
+    }
+
+    private void showAlert(Alert.AlertType type, String title, String message) {
+        Alert alert = new Alert(type);
+        alert.setTitle(title);
         alert.setHeaderText(null);
-        alert.setContentText("Fitur cetak laporan akan segera tersedia!");
+        alert.setContentText(message);
         alert.showAndWait();
     }
 }

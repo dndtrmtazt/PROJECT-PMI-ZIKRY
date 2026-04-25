@@ -13,7 +13,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.control.ScrollPane?>
 
-<VBox fx:id="paneRoot" prefHeight="650.0" prefWidth="917.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.DashboardController">
+<VBox fx:id="paneRoot" prefHeight="650.0" prefWidth="917.0" stylesheets="@../../CSS/dashboard.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.DashboardController">
     <children>
         <HBox fx:id="hboxHeader" alignment="CENTER_LEFT" prefHeight="60.0" style="-fx-background-color: #4A76A8;">
             <children>
@@ -90,9 +90,9 @@
                             </children>
                         </HBox>
 
-                        <ScrollPane fx:id="scrollStok" fitToWidth="true" hbarPolicy="NEVER" prefHeight="100.0" style="-fx-background: transparent; -fx-background-color: transparent;" vbarPolicy="AS_NEEDED" VBox.vgrow="ALWAYS">
+                        <ScrollPane fx:id="scrollStok" fitToWidth="true" hbarPolicy="NEVER" prefHeight="100.0" style="-fx-background: transparent; -fx-background-color: transparent;" styleClass="stock-scroll-pane" vbarPolicy="AS_NEEDED" VBox.vgrow="ALWAYS">
                             <content>
-                                <VBox fx:id="stokListContainer" spacing="8.0" style="-fx-background-color: transparent;">
+                                <VBox fx:id="stokListContainer" spacing="8.0" style="-fx-background-color: transparent;" styleClass="stock-list-container">
                                     <children>
                                     </children>
                                 </VBox>

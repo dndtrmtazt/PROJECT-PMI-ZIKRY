@@ -332,12 +332,12 @@ public class OwnerDashboardController {
             
             Stage stage = (Stage) logoutButton.getScene().getWindow();
             Scene scene = new javafx.scene.Scene(root);
+            stage.setResizable(true);
+            stage.setMaximized(false);
             stage.setScene(scene);
             stage.setTitle("PMITokoZikry - Login");
-            stage.setWidth(900);
-            stage.setHeight(600);
-            stage.centerOnScreen();
             stage.show();
+            stage.setMaximized(true);
         } catch (IOException e) {
             System.err.println("[OwnerDashboard] Logout error: " + e.getMessage());
             e.printStackTrace();
