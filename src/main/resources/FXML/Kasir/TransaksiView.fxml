@@ -5,49 +5,49 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane fx:id="paneRoot" prefHeight="650.0" prefWidth="1000.0" style="-fx-background-color: #efefef;" stylesheets="@../../CSS/kasir-scroll.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.KasirDashboardController">
+<AnchorPane fx:id="paneRoot" prefHeight="650.0" prefWidth="1000.0" style="-fx-background-color: #efefef;" styleClass="kasir-root" stylesheets="@../../CSS/kasir-scroll.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.KasirDashboardController">
     <children>
         <HBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <children>
 
                 <!-- MAIN CONTENT -->
-                <VBox fx:id="vboxMainContent" spacing="10.0" style="-fx-background-color: #efefef;" HBox.hgrow="ALWAYS">
-                    <padding><Insets bottom="10.0" left="10.0" right="10.0" top="10.0" /></padding>
+                <VBox fx:id="vboxMainContent" spacing="12.0" style="-fx-background-color: #efefef;" styleClass="kasir-main" HBox.hgrow="ALWAYS">
+                    <padding><Insets bottom="14.0" left="14.0" right="14.0" top="12.0" /></padding>
                     <children>
                         <HBox alignment="CENTER_RIGHT" prefHeight="24.0">
                             <children>
-                                <Label fx:id="lblTanggal" style="-fx-text-fill: #111111;" text="Jumat, 3 Apr 2026 | 11:53 WITA"><font><Font size="11.5" /></font></Label>
+                                <Label fx:id="lblTanggal" style="-fx-text-fill: #111111;" styleClass="kasir-clock" text="Jumat, 3 Apr 2026 | 11:53 WITA"><font><Font size="11.5" /></font></Label>
                             </children>
                         </HBox>
 
-                        <HBox prefHeight="597.0" prefWidth="866.0" spacing="10.0" VBox.vgrow="ALWAYS">
+                        <HBox prefHeight="597.0" prefWidth="866.0" spacing="12.0" VBox.vgrow="ALWAYS">
                             <children>
-                                <VBox spacing="10.0" HBox.hgrow="ALWAYS">
+                                <VBox spacing="12.0" HBox.hgrow="ALWAYS">
                                     <children>
-                                        <HBox fx:id="hboxSearch" alignment="CENTER_LEFT" prefHeight="36.0" spacing="8.0" style="-fx-background-color: #ffffff; -fx-background-radius: 8; -fx-border-color: #d3d3d3; -fx-border-radius: 8;">
-                                            <padding><Insets left="10.0" right="10.0" /></padding>
+                                        <HBox fx:id="hboxSearch" alignment="CENTER_LEFT" prefHeight="38.0" spacing="9.0" style="-fx-background-color: #ffffff; -fx-background-radius: 8; -fx-border-color: #d3d3d3; -fx-border-radius: 8;" styleClass="kasir-search-box">
+                                            <padding><Insets left="12.0" right="12.0" /></padding>
                                             <children>
                                                 <Label fx:id="lblSearchIcon" style="-fx-text-fill: #9a9a9a;" text="🔍"><font><Font size="12.0" /></font></Label>
-                                                <TextField fx:id="txtSearch" promptText="Cari Produk / kode barang..." style="-fx-background-color: transparent; -fx-font-size: 11px;" HBox.hgrow="ALWAYS" />
+                                                <TextField fx:id="txtSearch" promptText="Cari Produk / kode barang..." style="-fx-background-color: transparent; -fx-font-size: 11px;" styleClass="kasir-input" HBox.hgrow="ALWAYS" />
                                             </children>
                                         </HBox>
 
-                                        <VBox fx:id="vboxProductCard" style="-fx-background-color: #ffffff; -fx-background-radius: 10; -fx-border-color: #d7d7d7; -fx-border-radius: 10;" VBox.vgrow="ALWAYS">
+                                        <VBox fx:id="vboxProductCard" style="-fx-background-color: #ffffff; -fx-background-radius: 10; -fx-border-color: #d7d7d7; -fx-border-radius: 10;" styleClass="kasir-card" VBox.vgrow="ALWAYS">
                                             <children>
-                                                <Label fx:id="lblListProduk" style="-fx-font-weight: bold; -fx-text-fill: #111111;" text="List Produk">
+                                                <Label fx:id="lblListProduk" style="-fx-font-weight: bold; -fx-text-fill: #111111;" styleClass="kasir-title" text="List Produk">
                                                     <font><Font size="17.0" /></font>
                                                     <padding><Insets bottom="10.0" left="14.0" right="0.0" top="12.0" /></padding>
                                                 </Label>
-                                                <HBox fx:id="hboxProductHeader" alignment="CENTER_LEFT" prefHeight="34.0" spacing="10.0" style="-fx-background-color: #dcdcdc;">
+                                                <HBox fx:id="hboxProductHeader" alignment="CENTER_LEFT" prefHeight="36.0" spacing="10.0" style="-fx-background-color: #dcdcdc;" styleClass="kasir-table-header">
                                                     <padding><Insets left="20.0" right="20.0" /></padding>
                                                     <children>
-                                                        <Label fx:id="lblHeaderNama" maxWidth="1.7976931348623157E308" prefHeight="17.0" style="-fx-font-weight: bold;" text="Nama Produk" HBox.hgrow="ALWAYS">
+                                                        <Label fx:id="lblHeaderNama" maxWidth="1.7976931348623157E308" prefHeight="17.0" style="-fx-font-weight: bold;" styleClass="kasir-table-label" text="Nama Produk" HBox.hgrow="ALWAYS">
                                                             <font><Font size="11.5" /></font>
                                                         </Label>
-                                                        <Label fx:id="lblHeaderStok" alignment="CENTER" maxWidth="80.0" minWidth="80.0" prefHeight="18.0" prefWidth="80.0" style="-fx-font-weight: bold;" text="Stok">
+                                                        <Label fx:id="lblHeaderStok" alignment="CENTER" maxWidth="80.0" minWidth="80.0" prefHeight="18.0" prefWidth="80.0" style="-fx-font-weight: bold;" styleClass="kasir-table-label" text="Stok">
                                                             <font><Font size="11.5" /></font>
                                                         </Label>
-                                                        <Label fx:id="lblHeaderHarga" alignment="CENTER" maxWidth="120.0" minWidth="120.0" prefHeight="18.0" prefWidth="120.0" style="-fx-font-weight: bold;" text="Harga">
+                                                        <Label fx:id="lblHeaderHarga" alignment="CENTER" maxWidth="120.0" minWidth="120.0" prefHeight="18.0" prefWidth="120.0" style="-fx-font-weight: bold;" styleClass="kasir-table-label" text="Harga">
                                                             <font><Font size="11.5" /></font>
                                                         </Label>
                                                         <Region maxWidth="105.0" minWidth="105.0" prefWidth="105.0" />
@@ -61,44 +61,44 @@
                                     </children>
                                 </VBox>
 
-                                <VBox fx:id="vboxCart" minWidth="410.0" prefWidth="410.0" style="-fx-background-color: #ffffff; -fx-background-radius: 10; -fx-border-color: #d7d7d7; -fx-border-radius: 10;">
+                                <VBox fx:id="vboxCart" minWidth="410.0" prefWidth="420.0" style="-fx-background-color: #ffffff; -fx-background-radius: 10; -fx-border-color: #d7d7d7; -fx-border-radius: 10;" styleClass="kasir-card">
                                     <children>
-                                        <Label fx:id="lblKeranjangBelanja" style="-fx-font-weight: bold; -fx-text-fill: #111111;" text="Keranjang Belanja">
+                                        <Label fx:id="lblKeranjangBelanja" style="-fx-font-weight: bold; -fx-text-fill: #111111;" styleClass="kasir-title" text="Keranjang Belanja">
                                             <font><Font size="16.0" /></font>
                                             <padding><Insets bottom="10.0" left="12.0" top="15.0" /></padding>
                                         </Label>
-                                        <HBox fx:id="hboxCartHeader" alignment="CENTER_LEFT" minHeight="34.0" spacing="10.0" style="-fx-background-color: #dcdcdc;">
+                                        <HBox fx:id="hboxCartHeader" alignment="CENTER_LEFT" minHeight="36.0" spacing="10.0" style="-fx-background-color: #dcdcdc;" styleClass="kasir-table-header">
                                             <padding><Insets bottom="8.0" left="12.0" right="12.0" top="8.0" /></padding>
                                             <children>
-                                                <Label fx:id="lblCartHeaderItem" maxWidth="1.7976931348623157E308" minWidth="80.0" prefHeight="16.0" style="-fx-font-weight: bold;" text="Item" HBox.hgrow="ALWAYS"><font><Font size="11.0" /></font></Label>
-                                                <Label fx:id="lblCartHeaderQty" alignment="CENTER" maxWidth="70.0" minWidth="70.0" prefHeight="16.0" prefWidth="70.0" style="-fx-font-weight: bold;" text="Qty"><font><Font size="11.0" /></font></Label>
-                                                <Label fx:id="lblCartHeaderHarga" alignment="CENTER" maxWidth="100.0" minWidth="100.0" prefHeight="16.0" prefWidth="100.0" style="-fx-font-weight: bold;" text="Harga"><font><Font size="11.0" /></font></Label>
-                                                <Label fx:id="lblCartHeaderSubtotal" alignment="CENTER_RIGHT" maxWidth="90.0" minWidth="90.0" prefHeight="16.0" prefWidth="90.0" style="-fx-font-weight: bold;" text="Subtotal"><font><Font size="11.0" /></font></Label>
+                                                <Label fx:id="lblCartHeaderItem" maxWidth="1.7976931348623157E308" minWidth="80.0" prefHeight="16.0" style="-fx-font-weight: bold;" styleClass="kasir-table-label" text="Item" HBox.hgrow="ALWAYS"><font><Font size="11.0" /></font></Label>
+                                                <Label fx:id="lblCartHeaderQty" alignment="CENTER" maxWidth="70.0" minWidth="70.0" prefHeight="16.0" prefWidth="70.0" style="-fx-font-weight: bold;" styleClass="kasir-table-label" text="Qty"><font><Font size="11.0" /></font></Label>
+                                                <Label fx:id="lblCartHeaderHarga" alignment="CENTER" maxWidth="100.0" minWidth="100.0" prefHeight="16.0" prefWidth="100.0" style="-fx-font-weight: bold;" styleClass="kasir-table-label" text="Harga"><font><Font size="11.0" /></font></Label>
+                                                <Label fx:id="lblCartHeaderSubtotal" alignment="CENTER_RIGHT" maxWidth="90.0" minWidth="90.0" prefHeight="16.0" prefWidth="90.0" style="-fx-font-weight: bold;" styleClass="kasir-table-label" text="Subtotal"><font><Font size="11.0" /></font></Label>
                                             </children>
                                         </HBox>
-                                        <ScrollPane fx:id="scrollCart" fitToWidth="true" hbarPolicy="NEVER" prefHeight="339.0" prefWidth="351.0" style="-fx-background: white; -fx-background-color: white;" VBox.vgrow="ALWAYS">
-                                            <content><VBox fx:id="vboxCartList" style="-fx-background-color: #ffffff;" /></content>
+                                        <ScrollPane fx:id="scrollCart" fitToWidth="true" hbarPolicy="NEVER" prefHeight="339.0" prefWidth="351.0" style="-fx-background: white; -fx-background-color: white;" styleClass="cart-scroll-pane" VBox.vgrow="ALWAYS">
+                                            <content><VBox fx:id="vboxCartList" style="-fx-background-color: #ffffff;" styleClass="cart-list-content" /></content>
                                         </ScrollPane>
                                         <Separator fx:id="sepCart" />
-                                        <VBox fx:id="vboxSummary" spacing="12.0">
+                                        <VBox fx:id="vboxSummary" spacing="13.0" styleClass="kasir-summary">
                                             <padding><Insets bottom="12.0" left="12.0" right="12.0" top="12.0" /></padding>
                                             <children>
                                                 <HBox alignment="CENTER_LEFT">
                                                     <children>
-                                                        <Label fx:id="lblTotalBelanjaText" style="-fx-font-weight: bold;" text="Total Belanja:"><font><Font size="11.8" /></font></Label>
+                                                        <Label fx:id="lblTotalBelanjaText" style="-fx-font-weight: bold;" styleClass="kasir-label" text="Total Belanja:"><font><Font size="11.8" /></font></Label>
                                                         <Region HBox.hgrow="ALWAYS" />
-                                                        <Label fx:id="lblTotalBelanja" style="-fx-font-weight: bold;" text="Rp 0"><font><Font size="11.8" /></font></Label>
+                                                        <Label fx:id="lblTotalBelanja" style="-fx-font-weight: bold;" styleClass="kasir-total-value" text="Rp 0"><font><Font size="11.8" /></font></Label>
                                                     </children>
                                                 </HBox>
-                                                <TextField fx:id="txtBayar" prefHeight="32.0" promptText="Masukkan Nominal Bayar" style="-fx-background-radius: 8; -fx-font-size: 10.5px;" />
+                                                <TextField fx:id="txtBayar" prefHeight="34.0" promptText="Masukkan Nominal Bayar" style="-fx-background-radius: 8; -fx-font-size: 10.5px;" styleClass="kasir-payment-input" />
                                                 <HBox alignment="CENTER_LEFT">
                                                     <children>
-                                                        <Label fx:id="lblKembalianText" style="-fx-font-weight: bold;" text="Kembalian:"><font><Font size="11.8" /></font></Label>
+                                                        <Label fx:id="lblKembalianText" style="-fx-font-weight: bold;" styleClass="kasir-label" text="Kembalian:"><font><Font size="11.8" /></font></Label>
                                                         <Region HBox.hgrow="ALWAYS" />
-                                                        <Label fx:id="lblKembalian" style="-fx-font-weight: bold; -fx-text-fill: red;" text="Rp 0"><font><Font size="11.8" /></font></Label>
+                                                        <Label fx:id="lblKembalian" style="-fx-font-weight: bold; -fx-text-fill: red;" styleClass="kasir-change-value" text="Rp 0"><font><Font size="11.8" /></font></Label>
                                                     </children>
                                                 </HBox>
-                                                <Button fx:id="btnSimpanCetak" mnemonicParsing="false" prefHeight="40.0" prefWidth="1.7976931348623157E308" style="-fx-background-color: #379856; -fx-background-radius: 8; -fx-text-fill: white; -fx-font-weight: bold;" text="Simpan &amp; Cetak" />
+                                                <Button fx:id="btnSimpanCetak" mnemonicParsing="false" prefHeight="42.0" prefWidth="1.7976931348623157E308" style="-fx-background-color: #379856; -fx-background-radius: 8; -fx-text-fill: white; -fx-font-weight: bold;" styleClass="kasir-primary-button" text="Simpan &amp; Cetak" />
                                             </children>
                                         </VBox>
                                     </children>

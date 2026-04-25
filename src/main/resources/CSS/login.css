@@ -1,0 +1,178 @@
+.login-root {
+    -fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #F4F7FB 0%, #EAF1F8 52%, #F8FAFC 100%);
+    -fx-font-family: "Segoe UI", "Inter", sans-serif;
+}
+
+.login-root.dark {
+    -fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #0F1115 0%, #171C24 52%, #101214 100%);
+}
+
+.login-card {
+    -fx-background-color: #E3ECF7;
+    -fx-background-radius: 18;
+    -fx-border-color: rgba(255, 255, 255, 0.70);
+    -fx-border-radius: 18;
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(15, 23, 42, 0.14), 26, 0, 0, 12);
+}
+
+.login-root.dark .login-card {
+    -fx-background-color: #1E1E1E;
+    -fx-border-color: #313947;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.35), 28, 0, 0, 14);
+}
+
+.login-form {
+    -fx-spacing: 16;
+}
+
+.login-logo {
+    -fx-effect: dropshadow(gaussian, rgba(59, 130, 246, 0.18), 14, 0, 0, 5);
+}
+
+.login-title {
+    -fx-text-fill: #0F172A;
+    -fx-font-size: 26px;
+    -fx-font-weight: bold;
+}
+
+.login-subtitle {
+    -fx-text-fill: #60758E;
+    -fx-font-size: 14px;
+}
+
+.login-root.dark .login-title {
+    -fx-text-fill: #F8FAFC;
+}
+
+.login-root.dark .login-subtitle {
+    -fx-text-fill: #CBD5E1;
+}
+
+.login-field-label {
+    -fx-text-fill: #111827;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+.login-root.dark .login-field-label {
+    -fx-text-fill: #F8FAFC;
+}
+
+.login-input-box {
+    -fx-background-color: #F9FAFB;
+    -fx-background-radius: 10;
+    -fx-border-color: #D1D9E6;
+    -fx-border-radius: 10;
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(15, 23, 42, 0.04), 7, 0, 0, 2);
+}
+
+.login-input-box:hover {
+    -fx-border-color: #B8C7DA;
+}
+
+.login-input-box.focused {
+    -fx-border-color: #3B82F6;
+    -fx-effect: dropshadow(gaussian, rgba(59, 130, 246, 0.24), 12, 0, 0, 3);
+}
+
+.login-root.dark .login-input-box {
+    -fx-background-color: #2C2C2C;
+    -fx-border-color: #555555;
+    -fx-effect: none;
+}
+
+.login-root.dark .login-input-box:hover {
+    -fx-border-color: #64748B;
+}
+
+.login-root.dark .login-input-box.focused {
+    -fx-border-color: #60A5FA;
+    -fx-effect: dropshadow(gaussian, rgba(96, 165, 250, 0.18), 12, 0, 0, 3);
+}
+
+.login-field {
+    -fx-background-color: transparent;
+    -fx-border-width: 0;
+    -fx-padding: 0;
+    -fx-text-fill: #111827;
+    -fx-prompt-text-fill: #8A94A6;
+    -fx-font-size: 14px;
+}
+
+.login-root.dark .login-field {
+    -fx-text-fill: #F8FAFC;
+    -fx-prompt-text-fill: #9CA3AF;
+}
+
+.login-button {
+    -fx-background-color: #3B82F6;
+    -fx-background-radius: 10;
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(59, 130, 246, 0.26), 14, 0, 0, 5);
+}
+
+.login-button:hover {
+    -fx-background-color: #2563EB;
+}
+
+.login-button:pressed {
+    -fx-background-color: #1D4ED8;
+    -fx-translate-y: 1;
+}
+
+.login-button:disabled {
+    -fx-background-color: #93C5FD;
+    -fx-opacity: 0.85;
+}
+
+.login-error {
+    -fx-background-color: #FEF2F2;
+    -fx-background-radius: 10;
+    -fx-border-color: #FECACA;
+    -fx-border-radius: 10;
+    -fx-text-fill: #DC2626;
+    -fx-font-size: 13px;
+    -fx-padding: 8 12 8 12;
+    -fx-alignment: center;
+    -fx-min-height: 34;
+    -fx-pref-width: 350;
+}
+
+.login-root.dark .login-error {
+    -fx-background-color: #3A1F22;
+    -fx-border-color: #7F2C36;
+    -fx-text-fill: #FCA5A5;
+}
+
+.login-theme-toggle {
+    -fx-background-color: rgba(255, 255, 255, 0.68);
+    -fx-background-radius: 999;
+    -fx-border-color: rgba(148, 163, 184, 0.50);
+    -fx-border-radius: 999;
+    -fx-padding: 6 8 6 8;
+    -fx-effect: dropshadow(gaussian, rgba(15, 23, 42, 0.12), 12, 0, 0, 4);
+}
+
+.login-root.dark .login-theme-toggle {
+    -fx-background-color: rgba(30, 30, 30, 0.82);
+    -fx-border-color: #3B4554;
+}
+
+.login-theme-icon {
+    -fx-cursor: hand;
+    -fx-opacity: 0.58;
+}
+
+.login-theme-icon:hover {
+    -fx-opacity: 0.88;
+}
+
+.login-theme-icon.active {
+    -fx-opacity: 1;
+    -fx-effect: dropshadow(gaussian, rgba(59, 130, 246, 0.35), 10, 0, 0, 2);
+}

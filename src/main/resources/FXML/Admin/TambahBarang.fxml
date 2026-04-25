@@ -12,11 +12,11 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox fx:id="paneRoot" prefHeight="650.0" prefWidth="917.0" style="-fx-background-color: #F4F4F4;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.TambahBarangController">
+<VBox fx:id="paneRoot" prefHeight="650.0" prefWidth="917.0" styleClass="admin-page-root" stylesheets="@../../CSS/admin.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.TambahBarangController">
     <children>
-        <HBox fx:id="hboxHeader" alignment="CENTER_LEFT" prefHeight="70.0" style="-fx-background-color: #4A76A8;">
+        <HBox fx:id="hboxHeader" alignment="CENTER_LEFT" prefHeight="70.0" styleClass="admin-header">
             <children>
-                <Label fx:id="lblTitle" text="Tambahkan Barang Baru" textFill="WHITE">
+                <Label fx:id="lblTitle" styleClass="admin-title" text="Tambahkan Barang Baru">
                     <font><Font name="System Bold" size="26.0" /></font>
                     <padding><Insets left="30.0" /></padding>
                 </Label>
@@ -26,7 +26,7 @@
         <VBox alignment="TOP_CENTER" spacing="30.0" VBox.vgrow="ALWAYS">
             <padding><Insets bottom="30.0" left="30.0" right="30.0" top="30.0" /></padding>
             <children>
-                <VBox fx:id="vboxFormCard" spacing="10.0" style="-fx-background-color: white; -fx-background-radius: 15; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 15, 0, 0, 8);" VBox.vgrow="ALWAYS">
+                <VBox fx:id="vboxFormCard" spacing="10.0" styleClass="admin-card" VBox.vgrow="ALWAYS">
                     <children>
                         <GridPane hgap="100.0" vgap="25.0">
                             <columnConstraints>
@@ -41,21 +41,21 @@
                             <children>
                                 <VBox spacing="8.0">
                                     <children>
-                                        <Label fx:id="lblIdBarang" style="-fx-font-family: 'Inter Medium'; -fx-font-size: 14px; -fx-font-weight: bold;" text="ID Barang" />
-                                        <TextField fx:id="txtIdBarang" prefHeight="45.0" promptText="Masukkan ID Barang" style="-fx-background-radius: 8; -fx-border-color: #D1D5DB; -fx-border-radius: 8; -fx-font-size: 13px;" />
+                                        <Label fx:id="lblIdBarang" styleClass="admin-label" text="ID Barang" />
+                                        <TextField fx:id="txtIdBarang" prefHeight="45.0" promptText="Masukkan ID Barang" styleClass="admin-input" />
                                     </children>
                                 </VBox>
                                 <VBox spacing="8.0" GridPane.columnIndex="1">
                                     <children>
-                                        <Label fx:id="lblNamaBarang" style="-fx-font-family: 'Inter Medium'; -fx-font-size: 14px; -fx-font-weight: bold;" text="Nama Barang" />
-                                        <TextField fx:id="txtNamaBarang" prefHeight="45.0" promptText="Masukkan Nama Barang" style="-fx-background-radius: 8; -fx-border-color: #D1D5DB; -fx-border-radius: 8; -fx-font-size: 13px;" />
+                                        <Label fx:id="lblNamaBarang" styleClass="admin-label" text="Nama Barang" />
+                                        <TextField fx:id="txtNamaBarang" prefHeight="45.0" promptText="Masukkan Nama Barang" styleClass="admin-input" />
                                     </children>
                                 </VBox>
 
                                 <VBox spacing="8.0" GridPane.rowIndex="1">
                                     <children>
-                                        <Label fx:id="lblIdKategori" style="-fx-font-family: 'Inter Medium'; -fx-font-size: 14px; -fx-font-weight: bold;" text="ID Kategori" />
-                                        <ComboBox fx:id="cmbKategori" maxWidth="Infinity" prefHeight="45.0" promptText="Pilih Kategori" style="-fx-background-radius: 8; -fx-border-color: #D1D5DB; -fx-border-radius: 8; -fx-font-size: 13px; -fx-background-color: White;" />
+                                        <Label fx:id="lblIdKategori" styleClass="admin-label" text="ID Kategori" />
+                                        <ComboBox fx:id="cmbKategori" maxWidth="Infinity" prefHeight="45.0" promptText="Pilih Kategori" styleClass="admin-combo-box" />
                                     </children>
                                 </VBox>
 
@@ -63,14 +63,14 @@
                                     <children>
                                         <VBox spacing="8.0" HBox.hgrow="ALWAYS">
                                             <children>
-                                                <Label fx:id="lblStok" style="-fx-font-family: 'Inter Medium'; -fx-font-size: 14px; -fx-font-weight: bold;" text="Stok" />
-                                                <TextField fx:id="txtStok" maxWidth="Infinity" prefHeight="45.0" promptText="Stok" style="-fx-background-radius: 8; -fx-border-color: #D1D5DB; -fx-border-radius: 8; -fx-font-size: 13px;" />
+                                                <Label fx:id="lblStok" styleClass="admin-label" text="Stok" />
+                                                <TextField fx:id="txtStok" maxWidth="Infinity" prefHeight="45.0" promptText="Stok" styleClass="admin-input" />
                                             </children>
                                         </VBox>
                                         <VBox alignment="TOP_LEFT" spacing="8.0" HBox.hgrow="ALWAYS">
                                             <children>
-                                                <Label fx:id="lblSatuan" style="-fx-font-family: 'Inter Medium'; -fx-font-size: 14px; -fx-font-weight: bold;" text="Satuan" />
-                                                <ComboBox fx:id="cbSatuan" maxWidth="1.7976931348623157E308" minWidth="100.0" prefHeight="46.0" prefWidth="155.0" promptText="Pcs" style="-fx-background-radius: 8; -fx-border-color: #D1D5DB; -fx-border-radius: 8; -fx-font-size: 13px; -fx-background-color: white;" />
+                                                <Label fx:id="lblSatuan" styleClass="admin-label" text="Satuan" />
+                                                <ComboBox fx:id="cbSatuan" maxWidth="1.7976931348623157E308" minWidth="100.0" prefHeight="46.0" prefWidth="155.0" promptText="Pcs" styleClass="admin-combo-box" />
                                             </children>
                                         </VBox>
                                     </children>
@@ -78,24 +78,24 @@
 
                                 <VBox spacing="8.0" GridPane.rowIndex="2">
                                     <children>
-                                        <Label fx:id="lblHargaBeli" style="-fx-font-family: 'Inter Medium'; -fx-font-size: 14px; -fx-font-weight: bold;" text="Harga Beli" />
-                                        <TextField fx:id="txtHargaBeli" prefHeight="45.0" promptText="Masukkan Harga Beli" style="-fx-background-radius: 8; -fx-border-color: #D1D5DB; -fx-border-radius: 8; -fx-font-size: 13px;" />
+                                        <Label fx:id="lblHargaBeli" styleClass="admin-label" text="Harga Beli" />
+                                        <TextField fx:id="txtHargaBeli" prefHeight="45.0" promptText="Masukkan Harga Beli" styleClass="admin-input" />
                                     </children>
                                 </VBox>
                                 <VBox spacing="8.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
                                     <children>
-                                        <Label fx:id="lblHargaJual" style="-fx-font-family: 'Inter Medium'; -fx-font-size: 14px; -fx-font-weight: bold;" text="Harga Jual" />
-                                        <TextField fx:id="txtHargaJual" prefHeight="45.0" promptText="Masukkan Harga Jual" style="-fx-background-radius: 8; -fx-border-color: #D1D5DB; -fx-border-radius: 8; -fx-font-size: 13px;" />
+                                        <Label fx:id="lblHargaJual" styleClass="admin-label" text="Harga Jual" />
+                                        <TextField fx:id="txtHargaJual" prefHeight="45.0" promptText="Masukkan Harga Jual" styleClass="admin-input" />
                                     </children>
                                 </VBox>
                             </children>
                             <VBox.margin><Insets bottom="30.0" left="40.0" right="40.0" top="30.0" /></VBox.margin>
                         </GridPane>
 
-                        <HBox fx:id="hboxFooter" alignment="CENTER" prefHeight="79.0" prefWidth="850.0" spacing="30.0" style="-fx-background-color: white; -fx-background-radius: 0 0 15 15;">
+                        <HBox fx:id="hboxFooter" alignment="CENTER" prefHeight="79.0" prefWidth="850.0" spacing="30.0" styleClass="admin-form-footer">
                             <children>
-                                <Button fx:id="btnBatal" contentDisplay="RIGHT" onAction="#handleBatal" prefHeight="45.0" prefWidth="140.0" style="-fx-background-color: #E5E7EB; -fx-text-fill: #374151; -fx-background-radius: 8; -fx-font-family: 'Inter Medium'; -fx-font-weight: bold; -fx-cursor: hand;" text="Batal" />
-                                <Button fx:id="btnTambah" contentDisplay="RIGHT" onAction="#handleSimpan" prefHeight="45.0" prefWidth="300.0" style="-fx-background-color: #5CB85C; -fx-text-fill: white; -fx-background-radius: 8; -fx-font-family: 'Inter Medium'; -fx-font-weight: bold; -fx-cursor: hand;" text="+  Tambahkan Barang" />
+                                <Button fx:id="btnBatal" contentDisplay="RIGHT" onAction="#handleBatal" prefHeight="45.0" prefWidth="140.0" styleClass="admin-button-neutral" text="Batal" />
+                                <Button fx:id="btnTambah" contentDisplay="RIGHT" onAction="#handleSimpan" prefHeight="45.0" prefWidth="300.0" styleClass="admin-button-success" text="+  Tambahkan Barang" />
                             </children>
                         </HBox>
                     </children>

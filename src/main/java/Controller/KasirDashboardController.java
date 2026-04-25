@@ -23,6 +23,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -157,73 +158,31 @@ public class KasirDashboardController {
     // --- DARK MODE ---
     public void setDarkMode(boolean enabled) {
         MainController.isDarkMode = enabled;
+        setStyleClass(paneRoot, "dark", enabled);
+        setStyleClass(scrollProduct, "dark", enabled);
+        setStyleClass(scrollCart, "dark", enabled);
 
         // Propagasi ke controller konten yang sedang aktif
         if (currentContentController != null) {
             currentContentController.setDarkMode(enabled);
         }
 
-        String bgMain     = enabled ? "#121212" : "#efefef";
-        String bgSidebar  = enabled ? "#1e1e1e" : "#f8f8f8";
-        String borderColor= enabled ? "#333333" : "#d9d9d9";
-        String bgCard     = enabled ? "#1e1e1e" : "#ffffff";
-        String bgHeader   = enabled ? "#333333" : "#dcdcdc";
-        String textColor  = enabled ? "-fx-text-fill: white;" : "-fx-text-fill: #111111;";
         String labelMuted = enabled ? "-fx-text-fill: #bbbbbb;" : "-fx-text-fill: #9a9a9a;";
 
-        if (paneRoot != null)       paneRoot.setStyle("-fx-background-color: " + bgMain + ";");
-        if (vboxSidebar != null)    vboxSidebar.setStyle("-fx-background-color: " + bgSidebar + "; -fx-border-color: " + borderColor + "; -fx-border-width: 0 1 0 0;");
-        if (vboxMainContent != null) vboxMainContent.setStyle("-fx-background-color: " + bgMain + ";");
-
-        if (lblLogo != null)            lblLogo.setStyle("-fx-font-weight: bold; " + textColor);
-        if (lblTanggal != null)         lblTanggal.setStyle(textColor);
-        if (lblListProduk != null)      lblListProduk.setStyle("-fx-font-weight: bold; " + textColor);
-        if (lblKeranjangBelanja != null) lblKeranjangBelanja.setStyle("-fx-font-weight: bold; " + textColor);
-
-        if (hboxSearch != null)  hboxSearch.setStyle("-fx-background-color: " + bgCard + "; -fx-background-radius: 8; -fx-border-color: #d3d3d3; -fx-border-radius: 8;");
-        if (txtSearch != null)   txtSearch.setStyle("-fx-background-color: transparent; " + textColor + "-fx-font-size: 11px;");
+        clearInlineStyles(paneRoot, vboxSidebar, vboxMainContent);
+        clearInlineStyles(lblLogo, lblTanggal, lblListProduk, lblKeranjangBelanja);
+        clearInlineStyles(hboxSearch, txtSearch);
         if (lblSearchIcon != null) lblSearchIcon.setStyle(labelMuted);
 
-        if (vboxProductCard != null)   vboxProductCard.setStyle("-fx-background-color: " + bgCard + "; -fx-background-radius: 10; -fx-border-color: " + borderColor + "; -fx-border-radius: 10;");
-        if (hboxProductHeader != null) hboxProductHeader.setStyle("-fx-background-color: " + bgHeader + ";");
-        if (lblHeaderNama != null)     lblHeaderNama.setStyle("-fx-font-weight: bold; -fx-cursor: hand; " + textColor);
-        if (lblHeaderStok != null)     lblHeaderStok.setStyle("-fx-font-weight: bold; -fx-cursor: hand; " + textColor);
-        if (lblHeaderHarga != null)    lblHeaderHarga.setStyle("-fx-font-weight: bold; -fx-cursor: hand; " + textColor);
+        clearInlineStyles(vboxProductCard, hboxProductHeader, lblHeaderNama, lblHeaderStok, lblHeaderHarga);
+        clearInlineStyles(scrollProduct, vboxProdukList);
+        clearInlineStyles(vboxCart, hboxCartHeader, lblCartHeaderItem, lblCartHeaderQty, lblCartHeaderHarga, lblCartHeaderSubtotal);
+        clearInlineStyles(scrollCart, vboxCartList);
+        clearInlineStyles(lblTotalBelanjaText, lblTotalBelanja, lblKembalianText, lblKembalian, txtBayar, hboxThemeToggle, btnLogout, btnSimpanCetak);
 
-        if (scrollProduct != null) {
-            scrollProduct.setStyle("-fx-background: " + bgCard + "; -fx-background-color: transparent;");
-            scrollProduct.getStyleClass().remove("dark");
-            if (enabled) {
-                scrollProduct.getStyleClass().add("dark");
-            }
-        }
-        if (vboxProdukList != null) vboxProdukList.setStyle("-fx-background-color: " + bgCard + ";");
-
-        if (vboxCart != null)           vboxCart.setStyle("-fx-background-color: " + bgCard + "; -fx-background-radius: 10; -fx-border-color: " + borderColor + "; -fx-border-radius: 10;");
-        if (hboxCartHeader != null)     hboxCartHeader.setStyle("-fx-background-color: " + bgHeader + ";");
-        if (lblCartHeaderItem != null)  lblCartHeaderItem.setStyle("-fx-font-weight: bold; " + textColor);
-        if (lblCartHeaderQty != null)   lblCartHeaderQty.setStyle("-fx-font-weight: bold; " + textColor);
-        if (lblCartHeaderHarga != null) lblCartHeaderHarga.setStyle("-fx-font-weight: bold; " + textColor);
-        if (lblCartHeaderSubtotal != null) lblCartHeaderSubtotal.setStyle("-fx-font-weight: bold; " + textColor);
-
-        if (scrollCart != null)   scrollCart.setStyle("-fx-background: " + bgCard + "; -fx-background-color: transparent;");
-        if (vboxCartList != null) vboxCartList.setStyle("-fx-background-color: " + bgCard + ";");
-
-        if (lblTotalBelanjaText != null) lblTotalBelanjaText.setStyle("-fx-font-weight: bold; " + textColor);
-        if (lblTotalBelanja != null)     lblTotalBelanja.setStyle("-fx-font-weight: bold; " + textColor);
-        if (lblKembalianText != null)    lblKembalianText.setStyle("-fx-font-weight: bold; " + textColor);
-
-        if (txtBayar != null) txtBayar.setStyle(
-                "-fx-background-color: " + (enabled ? "#333333" : "white") + "; "
-                        + textColor
-                        + "-fx-background-radius: 8; -fx-font-size: 10.5px; -fx-border-color: #d3d3d3; -fx-border-radius: 8;"
-        );
-
-        if (hboxThemeToggle != null) hboxThemeToggle.setStyle("-fx-background-color: " + bgCard + "; -fx-border-color: #cfcfcf; -fx-border-radius: 20; -fx-background-radius: 20;");
         if (btnLightMode != null)    btnLightMode.setStyle("-fx-background-color: " + (enabled ? "transparent" : "#efefef") + "; -fx-background-radius: 18; -fx-cursor: hand;");
         if (btnDarkMode != null)     btnDarkMode.setStyle("-fx-background-color: " + (enabled ? "#444444" : "transparent") + "; -fx-background-radius: 18; -fx-cursor: hand;");
         if (btnTransaksi != null)    updateTransaksiButtonStyle(enabled, btnTransaksi.isHover());
-        if (btnLogout != null)       btnLogout.setStyle("-fx-background-color: transparent; " + textColor + "-fx-font-size: 12px; -fx-padding: 0;");
 
         try {
             if (imgLogo != null)      imgLogo.setImage(new Image(getClass().getResourceAsStream(enabled ? "/Images/LOGO2.png" : "/Images/LOGO.png")));
@@ -234,6 +193,27 @@ public class KasirDashboardController {
 
         displayProducts(allBarang, enabled);
         updateCartUI();
+    }
+
+    private void setStyleClass(Node node, String styleClass, boolean enabled) {
+        if (node == null || styleClass == null) return;
+
+        if (enabled) {
+            if (!node.getStyleClass().contains(styleClass)) {
+                node.getStyleClass().add(styleClass);
+            }
+        } else {
+            node.getStyleClass().remove(styleClass);
+        }
+    }
+
+    private void clearInlineStyles(Node... nodes) {
+        if (nodes == null) return;
+        for (Node node : nodes) {
+            if (node != null) {
+                node.setStyle("");
+            }
+        }
     }
 
     private void animateThemeTransition(boolean enabled) {
@@ -461,40 +441,39 @@ public class KasirDashboardController {
     // --- DESAIN BARIS PRODUK ---
     private HBox createProductRow(Barang barang, int displayStok, String textColor) {
         HBox row = new HBox(10);
+        row.getStyleClass().add("kasir-product-row");
         row.setAlignment(Pos.CENTER_LEFT);
         row.setPrefHeight(55);
         row.setPadding(new Insets(5, 20, 5, 20));
 
         Label name = new Label(barang.getNamaBarang());
+        name.getStyleClass().add("kasir-product-name");
         name.setMaxWidth(Double.MAX_VALUE);
         HBox.setHgrow(name, Priority.ALWAYS);
-        name.setStyle(textColor + "-fx-font-size: 11.5px; -fx-font-weight: bold;");
 
         // Tampilkan stok yang sudah dikurangi qty keranjang
         Label stok = new Label(String.valueOf(displayStok));
+        stok.getStyleClass().add("kasir-product-stock");
+        setStyleClass(stok, "kasir-stock-empty", displayStok <= 0);
         stok.setMinWidth(80);
         stok.setPrefWidth(80);
         stok.setMaxWidth(80);
         stok.setAlignment(Pos.CENTER);
-        // Warna merah jika stok habis
-        stok.setStyle((displayStok <= 0 ? "-fx-text-fill: #e74c3c;" : textColor) + "-fx-font-size: 11.5px;");
 
         Label harga = new Label("Rp " + nfIndo.format(barang.getHargaJual()));
+        harga.getStyleClass().add("kasir-product-price");
         harga.setMinWidth(120);
         harga.setPrefWidth(120);
         harga.setMaxWidth(120);
         harga.setAlignment(Pos.CENTER);
-        harga.setStyle(textColor + "-fx-font-size: 11.5px; -fx-font-weight: bold;");
 
         Button btnAdd = new Button(displayStok <= 0 ? "Habis" : "+ Tambah");
+        btnAdd.getStyleClass().add("kasir-add-button");
         btnAdd.setMinWidth(90);
         btnAdd.setPrefWidth(90);
         btnAdd.setMaxWidth(90);
         // Disable tombol jika stok sudah habis
         btnAdd.setDisable(displayStok <= 0);
-        btnAdd.setStyle(displayStok <= 0
-                ? "-fx-background-color: #cccccc; -fx-text-fill: #888888; -fx-background-radius: 5; -fx-font-size: 10.5px; -fx-font-weight: bold;"
-                : "-fx-background-color: #2ecc71; -fx-text-fill: white; -fx-background-radius: 5; -fx-font-size: 10.5px; -fx-font-weight: bold; -fx-cursor: hand;");
         btnAdd.setOnAction(e -> addToCart(barang));
 
         row.getChildren().addAll(name, stok, harga, btnAdd);
@@ -569,51 +548,43 @@ public class KasirDashboardController {
 
     // --- DESAIN BARIS KERANJANG ---
     private HBox createCartRow(Detail_Transaksi item, Barang barang, String textColor) {
-        boolean isDark = MainController.isDarkMode;
         HBox row = new HBox(5);
+        row.getStyleClass().add("kasir-cart-row");
         row.setAlignment(Pos.CENTER_LEFT);
         row.setPadding(new Insets(8, 10, 8, 10));
         row.setMinHeight(50);
 
         // Nama Barang
         Label name = new Label(barang.getNamaBarang());
+        name.getStyleClass().add("kasir-cart-name");
         name.setMinWidth(40);
         name.setMaxWidth(Double.MAX_VALUE);
         HBox.setHgrow(name, Priority.ALWAYS);
         name.setWrapText(true);
-        name.setStyle(textColor + "-fx-font-size: 11px; -fx-line-spacing: -1px;");
 
         // Kontrol Qty (tombol - angka +)
         HBox qtyBox = new HBox(0);
+        qtyBox.getStyleClass().add("kasir-qty-box");
         qtyBox.setAlignment(Pos.CENTER);
         qtyBox.setMinWidth(55);
         qtyBox.setMaxWidth(55);
         qtyBox.setPrefWidth(55);
         qtyBox.setPrefHeight(22);
-        qtyBox.setStyle(
-                "-fx-border-color: " + (isDark ? "#444444" : "#D1D5DB") + ";"
-                        + "-fx-border-radius: 4;"
-                        + "-fx-background-color: " + (isDark ? "#333333" : "white") + ";"
-                        + "-fx-background-radius: 4;"
-        );
-
-        String btnTextColor = isDark ? "-fx-text-fill: white;" : "-fx-text-fill: black;";
-        String commonStyle  = btnTextColor + "-fx-font-size: 10px; -fx-padding: 0;";
 
         Button btnMinus = new Button("-");
+        btnMinus.getStyleClass().add("kasir-qty-button");
         btnMinus.setMinWidth(17);
         btnMinus.setPrefHeight(22);
-        btnMinus.setStyle("-fx-background-color: transparent; -fx-border-color: " + (isDark ? "#444444" : "#D1D5DB") + "; -fx-border-width: 0 1 0 0; " + commonStyle + "-fx-cursor: hand;");
 
         Label lblQty = new Label(String.valueOf(item.getJumlah()));
+        lblQty.getStyleClass().add("kasir-qty-label");
         lblQty.setMinWidth(20);
         lblQty.setAlignment(Pos.CENTER);
-        lblQty.setStyle(commonStyle + "-fx-font-weight: bold;");
 
         Button btnPlus = new Button("+");
+        btnPlus.getStyleClass().add("kasir-qty-button");
         btnPlus.setMinWidth(17);
         btnPlus.setPrefHeight(22);
-        btnPlus.setStyle("-fx-background-color: transparent; -fx-border-color: " + (isDark ? "#444444" : "#D1D5DB") + "; -fx-border-width: 0 0 0 1; " + commonStyle + "-fx-cursor: hand;");
 
         btnMinus.setOnAction(e -> handleMinus(item, barang));
         btnPlus.setOnAction(e -> handlePlus(item, barang));
@@ -622,18 +593,18 @@ public class KasirDashboardController {
 
         // Harga satuan
         Label harga = new Label("Rp " + nfIndo.format(item.getHargaSatuan()));
+        harga.getStyleClass().add("kasir-cart-price");
         harga.setMinWidth(80);
         harga.setPrefWidth(80);
         harga.setMaxWidth(80);
         harga.setAlignment(Pos.CENTER);
-        harga.setStyle(textColor + "-fx-font-size: 10px;");
 
         Label sub = new Label("Rp " + nfIndo.format(item.getSubtotal()));
+        sub.getStyleClass().add("kasir-cart-subtotal");
         sub.setMinWidth(90);
         sub.setPrefWidth(90);
         sub.setMaxWidth(Double.MAX_VALUE);
         sub.setAlignment(Pos.CENTER_RIGHT);
-        sub.setStyle(textColor + "-fx-font-weight: bold; -fx-font-size: 10.5px;");
 
         row.getChildren().addAll(name, qtyBox, harga, sub);
         return row;
@@ -729,12 +700,16 @@ public class KasirDashboardController {
             double bayar  = cleanVal.isEmpty() ? 0 : Double.parseDouble(cleanVal);
             double kembali = bayar - totalBelanja;
             lblKembalian.setText("Rp " + nfIndo.format(kembali));
-            lblKembalian.setStyle(kembali >= 0
-                    ? "-fx-text-fill: #2ecc71; -fx-font-weight: bold;"
-                    : "-fx-text-fill: #e74c3c; -fx-font-weight: bold;");
+            applyChangeState(lblKembalian, kembali);
         } catch (Exception e) {
             lblKembalian.setText("Rp 0");
+            applyChangeState(lblKembalian, 0);
         }
+    }
+
+    private void applyChangeState(Label label, double value) {
+        setStyleClass(label, "kasir-change-positive", value >= 0);
+        setStyleClass(label, "kasir-change-negative", value < 0);
     }
 
     // --- CHECKOUT & SIMPAN TRANSAKSI ---
@@ -758,6 +733,7 @@ public class KasirDashboardController {
 
             PopUpSimpanCetakController controller = loader.getController();
             controller.setData(totalBelanja, nominalBayar);
+            controller.setDarkMode(MainController.isDarkMode);
 
             Stage popupStage = new Stage();
             popupStage.initModality(Modality.APPLICATION_MODAL);
@@ -811,7 +787,7 @@ public class KasirDashboardController {
             totalBelanja = 0;
             if (lblTotalBelanja != null) lblTotalBelanja.setText("Rp 0");
             if (lblKembalian != null)    lblKembalian.setText("Rp 0");
-            if (lblKembalian != null)    lblKembalian.setStyle("-fx-text-fill: black; -fx-font-weight: bold;");
+            if (lblKembalian != null)    applyChangeState(lblKembalian, 0);
 
             loadProducts(MainController.isDarkMode);
             updateCartUI();
@@ -826,6 +802,7 @@ public class KasirDashboardController {
     // --- PENCARIAN PRODUK ---
     private void setupSearch(boolean isDarkMode) {
         if (txtSearch == null) return;
+        txtSearch.focusedProperty().addListener((obs, wasFocused, isFocused) -> setStyleClass(hboxSearch, "focused", isFocused));
         txtSearch.textProperty().addListener((obs, old, newVal) -> {
             filterProducts(newVal, isDarkMode);
         });

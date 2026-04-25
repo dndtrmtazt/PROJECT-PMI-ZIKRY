@@ -7,6 +7,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -43,6 +44,8 @@ public class UserController {
         String textColor = enabled ? "white" : "#2C3E50";
         String borderColor = enabled ? "#333333" : "#E0E0E0";
 
+        setStyleClass(vboxMainContent, "dark", enabled);
+        setStyleClass(scrollUser, "dark", enabled);
         if (vboxMainContent != null) vboxMainContent.setStyle("-fx-background-color: " + bgMain + ";");
         if (lblTitle != null) {
             lblTitle.getParent().setStyle("-fx-background-color: #4A76A8;");
@@ -66,6 +69,17 @@ public class UserController {
         if (lblSubTitle != null) lblSubTitle.setStyle("-fx-text-fill: " + textColor + "; -fx-font-weight: bold;");
 
         muatDataUser();
+    }
+
+    private void setStyleClass(Node node, String styleClass, boolean enabled) {
+        if (node == null) return;
+        if (enabled) {
+            if (!node.getStyleClass().contains(styleClass)) {
+                node.getStyleClass().add(styleClass);
+            }
+        } else {
+            node.getStyleClass().remove(styleClass);
+        }
     }
 
     private void muatDataUser() {

@@ -105,6 +105,8 @@ public class FormKategoriController {
         String borderColor = enabled ? "#3A3A3A" : "#DCDCDC";
         String inputBg = enabled ? "#2C2C2C" : "white";
 
+        setStyleClass(rootPane, "dark", enabled);
+
         if (rootPane != null) {
             rootPane.setStyle("-fx-background-color: " + bgMain + "; -fx-background-radius: 12;");
             rootPane.getChildren().forEach(node -> {
@@ -139,6 +141,17 @@ public class FormKategoriController {
 
         if (lblHeader != null) {
             lblHeader.setStyle("-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: " + textColor + ";");
+        }
+    }
+
+    private void setStyleClass(Node node, String styleClass, boolean enabled) {
+        if (node == null) return;
+        if (enabled) {
+            if (!node.getStyleClass().contains(styleClass)) {
+                node.getStyleClass().add(styleClass);
+            }
+        } else {
+            node.getStyleClass().remove(styleClass);
         }
     }
 }

@@ -6,11 +6,11 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<VBox fx:id="vboxMainContent" prefHeight="600.0" prefWidth="817.0" style="-fx-background-color: #F4F4F4;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.PengaturanController">
+<VBox fx:id="vboxMainContent" prefHeight="600.0" prefWidth="817.0" styleClass="admin-page-root" stylesheets="@../../CSS/admin.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.PengaturanController">
     <children>
-        <HBox fx:id="hboxHeader" alignment="CENTER_LEFT" minHeight="60.0" prefHeight="60.0" style="-fx-background-color: #4A76A8;">
+        <HBox fx:id="hboxHeader" alignment="CENTER_LEFT" minHeight="60.0" prefHeight="60.0" styleClass="admin-header">
             <children>
-                <Label fx:id="lblTitle" text="Pengaturan Toko" textFill="WHITE">
+                <Label fx:id="lblTitle" styleClass="admin-title" text="Pengaturan Toko">
                     <font><Font name="System Bold" size="24.0" /></font>
                     <padding><Insets left="20.0" /></padding>
                 </Label>
@@ -20,50 +20,50 @@
         <VBox alignment="TOP_CENTER" spacing="20.0" VBox.vgrow="ALWAYS">
             <padding><Insets bottom="40.0" left="40.0" right="40.0" top="40.0" /></padding>
             <children>
-                <VBox fx:id="vboxCard" maxWidth="1.7976931348623157E308" spacing="30.0" style="-fx-background-color: white; -fx-background-radius: 15; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 15, 0, 0, 5);" VBox.vgrow="NEVER">
+                <VBox fx:id="vboxCard" maxWidth="1.7976931348623157E308" spacing="30.0" styleClass="admin-card" VBox.vgrow="NEVER">
                     <padding><Insets bottom="30.0" left="40.0" right="40.0" top="30.0" /></padding>
                     <children>
-                        <Label fx:id="lblSubTitle" style="-fx-font-family: 'Inter Medium'; -fx-font-size: 20;" text="Pengaturan Informasi Toko" />
+                        <Label fx:id="lblSubTitle" styleClass="admin-section-title" text="Pengaturan Informasi Toko" />
 
                         <VBox fx:id="VBP" spacing="20.0">
                             <children>
                                 <HBox alignment="CENTER_LEFT" spacing="20.0">
                                     <children>
-                                        <VBox alignment="CENTER" minHeight="40.0" minWidth="40.0" prefHeight="40.0" prefWidth="40.0" style="-fx-background-color: #4A76A8; -fx-background-radius: 8;">
+                                        <VBox alignment="CENTER" minHeight="40.0" minWidth="40.0" prefHeight="40.0" prefWidth="40.0" styleClass="admin-setting-icon">
                                             <children><ImageView fitHeight="30.0" fitWidth="30.0"><image><Image url="@../../Images/ICON29.png" /></image></ImageView></children>
                                         </VBox>
-                                        <Label minWidth="120.0" text="Nama Toko" />
-                                        <TextField fx:id="txtNamaToko" editable="false" prefHeight="35.0" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-font-weight: bold;" text="Toko Zikry" HBox.hgrow="ALWAYS" />
+                                        <Label minWidth="120.0" styleClass="admin-label" text="Nama Toko" />
+                                        <TextField fx:id="txtNamaToko" editable="false" prefHeight="35.0" styleClass="admin-readonly-field" text="Toko Zikry" HBox.hgrow="ALWAYS" />
                                     </children>
                                 </HBox>
 
                                 <HBox alignment="CENTER_LEFT" spacing="20.0">
                                     <children>
-                                        <VBox alignment="CENTER" minHeight="40.0" minWidth="40.0" prefHeight="40.0" prefWidth="40.0" style="-fx-background-color: #4A76A8; -fx-background-radius: 8;">
+                                        <VBox alignment="CENTER" minHeight="40.0" minWidth="40.0" prefHeight="40.0" prefWidth="40.0" styleClass="admin-setting-icon">
                                             <children><ImageView fitHeight="30.0" fitWidth="30.0"><image><Image url="@../../Images/ICON30.png" /></image></ImageView></children>
                                         </VBox>
-                                        <Label minWidth="120.0" text="Nomor Telepon" />
-                                        <TextField fx:id="txtTelp" editable="false" prefHeight="35.0" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-font-weight: bold;" text="+62 812-3456-7890" HBox.hgrow="ALWAYS" />
+                                        <Label minWidth="120.0" styleClass="admin-label" text="Nomor Telepon" />
+                                        <TextField fx:id="txtTelp" editable="false" prefHeight="35.0" styleClass="admin-readonly-field" text="+62 812-3456-7890" HBox.hgrow="ALWAYS" />
                                     </children>
                                 </HBox>
 
                                 <HBox alignment="CENTER_LEFT" spacing="20.0">
                                     <children>
-                                        <VBox alignment="CENTER" minHeight="40.0" minWidth="40.0" prefHeight="40.0" prefWidth="40.0" style="-fx-background-color: #4A76A8; -fx-background-radius: 8;">
+                                        <VBox alignment="CENTER" minHeight="40.0" minWidth="40.0" prefHeight="40.0" prefWidth="40.0" styleClass="admin-setting-icon">
                                             <children><ImageView fitHeight="30.0" fitWidth="30.0"><image><Image url="@../../Images/ICON31.png" /></image></ImageView></children>
                                         </VBox>
-                                        <Label minWidth="120.0" text="Alamat" />
-                                        <TextField fx:id="txtAlamat" editable="false" prefHeight="35.0" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-font-weight: bold;" text="Jl. Mawar No. 123, Jakarta" HBox.hgrow="ALWAYS" />
+                                        <Label minWidth="120.0" styleClass="admin-label" text="Alamat" />
+                                        <TextField fx:id="txtAlamat" editable="false" prefHeight="35.0" styleClass="admin-readonly-field" text="Jl. Mawar No. 123, Jakarta" HBox.hgrow="ALWAYS" />
                                     </children>
                                 </HBox>
 
                                 <HBox alignment="CENTER_LEFT" spacing="20.0">
                                     <children>
-                                        <VBox alignment="CENTER" minHeight="40.0" minWidth="40.0" prefHeight="40.0" prefWidth="40.0" style="-fx-background-color: #4A76A8; -fx-background-radius: 8;">
+                                        <VBox alignment="CENTER" minHeight="40.0" minWidth="40.0" prefHeight="40.0" prefWidth="40.0" styleClass="admin-setting-icon">
                                             <children><ImageView fitHeight="25.0" fitWidth="25.0"><image><Image url="@../../Images/ICON32.png" /></image></ImageView></children>
                                         </VBox>
-                                        <Label minWidth="120.0" text="Email" />
-                                        <TextField fx:id="txtEmail" editable="false" prefHeight="35.0" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-font-weight: bold;" text="tokozikry123@gmail.com" HBox.hgrow="ALWAYS" />
+                                        <Label minWidth="120.0" styleClass="admin-label" text="Email" />
+                                        <TextField fx:id="txtEmail" editable="false" prefHeight="35.0" styleClass="admin-readonly-field" text="tokozikry123@gmail.com" HBox.hgrow="ALWAYS" />
                                     </children>
                                 </HBox>
                             </children>
@@ -71,7 +71,7 @@
 
                         <HBox alignment="CENTER_RIGHT">
                             <children>
-                                <Button fx:id="btnEdit" onAction="#handleEdit" prefHeight="35.0" prefWidth="150.0" style="-fx-background-color: #3498DB; -fx-text-fill: white; -fx-background-radius: 8; -fx-font-family: 'Inter Medium'; -fx-cursor: hand;" text="Edit" />
+                                <Button fx:id="btnEdit" onAction="#handleEdit" prefHeight="35.0" prefWidth="150.0" styleClass="admin-button-primary" text="Edit" />
                             </children>
                         </HBox>
                     </children>

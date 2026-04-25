@@ -8,6 +8,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -220,14 +221,17 @@ public class MainController {
     private void applyActiveMenuStyle(HBox wrapper, Region indicator, ImageView iconView, String iconName) {
         wrapper.setMaxWidth(200);
         wrapper.setPrefHeight(42);
-        wrapper.setStyle("-fx-background-color: " + (isDarkMode ? "#2c3e50" : "#E3F2FD") + "; -fx-background-radius: 0 12 12 0;");
+        wrapper.setStyle("");
+        setStyleClass(wrapper, "active", true);
 
         indicator.setPrefWidth(4); indicator.setPrefHeight(24);
-        indicator.setStyle("-fx-background-color: #4072A5; -fx-background-radius: 5;");
+        indicator.setStyle("");
+        setStyleClass(indicator, "active", true);
 
         if (wrapper.getChildren().size() >= 2 && wrapper.getChildren().get(1) instanceof Button) {
             Button btn = (Button) wrapper.getChildren().get(1);
-            btn.setStyle("-fx-background-color: transparent; -fx-text-fill: #4072A5; -fx-font-weight: bold; -fx-font-size: 13px; -fx-padding: 0 0 0 10;");
+            btn.setStyle("");
+            setStyleClass(btn, "active", true);
         }
         
         try {
@@ -252,13 +256,17 @@ public class MainController {
 
         for (int i = 0; i < wrappers.length; i++) {
             if (wrappers[i] != null && wrappers[i].isVisible()) {
-                wrappers[i].setStyle("-fx-background-color: transparent;");
-                if (indicators[i] != null) indicators[i].setStyle("-fx-background-color: transparent;");
+                wrappers[i].setStyle("");
+                setStyleClass(wrappers[i], "active", false);
+                if (indicators[i] != null) {
+                    indicators[i].setStyle("");
+                    setStyleClass(indicators[i], "active", false);
+                }
                 
                 if (wrappers[i].getChildren().size() >= 2 && wrappers[i].getChildren().get(1) instanceof Button) {
                     Button btn = (Button) wrappers[i].getChildren().get(1);
-                    String textColor = isDarkMode ? "#E0E0E0" : "#555555";
-                    btn.setStyle("-fx-background-color: transparent; -fx-text-fill: " + textColor + "; -fx-font-weight: normal; -fx-font-size: 13px; -fx-padding: 0 0 0 10;");
+                    btn.setStyle("");
+                    setStyleClass(btn, "active", false);
                 }
                 
                 if (icons[i] != null) {
@@ -317,11 +325,8 @@ public class MainController {
 
     private void applyDarkMode() {
         isDarkMode = true;
-        if (mainPane != null) mainPane.setStyle("-fx-background-color: #121212;");
-
-        if (sidebarVBox != null) sidebarVBox.setStyle("-fx-background-color: #1e1e1e; -fx-border-color: #333333; -fx-border-width: 0 1 0 0;");
-        if (lblLogo != null) lblLogo.setStyle("-fx-font-weight: bold; -fx-font-size: 18; -fx-text-fill: white;");
-        if (hboxThemeToggle != null) hboxThemeToggle.setStyle("-fx-background-color: #2c2c2c; -fx-border-color: #444444; -fx-background-radius: 20; -fx-border-radius: 20;");
+        setStyleClass(mainPane, "dark", true);
+        clearInlineStyles(mainPane, sidebarVBox, lblLogo, hboxThemeToggle, btnLogout);
         
         try {
             if (imgLogo != null) imgLogo.setImage(new Image(getClass().getResourceAsStream("/Images/LOGO2.png")));
@@ -330,9 +335,8 @@ public class MainController {
             if (imgLogout != null) imgLogout.setImage(new Image(getClass().getResourceAsStream("/Images/ICON33.png")));
         } catch (Exception e) {}
 
-        if (btnDarkMode != null) btnDarkMode.setStyle("-fx-background-color: #444444; -fx-background-radius: 20;");
-        if (btnLightMode != null) btnLightMode.setStyle("-fx-background-color: transparent;");
-        if (btnLogout != null) btnLogout.setStyle("-fx-background-color: transparent; -fx-text-fill: white; -fx-cursor: hand;");
+        setStyleClass(btnDarkMode, "active", true);
+        setStyleClass(btnLightMode, "active", false);
         
         resetAllMenus();
         restoreActiveMenu();
@@ -341,11 +345,8 @@ public class MainController {
 
     private void applyLightMode() {
         isDarkMode = false;
-        if (mainPane != null) mainPane.setStyle("-fx-background-color: #F4F4F4;");
-
-        if (sidebarVBox != null) sidebarVBox.setStyle("-fx-background-color: white; -fx-border-color: #E0E0E0; -fx-border-width: 0 1 0 0;");
-        if (lblLogo != null) lblLogo.setStyle("-fx-font-weight: bold; -fx-font-size: 18; -fx-text-fill: black;");
-        if (hboxThemeToggle != null) hboxThemeToggle.setStyle("-fx-background-color: #F9FAFB; -fx-background-radius: 20; -fx-border-color: #D1D5DB; -fx-border-radius: 20;");
+        setStyleClass(mainPane, "dark", false);
+        clearInlineStyles(mainPane, sidebarVBox, lblLogo, hboxThemeToggle, btnLogout);
         
         try {
             if (imgLogo != null) imgLogo.setImage(new Image(getClass().getResourceAsStream("/Images/LOGO.png")));
@@ -354,9 +355,8 @@ public class MainController {
             if (imgLogout != null) imgLogout.setImage(new Image(getClass().getResourceAsStream("/Images/ICON6.png")));
         } catch (Exception e) {}
 
-        if (btnLightMode != null) btnLightMode.setStyle("-fx-background-color: #efefef; -fx-background-radius: 20;");
-        if (btnDarkMode != null) btnDarkMode.setStyle("-fx-background-color: transparent;");
-        if (btnLogout != null) btnLogout.setStyle("-fx-background-color: transparent; -fx-text-fill: black; -fx-cursor: hand;");
+        setStyleClass(btnLightMode, "active", true);
+        setStyleClass(btnDarkMode, "active", false);
         
         resetAllMenus();
         restoreActiveMenu();
@@ -410,6 +410,27 @@ public class MainController {
     private void setThemeButtonsBlocked(boolean blocked) {
         if (btnLightMode != null) btnLightMode.setMouseTransparent(blocked);
         if (btnDarkMode != null) btnDarkMode.setMouseTransparent(blocked);
+    }
+
+    private void setStyleClass(Node node, String styleClass, boolean enabled) {
+        if (node == null || styleClass == null) return;
+
+        if (enabled) {
+            if (!node.getStyleClass().contains(styleClass)) {
+                node.getStyleClass().add(styleClass);
+            }
+        } else {
+            node.getStyleClass().remove(styleClass);
+        }
+    }
+
+    private void clearInlineStyles(Node... nodes) {
+        if (nodes == null) return;
+        for (Node node : nodes) {
+            if (node != null) {
+                node.setStyle("");
+            }
+        }
     }
 
     private void handleLogout() {

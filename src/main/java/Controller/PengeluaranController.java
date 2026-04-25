@@ -8,6 +8,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -242,6 +243,8 @@ public class PengeluaranController implements Initializable {
                 + "-fx-text-fill: " + textColor + "; "
                 + "-fx-prompt-text-fill: " + promptColor + ";";
 
+        setStyleClass(vboxMainContent, "dark", enabled);
+        setStyleClass(scrollPengeluaran, "dark", enabled);
         if (vboxMainContent != null) vboxMainContent.setStyle("-fx-background-color: " + bgMain + ";");
         if (hboxSearch != null) hboxSearch.setStyle("-fx-background-color: " + bgCard + "; -fx-background-radius: 10; -fx-border-color: " + borderColor + "; -fx-border-radius: 10;");
         if (txtSearchPengeluaran != null) txtSearchPengeluaran.setStyle("-fx-background-radius: 8; -fx-border-radius: 8; -fx-background-color: " + inputBg + "; -fx-border-color: " + borderColor + "; -fx-text-fill: " + textColor + "; -fx-prompt-text-fill: " + promptColor + ";");
@@ -267,5 +270,16 @@ public class PengeluaranController implements Initializable {
 
         // Refresh konten agar warna baris berubah
         muatDataPengeluaran();
+    }
+
+    private void setStyleClass(Node node, String styleClass, boolean enabled) {
+        if (node == null) return;
+        if (enabled) {
+            if (!node.getStyleClass().contains(styleClass)) {
+                node.getStyleClass().add(styleClass);
+            }
+        } else {
+            node.getStyleClass().remove(styleClass);
+        }
     }
 }

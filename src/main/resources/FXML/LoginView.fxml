@@ -6,19 +6,19 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<StackPane fx:id="rootPane" prefHeight="600.0" prefWidth="900.0" style="-fx-background-color: #f4f6f9;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.LoginController">
-   <AnchorPane fx:id="loginContainer" maxHeight="500.0" maxWidth="400.0" prefHeight="500.0" prefWidth="400.0" style="-fx-background-color: #E3ECF7; -fx-background-radius: 15; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 20, 0, 0, 10);">
-      <VBox alignment="CENTER" layoutX="50.0" layoutY="30.0" prefHeight="440.0" prefWidth="300.0" spacing="15.0" AnchorPane.bottomAnchor="30.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="30.0">
-         <ImageView fx:id="logoImageView" fitHeight="120.0" fitWidth="120.0" pickOnBounds="true" preserveRatio="true">
+<StackPane fx:id="rootPane" prefHeight="600.0" prefWidth="900.0" styleClass="login-root" stylesheets="@../CSS/login.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.LoginController">
+   <AnchorPane fx:id="loginContainer" maxHeight="510.0" maxWidth="410.0" prefHeight="510.0" prefWidth="410.0" styleClass="login-card">
+      <VBox alignment="CENTER" layoutX="50.0" layoutY="30.0" prefHeight="450.0" prefWidth="310.0" spacing="16.0" styleClass="login-form" AnchorPane.bottomAnchor="30.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="30.0">
+         <ImageView fx:id="logoImageView" fitHeight="116.0" fitWidth="116.0" pickOnBounds="true" preserveRatio="true" styleClass="login-logo">
             <Image url="@../Images/LOGO.png" />
          </ImageView>
          <VBox alignment="CENTER" spacing="5.0">
-            <Label fx:id="titleLabel" text="Toko Zikry">
+            <Label fx:id="titleLabel" styleClass="login-title" text="Toko Zikry">
                <font>
                   <Font name="System Bold" size="26.0" />
                </font>
             </Label>
-            <Label fx:id="subtitleLabel" text="Selamat datang di aplikasi kasir pintar" textFill="#a1b3c6">
+            <Label fx:id="subtitleLabel" styleClass="login-subtitle" text="Selamat datang di aplikasi kasir pintar">
                <font>
                   <Font size="14.0" />
                </font>
@@ -28,14 +28,14 @@
             </VBox.margin>
          </VBox>
          <VBox spacing="8.0">
-            <Label fx:id="userIdLabel" text="Username">
+            <Label fx:id="userIdLabel" styleClass="login-field-label" text="Username">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>
             </Label>
-            <HBox fx:id="usernameBox" alignment="CENTER_LEFT" prefHeight="45.0" spacing="10.0" style="-fx-background-radius: 8; -fx-border-color: #d1d5db; -fx-border-radius: 8; -fx-background-color: #f9fafb;">
+            <HBox fx:id="usernameBox" alignment="CENTER_LEFT" prefHeight="46.0" spacing="10.0" styleClass="login-input-box">
                <padding>
-                  <Insets left="10.0" right="10.0" />
+                  <Insets left="12.0" right="12.0" />
                </padding>
                <children>
                   <ImageView fx:id="usernameIcon" fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
@@ -43,7 +43,7 @@
                         <Image url="@../Images/ICON1.png" />
                      </image>
                   </ImageView>
-                  <TextField fx:id="usernameField" promptText="Masukkan Username" style="-fx-background-color: transparent; -fx-border-width: 0; -fx-padding: 0;" HBox.hgrow="ALWAYS">
+                  <TextField fx:id="usernameField" promptText="Masukkan Username" styleClass="login-field" HBox.hgrow="ALWAYS">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -52,14 +52,14 @@
             </HBox>
          </VBox>
          <VBox spacing="8.0">
-            <Label fx:id="passwordLabel" text="Password">
+            <Label fx:id="passwordLabel" styleClass="login-field-label" text="Password">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>
             </Label>
-            <HBox fx:id="passwordBox" alignment="CENTER_LEFT" prefHeight="45.0" spacing="10.0" style="-fx-background-radius: 8; -fx-border-color: #d1d5db; -fx-border-radius: 8; -fx-background-color: #f9fafb;">
+            <HBox fx:id="passwordBox" alignment="CENTER_LEFT" prefHeight="46.0" spacing="10.0" styleClass="login-input-box">
                <padding>
-                  <Insets left="10.0" right="10.0" />
+                  <Insets left="12.0" right="12.0" />
                </padding>
                <children>
                   <ImageView fx:id="passwordIcon" fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
@@ -67,7 +67,7 @@
                         <Image url="@../Images/ICON2.png" />
                      </image>
                   </ImageView>
-                  <PasswordField fx:id="passwordField" promptText="Masukkan Password" style="-fx-background-color: transparent; -fx-border-width: 0; -fx-padding: 0;" HBox.hgrow="ALWAYS">
+                  <PasswordField fx:id="passwordField" promptText="Masukkan Password" styleClass="login-field" HBox.hgrow="ALWAYS">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -75,26 +75,26 @@
                </children>
             </HBox>
          </VBox>
-         <Label fx:id="errorLabel" textFill="#ef4444" visible="false">
+         <Label fx:id="errorLabel" alignment="CENTER" opacity="0.0" styleClass="login-error" visible="false" wrapText="true">
             <font>
                <Font size="13.0" />
             </font>
          </Label>
-         <Button fx:id="loginButton" mnemonicParsing="false" onAction="#handleLogin" prefHeight="45.0" prefWidth="350.0" style="-fx-background-color: #3b82f6; -fx-text-fill: white; -fx-background-radius: 8; -fx-font-weight: bold; -fx-font-size: 16px; -fx-cursor: hand;" text="Login">
+         <Button fx:id="loginButton" mnemonicParsing="false" onAction="#handleLogin" prefHeight="46.0" prefWidth="350.0" styleClass="login-button" text="Login">
             <VBox.margin>
-               <Insets top="10.0" />
+               <Insets top="6.0" />
             </VBox.margin>
          </Button>
       </VBox>
    </AnchorPane>
-   <HBox fx:id="themeToggleBox" alignment="CENTER" maxHeight="50.0" maxWidth="100.0" spacing="15.0" StackPane.alignment="TOP_RIGHT">
+   <HBox fx:id="themeToggleBox" alignment="CENTER" maxHeight="52.0" maxWidth="110.0" spacing="14.0" styleClass="login-theme-toggle" StackPane.alignment="TOP_RIGHT">
       <children>
-         <ImageView fx:id="sunIcon" fitHeight="35.0" fitWidth="35.0" onMouseClicked="#handleLightMode" pickOnBounds="true" preserveRatio="true" style="-fx-cursor: hand;">
+         <ImageView fx:id="sunIcon" fitHeight="32.0" fitWidth="32.0" onMouseClicked="#handleLightMode" pickOnBounds="true" preserveRatio="true" styleClass="login-theme-icon">
             <image>
                <Image url="@../Images/ICON3.png" />
             </image>
          </ImageView>
-         <ImageView fx:id="moonIcon" fitHeight="35.0" fitWidth="35.0" onMouseClicked="#handleDarkMode" pickOnBounds="true" preserveRatio="true" style="-fx-cursor: hand;">
+         <ImageView fx:id="moonIcon" fitHeight="32.0" fitWidth="32.0" onMouseClicked="#handleDarkMode" pickOnBounds="true" preserveRatio="true" styleClass="login-theme-icon">
             <image>
                <Image url="@../Images/ICON4.png" />
             </image>
