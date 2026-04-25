@@ -106,6 +106,8 @@ public class TambahUserController {
         String borderColor = enabled ? "#3A3A3A" : "#DCDCDC";
         String inputBg = enabled ? "#2C2C2C" : "white";
 
+        setStyleClass(rootPane, "dark", enabled);
+
         if (rootPane != null) {
             rootPane.setStyle("-fx-background-color: " + bgMain + "; -fx-background-radius: 10;");
             rootPane.getChildren().forEach(node -> {
@@ -145,6 +147,17 @@ public class TambahUserController {
 
         if (isEdit && txtID != null) {
             txtID.setStyle("-fx-background-color: " + inputBg + "; -fx-border-color: " + borderColor + "; -fx-border-radius: 5; -fx-background-radius: 5; -fx-text-fill: " + textColor + "; -fx-prompt-text-fill: " + (enabled ? "#9CA3AF" : "#9AA0A6") + ";");
+        }
+    }
+
+    private void setStyleClass(Node node, String styleClass, boolean enabled) {
+        if (node == null) return;
+        if (enabled) {
+            if (!node.getStyleClass().contains(styleClass)) {
+                node.getStyleClass().add(styleClass);
+            }
+        } else {
+            node.getStyleClass().remove(styleClass);
         }
     }
 }

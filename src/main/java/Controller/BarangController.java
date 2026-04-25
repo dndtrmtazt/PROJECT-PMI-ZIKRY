@@ -82,6 +82,7 @@ public class BarangController {
         String textColor = enabled ? "white" : "#2C3E50";
         String borderColor = enabled ? "#333333" : "#D1D5DB";
 
+        setStyleClass(paneRoot, "dark", enabled);
         if (paneRoot != null) paneRoot.setStyle("-fx-background-color: " + bgMain + ";");
         if (hboxHeader != null) hboxHeader.setStyle("-fx-background-color: #4A76A8;");
         if (lblTitle != null) lblTitle.setStyle("-fx-text-fill: white;");
@@ -97,6 +98,17 @@ public class BarangController {
             if (enabled) {
                 tableBarang.getStyleClass().add("dark");
             }
+        }
+    }
+
+    private void setStyleClass(Node node, String styleClass, boolean enabled) {
+        if (node == null) return;
+        if (enabled) {
+            if (!node.getStyleClass().contains(styleClass)) {
+                node.getStyleClass().add(styleClass);
+            }
+        } else {
+            node.getStyleClass().remove(styleClass);
         }
     }
 

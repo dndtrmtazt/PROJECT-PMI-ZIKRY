@@ -5,6 +5,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
+import javafx.scene.Node;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import DAO.TokoDAO;
@@ -96,6 +97,8 @@ public class PengaturanController {
         String mutedText = enabled ? "#D1D5DB" : "#374151";
         String borderColor = enabled ? "#333333" : "#E5E7EB";
 
+        setStyleClass(vboxMainContent, "dark", enabled);
+
         if (vboxMainContent != null) {
             vboxMainContent.setStyle("-fx-background-color: " + bgMain + ";");
         }
@@ -141,6 +144,17 @@ public class PengaturanController {
         }
 
         setFieldsEditable(isEditMode);
+    }
+
+    private void setStyleClass(Node node, String styleClass, boolean enabled) {
+        if (node == null) return;
+        if (enabled) {
+            if (!node.getStyleClass().contains(styleClass)) {
+                node.getStyleClass().add(styleClass);
+            }
+        } else {
+            node.getStyleClass().remove(styleClass);
+        }
     }
 
     // Helper method agar kode lebih bersih

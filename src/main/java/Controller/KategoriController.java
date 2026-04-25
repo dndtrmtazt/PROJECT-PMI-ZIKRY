@@ -8,6 +8,7 @@ import javafx.fxml.FXMLLoader; // Tambahkan ini
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Parent; // Tambahkan ini
 import javafx.scene.Scene; // Tambahkan ini
 import javafx.scene.control.*;
@@ -28,6 +29,7 @@ public class KategoriController implements Initializable {
     @FXML private HBox vboxHeader, hboxSearch, hboxTableHead;
     @FXML private Label lblTitle, lblDaftarKategori;
     @FXML private TextField txtSearchKategori;
+    @FXML private ScrollPane scrollKategori;
     @FXML private ImageView imgLightMode, imgDarkMode, imgLogout;
 
     private KategoriDAO kategoriDAO = new KategoriDAO();
@@ -161,6 +163,8 @@ public class KategoriController implements Initializable {
         String headerBg = enabled ? "#2C2C2C" : "#F8FAFC";
         String inputBg = enabled ? "#2C2C2C" : "white";
 
+        setStyleClass(paneRoot, "dark", enabled);
+        setStyleClass(scrollKategori, "dark", enabled);
         if (paneRoot != null) paneRoot.setStyle("-fx-background-color: " + bgMain + ";");
         if (vboxHeader != null) vboxHeader.setStyle("-fx-background-color: #4A76A8;");
         if (lblTitle != null) lblTitle.setStyle("-fx-text-fill: white; -fx-font-weight: bold;");
@@ -186,5 +190,16 @@ public class KategoriController implements Initializable {
             });
         }
         loadDataKategori();
+    }
+
+    private void setStyleClass(Node node, String styleClass, boolean enabled) {
+        if (node == null) return;
+        if (enabled) {
+            if (!node.getStyleClass().contains(styleClass)) {
+                node.getStyleClass().add(styleClass);
+            }
+        } else {
+            node.getStyleClass().remove(styleClass);
+        }
     }
 }

@@ -165,6 +165,8 @@ public class FormPengeluaranController implements Initializable {
                 + "-fx-text-fill: " + textColor + "; "
                 + "-fx-prompt-text-fill: " + promptColor + ";";
 
+        setStyleClass(rootPane, "dark", enabled);
+
         if (rootPane != null) {
             rootPane.setStyle("-fx-background-color: " + bgMain + "; -fx-background-radius: 10;");
             rootPane.getChildren().forEach(node -> {
@@ -215,6 +217,17 @@ public class FormPengeluaranController implements Initializable {
             if (dpTanggal.getEditor() != null) {
                 dpTanggal.getEditor().setStyle(dateEditorStyle);
             }
+        }
+    }
+
+    private void setStyleClass(Node node, String styleClass, boolean enabled) {
+        if (node == null) return;
+        if (enabled) {
+            if (!node.getStyleClass().contains(styleClass)) {
+                node.getStyleClass().add(styleClass);
+            }
+        } else {
+            node.getStyleClass().remove(styleClass);
         }
     }
 

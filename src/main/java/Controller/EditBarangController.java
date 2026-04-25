@@ -5,6 +5,7 @@ import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -394,6 +395,7 @@ public class EditBarangController {
         String borderColor = enabled ? "#333333" : "#D1D5DB";
         String promptColor = enabled ? "#B0B0B0" : "#757575";
 
+        setStyleClass(paneRoot, "dark", enabled);
         if (paneRoot != null) paneRoot.setStyle("-fx-background-color: " + bgMain + ";");
         if (hboxHeader != null) hboxHeader.setStyle("-fx-background-color: #4A76A8;");
         if (lblTitle != null) lblTitle.setStyle("-fx-text-fill: white;");
@@ -421,5 +423,16 @@ public class EditBarangController {
 
         if (cmbKategori != null) cmbKategori.setStyle(lockedStyle);
         if (cbSatuan != null) cbSatuan.setStyle(txtStyle);
+    }
+
+    private void setStyleClass(Node node, String styleClass, boolean enabled) {
+        if (node == null) return;
+        if (enabled) {
+            if (!node.getStyleClass().contains(styleClass)) {
+                node.getStyleClass().add(styleClass);
+            }
+        } else {
+            node.getStyleClass().remove(styleClass);
+        }
     }
 }

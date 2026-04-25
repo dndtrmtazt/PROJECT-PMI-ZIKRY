@@ -1,0 +1,539 @@
+.admin-root,
+.admin-page-root {
+    -fx-background-color: #F4F6F8;
+    -fx-font-family: "Segoe UI", "Inter", sans-serif;
+}
+
+.admin-root.dark,
+.admin-page-root.dark {
+    -fx-background-color: #121212;
+}
+
+.admin-sidebar {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #E2E8F0;
+    -fx-border-width: 0 1 0 0;
+    -fx-effect: dropshadow(gaussian, rgba(15, 23, 42, 0.08), 12, 0, 4, 0);
+}
+
+.admin-root.dark .admin-sidebar {
+    -fx-background-color: #1E1E1E;
+    -fx-border-color: #333333;
+    -fx-effect: none;
+}
+
+.admin-logo-text {
+    -fx-text-fill: #0F172A;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+}
+
+.admin-root.dark .admin-logo-text {
+    -fx-text-fill: #F8FAFC;
+}
+
+.admin-menu-wrapper {
+    -fx-background-color: transparent;
+    -fx-background-radius: 0 12 12 0;
+}
+
+.admin-menu-wrapper:hover {
+    -fx-background-color: #F1F6FC;
+}
+
+.admin-root.dark .admin-menu-wrapper:hover {
+    -fx-background-color: #252B33;
+}
+
+.admin-menu-wrapper.active {
+    -fx-background-color: #E3F2FD;
+}
+
+.admin-root.dark .admin-menu-wrapper.active {
+    -fx-background-color: #2C3E50;
+}
+
+.admin-menu-indicator {
+    -fx-background-color: transparent;
+    -fx-background-radius: 10;
+}
+
+.admin-menu-indicator.active {
+    -fx-background-color: #4072A5;
+}
+
+.admin-menu-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #475569;
+    -fx-font-size: 13px;
+    -fx-font-weight: normal;
+    -fx-padding: 0 0 0 10;
+    -fx-cursor: hand;
+}
+
+.admin-menu-wrapper.active .admin-menu-button {
+    -fx-text-fill: #4072A5;
+    -fx-font-weight: bold;
+}
+
+.admin-menu-button.active {
+    -fx-text-fill: #4072A5;
+    -fx-font-weight: bold;
+}
+
+.admin-root.dark .admin-menu-button {
+    -fx-text-fill: #E5E7EB;
+}
+
+.admin-root.dark .admin-menu-wrapper.active .admin-menu-button {
+    -fx-text-fill: #5CA9F5;
+}
+
+.admin-root.dark .admin-menu-button.active {
+    -fx-text-fill: #5CA9F5;
+}
+
+.admin-theme-toggle {
+    -fx-background-color: #F9FAFB;
+    -fx-background-radius: 20;
+    -fx-border-color: #D1D5DB;
+    -fx-border-radius: 20;
+    -fx-border-width: 1;
+}
+
+.admin-root.dark .admin-theme-toggle {
+    -fx-background-color: #2C2C2C;
+    -fx-border-color: #444444;
+}
+
+.admin-theme-button {
+    -fx-background-color: transparent;
+    -fx-background-radius: 18;
+    -fx-cursor: hand;
+}
+
+.admin-theme-button:hover {
+    -fx-background-color: #EAF1F8;
+}
+
+.admin-root.dark .admin-theme-button:hover {
+    -fx-background-color: #3A3A3A;
+}
+
+.admin-theme-button.active {
+    -fx-background-color: #EFEFEF;
+}
+
+.admin-root.dark .admin-theme-button.active {
+    -fx-background-color: #444444;
+}
+
+.admin-logout-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #111827;
+    -fx-font-size: 13px;
+    -fx-padding: 0 0 0 20;
+    -fx-cursor: hand;
+}
+
+.admin-logout-button:hover {
+    -fx-text-fill: #D9534F;
+}
+
+.admin-root.dark .admin-logout-button {
+    -fx-text-fill: #F8FAFC;
+}
+
+.admin-content-area {
+    -fx-background-color: transparent;
+}
+
+.admin-header {
+    -fx-background-color: #4A76A8;
+}
+
+.admin-title {
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+}
+
+.admin-body {
+    -fx-background-color: transparent;
+}
+
+.admin-card,
+.admin-search-card,
+.admin-table-card {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 12;
+    -fx-border-color: #E2E8F0;
+    -fx-border-radius: 12;
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(15, 23, 42, 0.08), 12, 0, 0, 5);
+}
+
+.admin-page-root.dark .admin-card,
+.admin-page-root.dark .admin-search-card,
+.admin-page-root.dark .admin-table-card {
+    -fx-background-color: #1E1E1E;
+    -fx-border-color: #333333;
+    -fx-effect: none;
+}
+
+.admin-section-title,
+.admin-label,
+.admin-table-label {
+    -fx-text-fill: #1F2937;
+}
+
+.admin-section-title {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+}
+
+.admin-form-title {
+    -fx-text-fill: #1F2937;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+}
+
+.admin-page-root.dark .admin-section-title,
+.admin-page-root.dark .admin-label,
+.admin-page-root.dark .admin-table-label,
+.admin-page-root.dark .admin-form-title {
+    -fx-text-fill: #F8FAFC;
+}
+
+.admin-table-head {
+    -fx-background-color: #F8FAFC;
+    -fx-background-radius: 8;
+    -fx-border-color: #E2E8F0;
+    -fx-border-width: 0 0 1 0;
+}
+
+.admin-page-root.dark .admin-table-head {
+    -fx-background-color: #2A2A2A;
+    -fx-border-color: #3A3A3A;
+}
+
+.admin-input,
+.admin-date-picker,
+.admin-combo-box {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 9;
+    -fx-border-color: #D1D5DB;
+    -fx-border-radius: 9;
+    -fx-text-fill: #111827;
+    -fx-prompt-text-fill: #8A94A6;
+}
+
+.admin-input:focused,
+.admin-date-picker:focused,
+.admin-combo-box:focused {
+    -fx-border-color: #4A76A8;
+    -fx-effect: dropshadow(gaussian, rgba(74, 118, 168, 0.18), 10, 0, 0, 2);
+}
+
+.admin-page-root.dark .admin-input,
+.admin-page-root.dark .admin-date-picker,
+.admin-page-root.dark .admin-combo-box {
+    -fx-background-color: #2C2C2C;
+    -fx-border-color: #444444;
+    -fx-text-fill: #F8FAFC;
+    -fx-prompt-text-fill: #A1A1AA;
+}
+
+.admin-readonly-field {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1F2937;
+}
+
+.admin-page-root.dark .admin-readonly-field {
+    -fx-text-fill: #F8FAFC;
+}
+
+.admin-error-label {
+    -fx-background-color: #FEF2F2;
+    -fx-background-radius: 8;
+    -fx-border-color: #FECACA;
+    -fx-border-radius: 8;
+    -fx-text-fill: #B91C1C;
+    -fx-padding: 8 10 8 10;
+}
+
+.admin-page-root.dark .admin-error-label {
+    -fx-background-color: #3A1F1F;
+    -fx-border-color: #7F1D1D;
+    -fx-text-fill: #FCA5A5;
+}
+
+.admin-button,
+.admin-button-primary,
+.admin-button-success,
+.admin-button-danger,
+.admin-button-neutral,
+.admin-button-info {
+    -fx-background-radius: 9;
+    -fx-border-radius: 9;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+
+.admin-button-primary {
+    -fx-background-color: #4A76A8;
+    -fx-text-fill: #FFFFFF;
+}
+
+.admin-button-primary:hover {
+    -fx-background-color: #3F6896;
+}
+
+.admin-button-primary:pressed {
+    -fx-background-color: #355A82;
+}
+
+.admin-button-success {
+    -fx-background-color: #5CB85C;
+    -fx-text-fill: #FFFFFF;
+}
+
+.admin-button-success:hover {
+    -fx-background-color: #4FA64F;
+}
+
+.admin-button-danger {
+    -fx-background-color: #D9534F;
+    -fx-text-fill: #FFFFFF;
+}
+
+.admin-button-danger:hover {
+    -fx-background-color: #C64541;
+}
+
+.admin-button-info {
+    -fx-background-color: #5BC0DE;
+    -fx-text-fill: #FFFFFF;
+}
+
+.admin-button-info:hover {
+    -fx-background-color: #47AECC;
+}
+
+.admin-button-neutral {
+    -fx-background-color: #E5E7EB;
+    -fx-text-fill: #374151;
+}
+
+.admin-button-neutral:hover {
+    -fx-background-color: #D8DCE2;
+}
+
+.admin-page-root.dark .admin-button-neutral {
+    -fx-background-color: #333333;
+    -fx-text-fill: #F8FAFC;
+}
+
+.admin-setting-icon {
+    -fx-background-color: #4A76A8;
+    -fx-background-radius: 10;
+}
+
+.admin-page-root.dark .admin-setting-icon {
+    -fx-background-color: #315D8E;
+}
+
+.admin-form-footer {
+    -fx-background-color: transparent;
+}
+
+.admin-dashboard-grid {
+    -fx-background-color: transparent;
+}
+
+.admin-dashboard-card,
+.admin-dashboard-card-sales,
+.admin-dashboard-card-expense,
+.admin-dashboard-card-transaction,
+.admin-dashboard-card-stock {
+    -fx-background-radius: 16;
+    -fx-border-radius: 16;
+    -fx-border-width: 1.2;
+    -fx-effect: dropshadow(gaussian, rgba(15, 23, 42, 0.08), 12, 0, 0, 6);
+    -fx-cursor: hand;
+}
+
+.admin-page-root.dark .admin-dashboard-card,
+.admin-page-root.dark .admin-dashboard-card-sales,
+.admin-page-root.dark .admin-dashboard-card-expense,
+.admin-page-root.dark .admin-dashboard-card-transaction,
+.admin-page-root.dark .admin-dashboard-card-stock {
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.22), 12, 0, 0, 6);
+}
+
+.admin-dashboard-card.sales,
+.admin-dashboard-card-sales {
+    -fx-background-color: #EAF1FB;
+    -fx-border-color: #2196F3;
+}
+
+.admin-dashboard-card.expense,
+.admin-dashboard-card-expense {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #D7DEE8;
+}
+
+.admin-dashboard-card.transaction,
+.admin-dashboard-card-transaction {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #2196F3;
+}
+
+.admin-dashboard-card.stock,
+.admin-dashboard-card-stock {
+    -fx-background-color: #E8F5E9;
+    -fx-border-color: #328B51;
+}
+
+.admin-page-root.dark .admin-dashboard-card.sales,
+.admin-page-root.dark .admin-dashboard-card-sales {
+    -fx-background-color: #1E2A3A;
+    -fx-border-color: #2F9CF4;
+}
+
+.admin-page-root.dark .admin-dashboard-card.expense,
+.admin-page-root.dark .admin-dashboard-card.transaction,
+.admin-page-root.dark .admin-dashboard-card-expense,
+.admin-page-root.dark .admin-dashboard-card-transaction {
+    -fx-background-color: #1E1E1E;
+    -fx-border-color: #3A3A3A;
+}
+
+.admin-page-root.dark .admin-dashboard-card.stock,
+.admin-page-root.dark .admin-dashboard-card-stock {
+    -fx-background-color: #1B2E1F;
+    -fx-border-color: #3FA166;
+}
+
+.admin-dashboard-card-title {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+.admin-dashboard-card-value {
+    -fx-text-fill: #2C3E50;
+    -fx-font-size: 34px;
+    -fx-font-weight: bold;
+}
+
+.admin-page-root.dark .admin-dashboard-card-value {
+    -fx-text-fill: #F8FAFC;
+}
+
+.admin-card-button {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 9;
+    -fx-border-color: #D7DEE8;
+    -fx-border-radius: 9;
+    -fx-border-width: 1;
+    -fx-text-fill: #111827;
+    -fx-cursor: hand;
+}
+
+.admin-card-button:hover {
+    -fx-background-color: #F1F5F9;
+}
+
+.admin-card-button:pressed {
+    -fx-background-color: #E2E8F0;
+}
+
+.admin-page-root.dark .admin-card-button {
+    -fx-background-color: #333333;
+    -fx-border-color: #3A3A3A;
+    -fx-text-fill: #FFFFFF;
+}
+
+.admin-list-scroll,
+.stock-scroll-pane {
+    -fx-background: transparent;
+    -fx-background-color: transparent;
+    -fx-padding: 0 4 0 0;
+}
+
+.admin-list-scroll > .viewport,
+.stock-scroll-pane > .viewport,
+.admin-list-scroll > .corner,
+.stock-scroll-pane > .corner {
+    -fx-background-color: transparent;
+}
+
+.admin-list-scroll .scroll-bar:vertical,
+.stock-scroll-pane .scroll-bar:vertical {
+    -fx-background-color: transparent;
+    -fx-pref-width: 9;
+    -fx-padding: 5 1 5 1;
+}
+
+.admin-list-scroll .scroll-bar:vertical .track,
+.stock-scroll-pane .scroll-bar:vertical .track {
+    -fx-background-color: #EEF2F7;
+    -fx-background-radius: 999;
+}
+
+.admin-list-scroll .scroll-bar:vertical .thumb,
+.stock-scroll-pane .scroll-bar:vertical .thumb {
+    -fx-background-color: #CBD5E1;
+    -fx-background-insets: 1;
+    -fx-background-radius: 999;
+}
+
+.admin-list-scroll .scroll-bar:vertical .thumb:hover,
+.stock-scroll-pane .scroll-bar:vertical .thumb:hover {
+    -fx-background-color: #94A3B8;
+}
+
+.admin-list-scroll .scroll-bar:vertical .thumb:pressed,
+.stock-scroll-pane .scroll-bar:vertical .thumb:pressed {
+    -fx-background-color: #64748B;
+}
+
+.admin-list-scroll .scroll-bar:vertical .increment-button,
+.admin-list-scroll .scroll-bar:vertical .decrement-button,
+.stock-scroll-pane .scroll-bar:vertical .increment-button,
+.stock-scroll-pane .scroll-bar:vertical .decrement-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+    -fx-pref-height: 0;
+    -fx-opacity: 0;
+}
+
+.admin-list-scroll .scroll-bar:vertical .increment-arrow,
+.admin-list-scroll .scroll-bar:vertical .decrement-arrow,
+.stock-scroll-pane .scroll-bar:vertical .increment-arrow,
+.stock-scroll-pane .scroll-bar:vertical .decrement-arrow {
+    -fx-shape: "";
+    -fx-padding: 0;
+}
+
+.admin-list-scroll.dark .scroll-bar:vertical .track,
+.stock-scroll-pane.dark .scroll-bar:vertical .track {
+    -fx-background-color: #262626;
+}
+
+.admin-list-scroll.dark .scroll-bar:vertical .thumb,
+.stock-scroll-pane.dark .scroll-bar:vertical .thumb {
+    -fx-background-color: #565656;
+}
+
+.admin-list-scroll.dark .scroll-bar:vertical .thumb:hover,
+.stock-scroll-pane.dark .scroll-bar:vertical .thumb:hover {
+    -fx-background-color: #777777;
+}
+
+.admin-list-scroll.dark .scroll-bar:vertical .thumb:pressed,
+.stock-scroll-pane.dark .scroll-bar:vertical .thumb:pressed {
+    -fx-background-color: #9A9A9A;
+}

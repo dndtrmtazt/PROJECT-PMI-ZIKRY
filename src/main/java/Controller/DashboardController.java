@@ -11,6 +11,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
@@ -114,6 +115,7 @@ public class DashboardController implements Initializable {
     }
 
     public void setDarkMode(boolean enabled) {
+        setStyleClass(paneRoot, "dark", enabled);
         String bgMain = enabled ? "#121212" : "#f4f4f4";
         String bgCard = enabled ? "#1e1e1e" : "white";
         String borderColor = enabled ? "#3A3A3A" : "#D7DEE8";
@@ -138,17 +140,17 @@ public class DashboardController implements Initializable {
 
         lblCard1Title.setStyle("-fx-text-fill: " + (enabled ? "#64b5f6" : "#1976D2") + "; -fx-font-weight: bold;");
         lblCard1Value.setStyle("-fx-text-fill: " + textColor + "; -fx-font-weight: bold;");
-        btnCard1.setStyle(getDashboardButtonStyle(enabled, textColor, borderColor));
+        clearInlineStyles(btnCard1);
 
         lblCard2Title.setStyle("-fx-text-fill: " + textColor + "; -fx-font-weight: bold;");
         lblCard2Value.setStyle("-fx-text-fill: " + textColor + "; -fx-font-weight: bold;");
-        btnCard2.setStyle(getDashboardButtonStyle(enabled, textColor, borderColor));
+        clearInlineStyles(btnCard2);
 
         lblCard3Title.setStyle("-fx-text-fill: " + textColor + "; -fx-font-weight: bold;");
         lblCard3Value.setStyle("-fx-text-fill: " + textColor + "; -fx-font-weight: bold;");
 
         lblCard4Title.setStyle("-fx-text-fill: " + (enabled ? "#81c784" : "#2E7D32") + "; -fx-font-weight: bold;");
-        btnCard4.setStyle(getDashboardButtonStyle(enabled, textColor, borderColor));
+        clearInlineStyles(btnCard4);
         updateActionButtonArrow(btnCard1, enabled);
         updateActionButtonArrow(btnCard2, enabled);
         updateActionButtonArrow(btnCard4, enabled);
@@ -253,5 +255,26 @@ public class DashboardController implements Initializable {
         arrowLabel.setAlignment(Pos.CENTER);
         arrowLabel.setStyle("-fx-text-fill: " + (darkMode ? "white" : "#111111") + "; -fx-font-size: 22px; -fx-font-weight: bold;");
         button.setGraphic(arrowLabel);
+    }
+
+    private void setStyleClass(Node node, String styleClass, boolean enabled) {
+        if (node == null || styleClass == null) return;
+
+        if (enabled) {
+            if (!node.getStyleClass().contains(styleClass)) {
+                node.getStyleClass().add(styleClass);
+            }
+        } else {
+            node.getStyleClass().remove(styleClass);
+        }
+    }
+
+    private void clearInlineStyles(Node... nodes) {
+        if (nodes == null) return;
+        for (Node node : nodes) {
+            if (node != null) {
+                node.setStyle("");
+            }
+        }
     }
 }

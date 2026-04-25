@@ -5,11 +5,11 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<VBox fx:id="vboxMainContent" prefHeight="600.0" prefWidth="817.0" style="-fx-background-color: #F4F4F4;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.UserController">
+<VBox fx:id="vboxMainContent" prefHeight="600.0" prefWidth="817.0" style="-fx-background-color: #F4F4F4;" styleClass="admin-page-root" stylesheets="@../../CSS/admin.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.UserController">
     <children>
-        <HBox alignment="CENTER_LEFT" prefHeight="60.0" style="-fx-background-color: #4A76A8;">
+        <HBox alignment="CENTER_LEFT" prefHeight="60.0" styleClass="admin-header">
             <children>
-                <Label fx:id="lblTitle" text="Manajemen User" textFill="WHITE">
+                <Label fx:id="lblTitle" styleClass="admin-title" text="Manajemen User">
                     <font><Font name="System Bold" size="24.0" /></font>
                     <padding><Insets left="20.0" /></padding>
                 </Label>
@@ -19,18 +19,18 @@
         <VBox spacing="20.0" VBox.vgrow="ALWAYS">
             <padding><Insets bottom="20.0" left="25.0" right="25.0" top="30.0" /></padding>
             <children>
-                <VBox fx:id="LyrUsr" spacing="15.0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 10, 0, 0, 5);" VBox.vgrow="ALWAYS">
+                <VBox fx:id="LyrUsr" spacing="15.0" styleClass="admin-table-card" VBox.vgrow="ALWAYS">
                     <padding><Insets bottom="20.0" left="20.0" right="20.0" top="20.0" /></padding>
                     <children>
                         <HBox alignment="CENTER_LEFT">
                             <children>
-                                <Label fx:id="lblSubTitle" style="-fx-font-family: 'Inter Medium'; -fx-font-size: 18; -fx-font-weight: bold;" text="Daftar Pengguna Sistem" />
+                                <Label fx:id="lblSubTitle" styleClass="admin-section-title" text="Daftar Pengguna Sistem" />
                                 <Region HBox.hgrow="ALWAYS" />
-                                <Button fx:id="btnTambahUser" mnemonicParsing="false" onAction="#handleTambahUser" prefHeight="35.0" prefWidth="180.0" style="-fx-background-color: #3498DB; -fx-text-fill: white; -fx-background-radius: 8;" text="+ Tambah User Baru" />
+                                <Button fx:id="btnTambahUser" mnemonicParsing="false" onAction="#handleTambahUser" prefHeight="35.0" prefWidth="180.0" styleClass="admin-button-primary" text="+ Tambah User Baru" />
                             </children>
                         </HBox>
 
-                        <HBox fx:id="hboxTableHead" alignment="CENTER_LEFT" prefHeight="40.0" spacing="10.0" style="-fx-background-color: #F8F9FA; -fx-background-radius: 5; -fx-border-color: #E0E0E0; -fx-border-width: 0 0 1 0;">
+                        <HBox fx:id="hboxTableHead" alignment="CENTER_LEFT" prefHeight="40.0" spacing="10.0" styleClass="admin-table-head">
                             <padding><Insets left="15.0" right="15.0" /></padding>
                             <children>
                                 <Label prefWidth="40.0" style="-fx-font-weight: bold;" text="No" />
@@ -42,7 +42,7 @@
                             </children>
                         </HBox>
 
-                        <ScrollPane fx:id="scrollUser" fitToWidth="true" hbarPolicy="NEVER" style="-fx-background: transparent; -fx-background-color: transparent;" VBox.vgrow="ALWAYS">
+                        <ScrollPane fx:id="scrollUser" fitToWidth="true" hbarPolicy="NEVER" styleClass="admin-list-scroll" VBox.vgrow="ALWAYS">
                             <content>
                                 <VBox fx:id="vboxUserList" spacing="10.0" style="-fx-background-color: transparent;" />
                             </content>
