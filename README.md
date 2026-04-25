@@ -123,13 +123,14 @@ Masing-masing role memiliki menu dan hak akses yang berbeda.
 ## Screenshot
 > Placeholder screenshot project
 
-Tambahkan gambar di bagian ini ketika screenshot sudah siap:
+### Dashboard
+![Dashboard](src/main/resources/Images/screen-shot-dashboard.png)
 
-| Nama | Preview |
-| --- | --- |
-| Dashboard | `docs/screenshots/dashboard.png` |
-| Kasir | `docs/screenshots/kasir.png` |
-| Laporan | `docs/screenshots/laporan.png` |
+### Kasir
+![Kasir](src/main/resources/Images/screen-shot-kasir.png)
+
+### Laporan
+![Laporan](src/main/resources/Images/screen-shot-laporan.png)
 
 ## Author / Tim
 - Nama: `Muhammad Reza Saputra (Team Leader), Nur Asinta Noviyani, Dan Dinda Triamita`
