@@ -1,0 +1,73 @@
+.stock-scroll-pane {
+    -fx-background: transparent;
+    -fx-background-color: transparent;
+    -fx-padding: 0 2 0 0;
+}
+
+.stock-scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+
+.stock-scroll-pane > .corner {
+    -fx-background-color: transparent;
+}
+
+.stock-list-container {
+    -fx-background-color: transparent;
+    -fx-padding: 0 12 0 0;
+}
+
+.stock-scroll-pane .scroll-bar:vertical {
+    -fx-background-color: transparent;
+    -fx-pref-width: 9;
+    -fx-padding: 4 1 4 1;
+}
+
+.stock-scroll-pane .scroll-bar:vertical .track {
+    -fx-background-color: #DCE9DF;
+    -fx-background-radius: 999;
+}
+
+.stock-scroll-pane .scroll-bar:vertical .thumb {
+    -fx-background-color: #AFC5B8;
+    -fx-background-insets: 1;
+    -fx-background-radius: 999;
+}
+
+.stock-scroll-pane .scroll-bar:vertical .thumb:hover {
+    -fx-background-color: #8FAE9B;
+}
+
+.stock-scroll-pane .scroll-bar:vertical .thumb:pressed {
+    -fx-background-color: #6F967D;
+}
+
+.stock-scroll-pane .scroll-bar:vertical .increment-button,
+.stock-scroll-pane .scroll-bar:vertical .decrement-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+    -fx-pref-height: 0;
+    -fx-opacity: 0;
+}
+
+.stock-scroll-pane .scroll-bar:vertical .increment-arrow,
+.stock-scroll-pane .scroll-bar:vertical .decrement-arrow {
+    -fx-shape: "";
+    -fx-padding: 0;
+}
+
+.stock-scroll-pane.dark .scroll-bar:vertical .track {
+    -fx-background-color: #26372C;
+}
+
+.stock-scroll-pane.dark .scroll-bar:vertical .thumb {
+    -fx-background-color: #526A5B;
+}
+
+.stock-scroll-pane.dark .scroll-bar:vertical .thumb:hover {
+    -fx-background-color: #6D8877;
+}
+
+.stock-scroll-pane.dark .scroll-bar:vertical .thumb:pressed {
+    -fx-background-color: #88A393;
+}
