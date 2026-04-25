@@ -47,8 +47,7 @@ public class LoginController {
         String password = passwordField.getText().trim();
 
         if (userId.isEmpty() || password.isEmpty()) {
-            errorLabel.setText("Username dan Password tidak boleh kosong!");
-            errorLabel.setVisible(true);
+            showLoginError("Username dan Password tidak boleh kosong!");
             return;
         }
 
@@ -56,7 +55,7 @@ public class LoginController {
         User user = UserDAO.validateUser(userId, password);
 
         if (user != null) {
-            errorLabel.setVisible(false);
+            hideLoginError();
 
             // 2. Simpan User ke Session (Tas Ajaib)
             UserSession.getInstance().setCurrentUser(user);
@@ -69,8 +68,7 @@ public class LoginController {
             navigateToDashboard(event, user);
 
         } else {
-            errorLabel.setText("Username atau Password salah!");
-            errorLabel.setVisible(true);
+            showLoginError("Username atau Password salah!");
         }
     }
 
@@ -97,8 +95,7 @@ public class LoginController {
             showDashboardMaximized(stage, scene, "Toko Zikry - " + user.getRole().toUpperCase());
 
         } catch (IOException e) {
-            errorLabel.setText("Gagal masuk ke Dashboard!");
-            errorLabel.setVisible(true);
+            showLoginError("Gagal masuk ke Dashboard!");
             e.printStackTrace();
         }
     }
@@ -128,22 +125,22 @@ public class LoginController {
 
     @FXML
     void handleDarkMode(MouseEvent event) {
-        if (!isDarkMode) applyFadeTransition(this::setDarkMode);
+        if (!isDarkMode) applyFadeTransition(() -> applyTheme(true));
     }
 
     @FXML
     void handleLightMode(MouseEvent event) {
-        if (isDarkMode) applyFadeTransition(this::setLightMode);
+        if (isDarkMode) applyFadeTransition(() -> applyTheme(false));
     }
 
     private void applyFadeTransition(Runnable action) {
-        FadeTransition fadeOut = new FadeTransition(Duration.millis(300), rootPane);
+        FadeTransition fadeOut = new FadeTransition(Duration.millis(150), loginContainer);
         fadeOut.setFromValue(1.0);
-        fadeOut.setToValue(0.3);
+        fadeOut.setToValue(0.78);
         fadeOut.setOnFinished(e -> {
             action.run();
-            FadeTransition fadeIn = new FadeTransition(Duration.millis(300), rootPane);
-            fadeIn.setFromValue(0.3);
+            FadeTransition fadeIn = new FadeTransition(Duration.millis(180), loginContainer);
+            fadeIn.setFromValue(0.78);
             fadeIn.setToValue(1.0);
             fadeIn.play();
         });
@@ -151,59 +148,92 @@ public class LoginController {
     }
 
     private void setDarkMode() {
-        isDarkMode = true;
-        try {
-            sunIcon.setImage(new Image(getClass().getResourceAsStream("/Images/ICON3DARK.png")));
-            moonIcon.setImage(new Image(getClass().getResourceAsStream("/Images/ICON4DARK.png")));
-            logoImageView.setImage(new Image(getClass().getResourceAsStream("/Images/LOGO2.png")));
-        } catch (Exception e) {}
-
-        rootPane.setStyle("-fx-background-color: #121212;");
-        loginContainer.setStyle("-fx-background-color: #1e1e1e; -fx-background-radius: 15;");
-        titleLabel.setStyle("-fx-text-fill: white;");
-        subtitleLabel.setStyle("-fx-text-fill: #cccccc;");
-        userIdLabel.setStyle("-fx-text-fill: white;");
-        passwordLabel.setStyle("-fx-text-fill: white;");
-
-        usernameBox.setStyle("-fx-background-color: #2c2c2c; -fx-border-color: #555555; -fx-background-radius: 8; -fx-border-radius: 8;");
-        passwordBox.setStyle("-fx-background-color: #2c2c2c; -fx-border-color: #555555; -fx-background-radius: 8; -fx-border-radius: 8;");
-        usernameField.setStyle("-fx-background-color: transparent; -fx-text-fill: white;");
-        passwordField.setStyle("-fx-background-color: transparent; -fx-text-fill: white;");
-
-        ColorAdjust iconContrast = new ColorAdjust();
-        iconContrast.setBrightness(0.8);
-        usernameIcon.setEffect(iconContrast);
-        passwordIcon.setEffect(iconContrast);
+        applyTheme(true);
     }
 
     private void setLightMode() {
-        isDarkMode = false;
-        try {
-            sunIcon.setImage(new Image(getClass().getResourceAsStream("/Images/ICON3.png")));
-            moonIcon.setImage(new Image(getClass().getResourceAsStream("/Images/ICON4.png")));
-            logoImageView.setImage(new Image(getClass().getResourceAsStream("/Images/LOGO.png")));
-        } catch (Exception e) {}
-
-        rootPane.setStyle("-fx-background-color: #f4f6f9;");
-        loginContainer.setStyle("-fx-background-color: #E3ECF7; -fx-background-radius: 15;");
-        titleLabel.setStyle("-fx-text-fill: black;");
-        subtitleLabel.setStyle("-fx-text-fill: #a1b3c6;");
-        userIdLabel.setStyle("-fx-text-fill: black;");
-        passwordLabel.setStyle("-fx-text-fill: black;");
-
-        usernameBox.setStyle("-fx-background-color: #f9fafb; -fx-border-color: #d1d5db; -fx-background-radius: 8; -fx-border-radius: 8;");
-        passwordBox.setStyle("-fx-background-color: #f9fafb; -fx-border-color: #d1d5db; -fx-background-radius: 8; -fx-border-radius: 8;");
-        usernameField.setStyle("-fx-background-color: transparent; -fx-text-fill: black;");
-        passwordField.setStyle("-fx-background-color: transparent; -fx-text-fill: black;");
-
-        usernameIcon.setEffect(null);
-        passwordIcon.setEffect(null);
+        applyTheme(false);
     }
+
+    private void applyTheme(boolean darkMode) {
+        isDarkMode = darkMode;
+        setStyleClass(rootPane, "dark", darkMode);
+        setStyleClass(sunIcon, "active", !darkMode);
+        setStyleClass(moonIcon, "active", darkMode);
+
+        try {
+            sunIcon.setImage(new Image(getClass().getResourceAsStream(darkMode ? "/Images/ICON3DARK.png" : "/Images/ICON3.png")));
+            moonIcon.setImage(new Image(getClass().getResourceAsStream(darkMode ? "/Images/ICON4DARK.png" : "/Images/ICON4.png")));
+            logoImageView.setImage(new Image(getClass().getResourceAsStream(darkMode ? "/Images/LOGO2.png" : "/Images/LOGO.png")));
+        } catch (Exception e) {
+            // Abaikan jika asset tidak ditemukan agar halaman login tetap terbuka.
+        }
+
+        if (darkMode) {
+            ColorAdjust iconContrast = new ColorAdjust();
+            iconContrast.setBrightness(0.8);
+            usernameIcon.setEffect(iconContrast);
+            passwordIcon.setEffect(iconContrast);
+        } else {
+            usernameIcon.setEffect(null);
+            passwordIcon.setEffect(null);
+        }
+    }
+
+    private void setupFocusStates() {
+        usernameField.focusedProperty().addListener((obs, oldValue, focused) -> setStyleClass(usernameBox, "focused", focused));
+        passwordField.focusedProperty().addListener((obs, oldValue, focused) -> setStyleClass(passwordBox, "focused", focused));
+    }
+
+    private void showLoginError(String message) {
+        errorLabel.setText(message);
+        errorLabel.setVisible(true);
+
+        FadeTransition fadeIn = new FadeTransition(Duration.millis(180), errorLabel);
+        fadeIn.setFromValue(errorLabel.getOpacity());
+        fadeIn.setToValue(1.0);
+        fadeIn.play();
+    }
+
+    private void hideLoginError() {
+        if (!errorLabel.isVisible()) return;
+
+        FadeTransition fadeOut = new FadeTransition(Duration.millis(150), errorLabel);
+        fadeOut.setFromValue(errorLabel.getOpacity());
+        fadeOut.setToValue(0.0);
+        fadeOut.setOnFinished(event -> errorLabel.setVisible(false));
+        fadeOut.play();
+    }
+
+    private void playEntranceAnimation() {
+        loginContainer.setOpacity(0.0);
+
+        FadeTransition fadeIn = new FadeTransition(Duration.millis(260), loginContainer);
+        fadeIn.setFromValue(0.0);
+        fadeIn.setToValue(1.0);
+        fadeIn.play();
+    }
+
+    private void setStyleClass(Node node, String styleClass, boolean enabled) {
+        if (node == null || styleClass == null) return;
+
+        if (enabled) {
+            if (!node.getStyleClass().contains(styleClass)) {
+                node.getStyleClass().add(styleClass);
+            }
+        } else {
+            node.getStyleClass().remove(styleClass);
+        }
+    }
+
     @FXML
     public void initialize() {
         // Memberitahu Java kalau tombol login adalah tombol default
         // Pas user tekan ENTER, method handleLogin() bakal langsung jalan
         loginButton.setDefaultButton(true);
+        setupFocusStates();
+        errorLabel.setOpacity(0.0);
+        errorLabel.setVisible(false);
         
         // Sesuaikan tema awal dengan state global
         if (MainController.isDarkMode) {
@@ -211,5 +241,7 @@ public class LoginController {
         } else {
             setLightMode();
         }
+
+        playEntranceAnimation();
     }
 }
