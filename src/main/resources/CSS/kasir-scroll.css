@@ -1,40 +1,431 @@
-.product-scroll-pane {
+.kasir-root {
+    -fx-background-color: #F3F5F7;
+    -fx-font-family: "Segoe UI", "Inter", sans-serif;
+}
+
+.kasir-root.dark {
+    -fx-background-color: #121212;
+}
+
+.kasir-sidebar {
+    -fx-background-color: #F8FAFC;
+    -fx-border-color: #DFE5EC;
+    -fx-border-width: 0 1 0 0;
+}
+
+.kasir-root.dark .kasir-sidebar {
+    -fx-background-color: #1E1E1E;
+    -fx-border-color: #333333;
+}
+
+.kasir-main {
+    -fx-background-color: #F3F5F7;
+}
+
+.kasir-root.dark .kasir-main {
+    -fx-background-color: #121212;
+}
+
+.kasir-logo-text,
+.kasir-title,
+.kasir-label,
+.kasir-table-label,
+.kasir-clock {
+    -fx-text-fill: #111827;
+}
+
+.kasir-root.dark .kasir-logo-text,
+.kasir-root.dark .kasir-title,
+.kasir-root.dark .kasir-label,
+.kasir-root.dark .kasir-table-label,
+.kasir-root.dark .kasir-clock {
+    -fx-text-fill: #F8FAFC;
+}
+
+.kasir-title {
+    -fx-font-size: 17px;
+    -fx-font-weight: bold;
+}
+
+.kasir-clock {
+    -fx-font-size: 12px;
+}
+
+.kasir-nav-button {
+    -fx-background-color: #DCE9F7;
+    -fx-background-radius: 10;
+    -fx-text-fill: #3B6EA7;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-padding: 0 0 0 10;
+    -fx-cursor: hand;
+}
+
+.kasir-nav-button:hover {
+    -fx-background-color: #CFE1F5;
+    -fx-border-color: #C1D7EF;
+    -fx-border-radius: 10;
+}
+
+.kasir-root.dark .kasir-nav-button {
+    -fx-background-color: #151515;
+    -fx-border-color: #2A2A2A;
+    -fx-border-radius: 10;
+    -fx-text-fill: #4DA3FF;
+}
+
+.kasir-root.dark .kasir-nav-button:hover {
+    -fx-background-color: #202020;
+    -fx-border-color: #353535;
+}
+
+.kasir-theme-toggle {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #CBD5E1;
+    -fx-border-radius: 20;
+    -fx-background-radius: 20;
+}
+
+.kasir-root.dark .kasir-theme-toggle {
+    -fx-background-color: #1E1E1E;
+    -fx-border-color: #444444;
+}
+
+.kasir-theme-button {
+    -fx-background-color: transparent;
+    -fx-background-radius: 18;
+    -fx-cursor: hand;
+}
+
+.kasir-theme-button:hover {
+    -fx-background-color: #E8EEF6;
+}
+
+.kasir-root.dark .kasir-theme-button:hover {
+    -fx-background-color: #333333;
+}
+
+.kasir-logout-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #111827;
+    -fx-font-size: 12px;
+    -fx-padding: 0;
+    -fx-cursor: hand;
+}
+
+.kasir-logout-button:hover {
+    -fx-text-fill: #D14343;
+}
+
+.kasir-root.dark .kasir-logout-button {
+    -fx-text-fill: #F8FAFC;
+}
+
+.kasir-content-wrap {
+    -fx-background-color: transparent;
+}
+
+.kasir-search-box {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 10;
+    -fx-border-color: #D6DEE8;
+    -fx-border-radius: 10;
+    -fx-effect: dropshadow(gaussian, rgba(15, 23, 42, 0.06), 8, 0, 0, 2);
+}
+
+.kasir-search-box.focused {
+    -fx-border-color: #4A76A8;
+    -fx-effect: dropshadow(gaussian, rgba(74, 118, 168, 0.20), 12, 0, 0, 3);
+}
+
+.kasir-root.dark .kasir-search-box {
+    -fx-background-color: #1E1E1E;
+    -fx-border-color: #343434;
+    -fx-effect: none;
+}
+
+.kasir-root.dark .kasir-search-box.focused {
+    -fx-border-color: #4DA3FF;
+    -fx-effect: dropshadow(gaussian, rgba(77, 163, 255, 0.18), 12, 0, 0, 3);
+}
+
+.kasir-input {
+    -fx-background-color: transparent;
+    -fx-text-fill: #111827;
+    -fx-prompt-text-fill: #8A94A6;
+    -fx-font-size: 12px;
+}
+
+.kasir-root.dark .kasir-input {
+    -fx-text-fill: #F8FAFC;
+    -fx-prompt-text-fill: #A8A8A8;
+}
+
+.kasir-payment-input {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 10;
+    -fx-border-color: #D6DEE8;
+    -fx-border-radius: 10;
+    -fx-text-fill: #111827;
+    -fx-prompt-text-fill: #9AA4B2;
+    -fx-font-size: 12px;
+    -fx-padding: 0 12 0 12;
+}
+
+.kasir-payment-input:focused {
+    -fx-border-color: #4A76A8;
+    -fx-effect: dropshadow(gaussian, rgba(74, 118, 168, 0.20), 10, 0, 0, 2);
+}
+
+.kasir-root.dark .kasir-payment-input {
+    -fx-background-color: #252525;
+    -fx-border-color: #444444;
+    -fx-text-fill: #F8FAFC;
+    -fx-prompt-text-fill: #A8A8A8;
+}
+
+.kasir-card {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 10;
+    -fx-border-color: #D7DEE8;
+    -fx-border-radius: 10;
+    -fx-effect: dropshadow(gaussian, rgba(15, 23, 42, 0.06), 10, 0, 0, 3);
+}
+
+.kasir-root.dark .kasir-card {
+    -fx-background-color: #1E1E1E;
+    -fx-border-color: #333333;
+    -fx-effect: none;
+}
+
+.kasir-table-header {
+    -fx-background-color: #EEF2F7;
+    -fx-border-color: transparent transparent #DDE4EC transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+.kasir-root.dark .kasir-table-header {
+    -fx-background-color: #2A2A2A;
+    -fx-border-color: transparent transparent #383838 transparent;
+}
+
+.kasir-table-label {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+
+.kasir-product-row,
+.kasir-cart-row {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.kasir-product-row:hover,
+.kasir-cart-row:hover {
+    -fx-background-color: #F8FAFD;
+}
+
+.kasir-root.dark .kasir-product-row:hover,
+.kasir-root.dark .kasir-cart-row:hover {
+    -fx-background-color: #252525;
+}
+
+.kasir-product-name,
+.kasir-product-price,
+.kasir-cart-subtotal {
+    -fx-font-weight: bold;
+}
+
+.kasir-product-name,
+.kasir-product-stock,
+.kasir-product-price {
+    -fx-font-size: 12px;
+}
+
+.kasir-cart-name {
+    -fx-font-size: 11px;
+}
+
+.kasir-cart-price,
+.kasir-cart-subtotal {
+    -fx-font-size: 10.5px;
+}
+
+.kasir-product-name,
+.kasir-product-stock,
+.kasir-product-price,
+.kasir-cart-name,
+.kasir-cart-price,
+.kasir-cart-subtotal,
+.kasir-qty-label {
+    -fx-text-fill: #111827;
+}
+
+.kasir-root.dark .kasir-product-name,
+.kasir-root.dark .kasir-product-stock,
+.kasir-root.dark .kasir-product-price,
+.kasir-root.dark .kasir-cart-name,
+.kasir-root.dark .kasir-cart-price,
+.kasir-root.dark .kasir-cart-subtotal,
+.kasir-root.dark .kasir-qty-label {
+    -fx-text-fill: #F8FAFC;
+}
+
+.kasir-stock-empty,
+.kasir-root.dark .kasir-stock-empty {
+    -fx-text-fill: #E74C3C;
+}
+
+.kasir-add-button {
+    -fx-background-color: #2ECC71;
+    -fx-background-radius: 8;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+
+.kasir-add-button:hover {
+    -fx-background-color: #28B463;
+}
+
+.kasir-add-button:pressed {
+    -fx-background-color: #239B56;
+}
+
+.kasir-add-button:disabled {
+    -fx-background-color: #D6DADF;
+    -fx-text-fill: #8C939E;
+    -fx-opacity: 1;
+}
+
+.kasir-qty-box {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 6;
+    -fx-border-color: #D1D5DB;
+    -fx-border-radius: 6;
+}
+
+.kasir-root.dark .kasir-qty-box {
+    -fx-background-color: #2B2B2B;
+    -fx-border-color: #454545;
+}
+
+.kasir-qty-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #111827;
+    -fx-font-size: 11px;
+    -fx-padding: 0;
+    -fx-cursor: hand;
+}
+
+.kasir-qty-button:hover {
+    -fx-background-color: #EAF1FB;
+}
+
+.kasir-root.dark .kasir-qty-button {
+    -fx-text-fill: #F8FAFC;
+}
+
+.kasir-root.dark .kasir-qty-button:hover {
+    -fx-background-color: #363636;
+}
+
+.kasir-summary {
+    -fx-background-color: #FFFFFF;
+}
+
+.kasir-root.dark .kasir-summary {
+    -fx-background-color: #1E1E1E;
+}
+
+.kasir-total-value {
+    -fx-text-fill: #111827;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+.kasir-change-value {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+.kasir-root.dark .kasir-total-value {
+    -fx-text-fill: #F8FAFC;
+}
+
+.kasir-primary-button {
+    -fx-background-color: #379856;
+    -fx-background-radius: 10;
+    -fx-text-fill: white;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+
+.kasir-primary-button:hover {
+    -fx-background-color: #2F884C;
+}
+
+.kasir-primary-button:pressed {
+    -fx-background-color: #287441;
+}
+
+.product-scroll-pane,
+.cart-scroll-pane {
     -fx-background-color: transparent;
     -fx-background: transparent;
     -fx-padding: 0 4 0 0;
 }
 
-.product-scroll-pane > .viewport {
+.product-scroll-pane > .viewport,
+.cart-scroll-pane > .viewport,
+.product-scroll-pane > .corner,
+.cart-scroll-pane > .corner {
     -fx-background-color: transparent;
 }
 
-.product-list-content {
+.product-list-content,
+.cart-list-content {
+    -fx-background-color: transparent;
     -fx-padding: 0 16 0 0;
 }
 
-.product-scroll-pane .scroll-bar:vertical {
+.product-scroll-pane .scroll-bar:vertical,
+.cart-scroll-pane .scroll-bar:vertical {
     -fx-background-color: transparent;
     -fx-pref-width: 10;
     -fx-padding: 6 2 6 2;
 }
 
-.product-scroll-pane .scroll-bar:vertical .track {
+.product-scroll-pane .scroll-bar:vertical .track,
+.cart-scroll-pane .scroll-bar:vertical .track {
     -fx-background-color: #F1F5F9;
     -fx-background-radius: 999;
 }
 
-.product-scroll-pane .scroll-bar:vertical .thumb {
+.product-scroll-pane .scroll-bar:vertical .thumb,
+.cart-scroll-pane .scroll-bar:vertical .thumb {
     -fx-background-color: #CBD5E1;
     -fx-background-insets: 1;
     -fx-background-radius: 999;
 }
 
-.product-scroll-pane .scroll-bar:vertical .thumb:hover {
+.product-scroll-pane .scroll-bar:vertical .thumb:hover,
+.cart-scroll-pane .scroll-bar:vertical .thumb:hover {
     -fx-background-color: #94A3B8;
 }
 
+.product-scroll-pane .scroll-bar:vertical .thumb:pressed,
+.cart-scroll-pane .scroll-bar:vertical .thumb:pressed {
+    -fx-background-color: #64748B;
+}
+
 .product-scroll-pane .scroll-bar:vertical .increment-button,
-.product-scroll-pane .scroll-bar:vertical .decrement-button {
+.product-scroll-pane .scroll-bar:vertical .decrement-button,
+.cart-scroll-pane .scroll-bar:vertical .increment-button,
+.cart-scroll-pane .scroll-bar:vertical .decrement-button {
     -fx-background-color: transparent;
     -fx-padding: 0;
     -fx-pref-height: 0;
@@ -42,19 +433,131 @@
 }
 
 .product-scroll-pane .scroll-bar:vertical .increment-arrow,
-.product-scroll-pane .scroll-bar:vertical .decrement-arrow {
+.product-scroll-pane .scroll-bar:vertical .decrement-arrow,
+.cart-scroll-pane .scroll-bar:vertical .increment-arrow,
+.cart-scroll-pane .scroll-bar:vertical .decrement-arrow {
     -fx-shape: "";
     -fx-padding: 0;
 }
 
-.product-scroll-pane.dark .scroll-bar:vertical .track {
+.product-scroll-pane.dark .scroll-bar:vertical .track,
+.cart-scroll-pane.dark .scroll-bar:vertical .track {
     -fx-background-color: #262626;
 }
 
-.product-scroll-pane.dark .scroll-bar:vertical .thumb {
+.product-scroll-pane.dark .scroll-bar:vertical .thumb,
+.cart-scroll-pane.dark .scroll-bar:vertical .thumb {
     -fx-background-color: #565656;
 }
 
-.product-scroll-pane.dark .scroll-bar:vertical .thumb:hover {
+.product-scroll-pane.dark .scroll-bar:vertical .thumb:hover,
+.cart-scroll-pane.dark .scroll-bar:vertical .thumb:hover {
     -fx-background-color: #777777;
+}
+
+.product-scroll-pane.dark .scroll-bar:vertical .thumb:pressed,
+.cart-scroll-pane.dark .scroll-bar:vertical .thumb:pressed {
+    -fx-background-color: #8A8A8A;
+}
+
+.kasir-popup-root {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #D7DEE8;
+    -fx-border-width: 1;
+}
+
+.kasir-popup-root.dark {
+    -fx-background-color: #1E1E1E;
+    -fx-border-color: #333333;
+}
+
+.kasir-popup-header {
+    -fx-background-color: #2D7A32;
+}
+
+.kasir-popup-title {
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+}
+
+.kasir-popup-subtitle {
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 12px;
+}
+
+.kasir-popup-content {
+    -fx-background-color: transparent;
+}
+
+.kasir-popup-label,
+.kasir-popup-value {
+    -fx-text-fill: #1F2937;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+}
+
+.kasir-popup-root.dark .kasir-popup-label,
+.kasir-popup-root.dark .kasir-popup-value {
+    -fx-text-fill: #F8FAFC;
+}
+
+.kasir-popup-line {
+    -fx-stroke: #E5E7EB;
+}
+
+.kasir-popup-root.dark .kasir-popup-line {
+    -fx-stroke: #383838;
+}
+
+.kasir-change-box {
+    -fx-background-color: #F1F8E9;
+    -fx-border-color: #C5E1A5;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-padding: 0 18 0 18;
+}
+
+.kasir-popup-root.dark .kasir-change-box {
+    -fx-background-color: #1B2E1F;
+    -fx-border-color: #2F6E3B;
+}
+
+.kasir-popup-cancel {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #D7DEE8;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-text-fill: #111827;
+    -fx-cursor: hand;
+}
+
+.kasir-popup-cancel:hover {
+    -fx-background-color: #F3F6FA;
+}
+
+.kasir-popup-root.dark .kasir-popup-cancel {
+    -fx-background-color: #252525;
+    -fx-border-color: #3A3A3A;
+    -fx-text-fill: #F8FAFC;
+}
+
+.kasir-popup-confirm {
+    -fx-background-color: #2D7A32;
+    -fx-background-radius: 8;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+
+.kasir-popup-confirm:hover {
+    -fx-background-color: #256B2A;
+}
+
+.kasir-change-positive {
+    -fx-text-fill: #2D7A32;
+}
+
+.kasir-change-negative {
+    -fx-text-fill: #D32F2F;
 }

@@ -1,14 +1,17 @@
 package Controller;
 
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import java.text.NumberFormat;
 import java.util.Locale;
 
 public class PopUpSimpanCetakController {
 
+    @FXML private AnchorPane popupRoot;
     @FXML private Label lblTotal;
     @FXML private Label lblBayar;
     @FXML private Label lblKembalian;
@@ -36,12 +39,11 @@ public class PopUpSimpanCetakController {
         lblBayar.setText("Rp " + nfIndo.format(bayar));
         double kembalian = bayar - total;
         lblKembalian.setText("Rp " + nfIndo.format(kembalian));
-        
-        if (kembalian < 0) {
-            lblKembalian.setStyle("-fx-text-fill: #d32f2f; -fx-font-weight: bold;");
-        } else {
-            lblKembalian.setStyle("-fx-text-fill: #2d7a32; -fx-font-weight: bold;");
-        }
+        applyChangeState(lblKembalian, kembalian);
+    }
+
+    public void setDarkMode(boolean enabled) {
+        setStyleClass(popupRoot, "dark", enabled);
     }
 
     public boolean isConfirmed() {
@@ -51,5 +53,22 @@ public class PopUpSimpanCetakController {
     private void closeStage() {
         Stage stage = (Stage) btnTutup.getScene().getWindow();
         stage.close();
+    }
+
+    private void applyChangeState(Label label, double value) {
+        setStyleClass(label, "kasir-change-positive", value >= 0);
+        setStyleClass(label, "kasir-change-negative", value < 0);
+    }
+
+    private void setStyleClass(Node node, String styleClass, boolean enabled) {
+        if (node == null || styleClass == null) return;
+
+        if (enabled) {
+            if (!node.getStyleClass().contains(styleClass)) {
+                node.getStyleClass().add(styleClass);
+            }
+        } else {
+            node.getStyleClass().remove(styleClass);
+        }
     }
 }
