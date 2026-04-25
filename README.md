@@ -1,8 +1,24 @@
 # Toko Zikry
 
-![Java](https://img.shields.io/badge/Java-JavaFX_21.0.6-blue)
+![Java](https://img.shields.io/badge/Java-JavaFX%2021.0.6-blue)
 ![SQLite](https://img.shields.io/badge/Database-SQLite-green)
 ![Maven](https://img.shields.io/badge/Build-Maven-red)
+![License](https://img.shields.io/badge/License-Private-lightgrey)
+
+## Daftar Isi
+- [Deskripsi](#deskripsi)
+- [Fitur Utama](#fitur-utama)
+- [Teknologi](#teknologi)
+- [Struktur Folder](#struktur-folder)
+- [Cara Install](#cara-install)
+- [Cara Menjalankan](#cara-menjalankan)
+- [Cara Build](#cara-build)
+- [Export Laporan](#export-laporan)
+- [Light / Dark Mode](#light--dark-mode)
+- [Role User](#role-user)
+- [Screenshot](#screenshot)
+- [Author / Tim](#author--tim)
+- [Catatan](#catatan)
 
 ## Deskripsi
 **Toko Zikry** adalah aplikasi kasir desktop berbasis **JavaFX** untuk pengelolaan transaksi, data barang, laporan penjualan, pengeluaran, kategori, dan user dengan dukungan role **kasir** serta **pemilik/admin**.
@@ -107,17 +123,17 @@ Masing-masing role memiliki menu dan hak akses yang berbeda.
 ## Screenshot
 > Placeholder screenshot project
 
-Tambahkan gambar di bagian ini, misalnya:
+Tambahkan gambar di bagian ini ketika screenshot sudah siap:
 
-```text
-![Dashboard](docs/screenshots/dashboard.png)
-![Kasir](docs/screenshots/kasir.png)
-![Laporan](docs/screenshots/laporan.png)
-```
+| Nama | Preview |
+| --- | --- |
+| Dashboard | `docs/screenshots/dashboard.png` |
+| Kasir | `docs/screenshots/kasir.png` |
+| Laporan | `docs/screenshots/laporan.png` |
 
 ## Author / Tim
-- Nama: `[Isi nama kamu / tim di sini]`
-- Institusi / Kelas: `[Opsional]`
+- Nama: `Muhammad Reza Saputra (Team Leader), Nur Asinta Noviyani, Dan Dinda Triamita`
+- Kelompok : `Kelompok 5`
 
 ## Catatan
 - Database utama project tersimpan di `database/umkm.db`.
