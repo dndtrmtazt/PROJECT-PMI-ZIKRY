@@ -1,5 +1,6 @@
 package Controller;
 
+import config.UserSession;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
@@ -26,9 +27,6 @@ public class FormPengeluaranController implements Initializable {
 
     private boolean isEdit = false;
     private String idLama;
-
-    // Instance DAO untuk operasi database
-    private PengeluaranDAO pengeluaranDAO = new PengeluaranDAO();
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -99,10 +97,15 @@ public class FormPengeluaranController implements Initializable {
             LocalDate tgl = dpTanggal.getValue();
             String nominalStr = txtNominal.getText().replace(".", "").trim();
             String jenis = txtJenis.getText().trim();
-            String idUser = "PMK001"; // ID User default
+            String idUser = UserSession.getInstance().getUserId();
 
             if (id.isEmpty() || nominalStr.isEmpty() || jenis.isEmpty() || tgl == null) {
                 tampilkanPesan("Semua field wajib diisi!", Alert.AlertType.WARNING);
+                return;
+            }
+
+            if (idUser == null || idUser.trim().isEmpty()) {
+                tampilkanPesan("Session user tidak ditemukan. Silakan login ulang.", Alert.AlertType.ERROR);
                 return;
             }
 

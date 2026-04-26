@@ -1,5 +1,6 @@
 package Controller;
 
+import config.UserSession;
 import javafx.animation.FadeTransition;
 import javafx.animation.Interpolator;
 import javafx.animation.SequentialTransition;
@@ -435,6 +436,7 @@ public class MainController {
 
     private void handleLogout() {
         try {
+            UserSession.getInstance().logout();
             Stage stage = (Stage) btnLogout.getScene().getWindow();
             Parent root = FXMLLoader.load(getClass().getResource("/FXML/LoginView.fxml"));
             stage.setResizable(true);

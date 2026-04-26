@@ -129,11 +129,16 @@ public class BarangDAO {
     }
 
     public static boolean reduceStok(String idBarang, int jumlah) {
-        String query = "UPDATE barang SET stok = stok - ? WHERE id_barang = ?";
+        if (jumlah <= 0) {
+            return false;
+        }
+
+        String query = "UPDATE barang SET stok = stok - ? WHERE id_barang = ? AND stok >= ?";
         try (Connection conn = koneksi.koneksiDB();
              PreparedStatement ps = conn.prepareStatement(query)) {
             ps.setInt(1, jumlah);
             ps.setString(2, idBarang);
+            ps.setInt(3, jumlah);
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             System.err.println("Error reducing stok: " + e.getMessage());

@@ -133,7 +133,7 @@ Masing-masing role memiliki menu dan hak akses yang berbeda.
 ![Laporan](src/main/resources/Images/screen-shot-laporan.png)
 
 ## Author / Tim
-- Nama: `Muhammad Reza Saputra (Team Leader), Nur Asinta Noviyani, Dan Dinda Triamita`
+- Nama: `Muhammad Reza Saputra (Team Leader), Amdy Nurdiansyah, Nur Asinta Noviyani, Dan Dinda Triamita`
 - Kelompok : `Kelompok 5`
 
 ## Catatan

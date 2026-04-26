@@ -71,6 +71,11 @@ public final class DatabaseInitializer {
                     "UPDATE barang SET satuan = 'Pcs' " +
                             "WHERE satuan IS NULL OR trim(satuan) = ''"
             );
+
+            statement.executeUpdate(
+                    "UPDATE barang SET stok = 0 " +
+                            "WHERE stok < 0"
+            );
         }
     }
 
@@ -121,7 +126,7 @@ public final class DatabaseInitializer {
                         "id_barang TEXT PRIMARY KEY, " +
                         "nama_barang TEXT NOT NULL, " +
                         "id_kategori TEXT, " +
-                        "stok INTEGER NOT NULL DEFAULT 0, " +
+                        "stok INTEGER NOT NULL DEFAULT 0 CHECK (stok >= 0), " +
                         "satuan TEXT NOT NULL DEFAULT 'Pcs', " +
                         "harga_beli NUMERIC NOT NULL, " +
                         "harga_jual NUMERIC NOT NULL, " +
@@ -188,7 +193,7 @@ public final class DatabaseInitializer {
                 "INSERT OR IGNORE INTO barang (id_barang, nama_barang, id_kategori, stok, satuan, harga_beli, harga_jual) VALUES ('ESK002', 'KOCNETTO COKLAT', 'ESK000', 29, 'Pcs', 9000.00, 10000.00)",
                 "INSERT OR IGNORE INTO barang (id_barang, nama_barang, id_kategori, stok, satuan, harga_beli, harga_jual) VALUES ('ESK003', 'MAGNUM CLASSIS', 'ESK000', 20, 'Pcs', 18000.00, 22000.00)",
                 "INSERT OR IGNORE INTO barang (id_barang, nama_barang, id_kategori, stok, satuan, harga_beli, harga_jual) VALUES ('ESK004', 'ICED MOCHI', 'ESK000', 10, 'Pcs', 3000.00, 4000.00)",
-                "INSERT OR IGNORE INTO barang (id_barang, nama_barang, id_kategori, stok, satuan, harga_beli, harga_jual) VALUES ('ESK005', 'WALLS STROBERRY VANILA', 'ESK000', -48, 'Pcs', 4000.00, 5000.00)",
+                "INSERT OR IGNORE INTO barang (id_barang, nama_barang, id_kategori, stok, satuan, harga_beli, harga_jual) VALUES ('ESK005', 'WALLS STROBERRY VANILA', 'ESK000', 0, 'Pcs', 4000.00, 5000.00)",
                 "INSERT OR IGNORE INTO barang (id_barang, nama_barang, id_kategori, stok, satuan, harga_beli, harga_jual) VALUES ('MIM001', 'MINERAL', 'MIM000', 30, 'Liter', 8000.00, 9000.00)",
                 "INSERT OR IGNORE INTO barang (id_barang, nama_barang, id_kategori, stok, satuan, harga_beli, harga_jual) VALUES ('MIM002', 'AQUA', 'MIM000', 30, 'Liter', 7000.00, 8000.00)",
                 "INSERT OR IGNORE INTO barang (id_barang, nama_barang, id_kategori, stok, satuan, harga_beli, harga_jual) VALUES ('MIM003', 'KOPI GOLDA', 'MIM000', 30, 'Pcs', 2500.00, 3000.00)",

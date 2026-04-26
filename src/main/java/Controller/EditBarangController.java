@@ -26,7 +26,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.NumberFormat;
 import java.util.List;
+import java.util.Locale;
 import DAO.BarangDAO;
 
 public class EditBarangController {
@@ -39,6 +41,7 @@ public class EditBarangController {
     @FXML private Button btnSimpan, btnBatal, btnHapus;
 
     private String idBarangAsli; // <--- Kunci buat nyimpen ID lama sebelum diedit
+    private final NumberFormat numberFormat = NumberFormat.getIntegerInstance(new Locale("id", "ID"));
 
     @FXML
     public void initialize() {
@@ -55,6 +58,8 @@ public class EditBarangController {
 
         // Isi pilihan satuan
         cbSatuan.setItems(FXCollections.observableArrayList("Pcs", "Liter", "Butir", "Kg", "Gram", "Box"));
+        setupCurrencyField(txtHargaBeli);
+        setupCurrencyField(txtHargaJual);
     }
 
     // Method ini dipanggil dari Halaman Utama saat mau edit barang
@@ -71,8 +76,8 @@ public class EditBarangController {
         cmbKategori.setValue(idKat + " - " + namaKat); // Set kategori yang tersimpan
         txtStok.setText(String.valueOf(stok));
         cbSatuan.setValue(satuan); // Set satuan yang tersimpan
-        txtHargaBeli.setText(String.valueOf((long)hBeli));
-        txtHargaJual.setText(String.valueOf((long)hJual));
+        txtHargaBeli.setText(numberFormat.format((long) hBeli));
+        txtHargaJual.setText(numberFormat.format((long) hJual));
     }
 
     private String getSelectedKategoriId() {
@@ -94,6 +99,38 @@ public class EditBarangController {
         for (model.Kategori k : list) {
             cmbKategori.getItems().add(k.getIdKategori() + " - " + k.getNamaKategori());
         }
+    }
+
+    private void setupCurrencyField(TextField field) {
+        if (field == null) {
+            return;
+        }
+
+        field.setTextFormatter(new TextFormatter<>(change -> {
+            String newText = change.getControlNewText();
+            String digitsOnly = newText.replaceAll("[^0-9]", "");
+
+            if (digitsOnly.isEmpty()) {
+                change.setText("");
+                change.setRange(0, change.getControlText().length());
+                return change;
+            }
+
+            try {
+                long value = Long.parseLong(digitsOnly);
+                String formatted = numberFormat.format(value);
+                change.setText(formatted);
+                change.setRange(0, change.getControlText().length());
+                return change;
+            } catch (NumberFormatException e) {
+                return null;
+            }
+        }));
+    }
+
+    private double parseFormattedNumber(String value) {
+        String normalized = value == null ? "" : value.replace(".", "").replaceAll("[^0-9]", "").trim();
+        return normalized.isEmpty() ? 0 : Double.parseDouble(normalized);
     }
 
     @FXML
@@ -133,8 +170,8 @@ public class EditBarangController {
                 pstmt.setString(3, idKat);
                 pstmt.setInt(4, Integer.parseInt(txtStok.getText()));
                 pstmt.setString(5, cbSatuan.getValue());
-                pstmt.setDouble(6, Double.parseDouble(txtHargaBeli.getText()));
-                pstmt.setDouble(7, Double.parseDouble(txtHargaJual.getText()));
+                pstmt.setDouble(6, parseFormattedNumber(txtHargaBeli.getText()));
+                pstmt.setDouble(7, parseFormattedNumber(txtHargaJual.getText()));
                 pstmt.setString(8, idBarangAsli); // WHERE id_barang = id lama
 
                 pstmt.executeUpdate();
@@ -201,9 +238,19 @@ public class EditBarangController {
         }
 
         try {
-            Integer.parseInt(txtStok.getText());
-            Double.parseDouble(txtHargaBeli.getText());
-            Double.parseDouble(txtHargaJual.getText());
+            int stok = Integer.parseInt(txtStok.getText());
+            double hargaBeli = parseFormattedNumber(txtHargaBeli.getText());
+            double hargaJual = parseFormattedNumber(txtHargaJual.getText());
+
+            if (stok < 0) {
+                showAlert(Alert.AlertType.WARNING, "Peringatan", "Stok tidak boleh negatif!");
+                return false;
+            }
+
+            if (hargaBeli < 0 || hargaJual < 0) {
+                showAlert(Alert.AlertType.WARNING, "Peringatan", "Harga tidak boleh negatif!");
+                return false;
+            }
         } catch (NumberFormatException e) {
             showAlert(Alert.AlertType.WARNING, "Peringatan", "Stok dan Harga harus berupa angka!");
             return false;

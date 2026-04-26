@@ -11,6 +11,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextFormatter;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
@@ -28,7 +29,9 @@ import javafx.scene.control.ListCell;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.text.NumberFormat;
 import java.util.List;
+import java.util.Locale;
 
 public class TambahBarangController {
 
@@ -51,6 +54,8 @@ public class TambahBarangController {
     @FXML
     private Label lblSatuan;
 
+    private final NumberFormat numberFormat = NumberFormat.getIntegerInstance(new Locale("id", "ID"));
+
     @FXML
     public void initialize() {
         setDarkMode(MainController.isDarkMode);
@@ -72,6 +77,8 @@ public class TambahBarangController {
 
 
         cbSatuan.setItems(listSatuan);
+        setupCurrencyField(txtHargaBeli);
+        setupCurrencyField(txtHargaJual);
 
         // (Opsional) Set nilai default biar user gak perlu klik lagi kalau mayoritas barang itu 'Pcs'
         cbSatuan.setValue("Pcs");
@@ -133,6 +140,38 @@ public class TambahBarangController {
         }
 
         return selected.split(" - ")[0].trim();
+    }
+
+    private void setupCurrencyField(TextField field) {
+        if (field == null) {
+            return;
+        }
+
+        field.setTextFormatter(new TextFormatter<>(change -> {
+            String newText = change.getControlNewText();
+            String digitsOnly = newText.replaceAll("[^0-9]", "");
+
+            if (digitsOnly.isEmpty()) {
+                change.setText("");
+                change.setRange(0, change.getControlText().length());
+                return change;
+            }
+
+            try {
+                long value = Long.parseLong(digitsOnly);
+                String formatted = numberFormat.format(value);
+                change.setText(formatted);
+                change.setRange(0, change.getControlText().length());
+                return change;
+            } catch (NumberFormatException e) {
+                return null;
+            }
+        }));
+    }
+
+    private double parseFormattedNumber(String value) {
+        String normalized = value == null ? "" : value.replace(".", "").replaceAll("[^0-9]", "").trim();
+        return normalized.isEmpty() ? 0 : Double.parseDouble(normalized);
     }
 
     public void setDarkMode(boolean enabled) {
@@ -228,8 +267,8 @@ public class TambahBarangController {
                 pstmt.setString(5, satuan);
 
                 // Indeks sisanya bergeser jadi 6 dan 7
-                pstmt.setDouble(6, Double.parseDouble(txtHargaBeli.getText()));
-                pstmt.setDouble(7, Double.parseDouble(txtHargaJual.getText()));
+                pstmt.setDouble(6, parseFormattedNumber(txtHargaBeli.getText()));
+                pstmt.setDouble(7, parseFormattedNumber(txtHargaJual.getText()));
 
                 pstmt.executeUpdate();
                 showSuccessDialog("Berhasil ditambahkan");
@@ -264,9 +303,19 @@ public class TambahBarangController {
 
         // CEK APAKAH STOK & HARGA BENARAN ANGKA
         try {
-            Integer.parseInt(txtStok.getText());
-            Double.parseDouble(txtHargaBeli.getText());
-            Double.parseDouble(txtHargaJual.getText());
+            int stok = Integer.parseInt(txtStok.getText());
+            double hargaBeli = parseFormattedNumber(txtHargaBeli.getText());
+            double hargaJual = parseFormattedNumber(txtHargaJual.getText());
+
+            if (stok < 0) {
+                showAlert(Alert.AlertType.WARNING, "Peringatan", "Stok tidak boleh negatif!");
+                return false;
+            }
+
+            if (hargaBeli < 0 || hargaJual < 0) {
+                showAlert(Alert.AlertType.WARNING, "Peringatan", "Harga tidak boleh negatif!");
+                return false;
+            }
         } catch (NumberFormatException e) {
             showAlert(Alert.AlertType.WARNING, "Peringatan", "Stok dan Harga harus berupa angka!");
             return false;

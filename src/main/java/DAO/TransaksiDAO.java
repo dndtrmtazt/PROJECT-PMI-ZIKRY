@@ -8,6 +8,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
+import model.Detail_Transaksi;
 import model.Transaksi;
 
 public class TransaksiDAO {
@@ -114,6 +115,79 @@ public class TransaksiDAO {
         return false;
     }
 
+    public static boolean saveTransaksiWithDetails(Transaksi transaksi, List<Detail_Transaksi> details) {
+        if (transaksi == null || details == null || details.isEmpty()) {
+            return false;
+        }
+
+        String transaksiQuery = "INSERT INTO transaksi (id_transaksi, tgl_transaksi, id_user, total) VALUES (?, ?, ?, ?)";
+        String detailQuery = "INSERT INTO detail_transaksi (id_detail, id_transaksi, id_barang, jumlah, harga_satuan) VALUES (?, ?, ?, ?, ?)";
+        String stokQuery = "UPDATE barang SET stok = stok - ? WHERE id_barang = ? AND stok >= ?";
+
+        try (Connection conn = koneksi.koneksiDB()) {
+            boolean originalAutoCommit = conn.getAutoCommit();
+            conn.setAutoCommit(false);
+
+            try (PreparedStatement transaksiPs = conn.prepareStatement(transaksiQuery);
+                 PreparedStatement detailPs = conn.prepareStatement(detailQuery);
+                 PreparedStatement stokPs = conn.prepareStatement(stokQuery)) {
+
+                transaksiPs.setString(1, transaksi.getIdTransaksi());
+                transaksiPs.setString(2, formatDateTime(transaksi.getTglTransaksi()));
+                transaksiPs.setString(3, transaksi.getIdUser());
+                transaksiPs.setDouble(4, transaksi.getTotal());
+
+                if (transaksiPs.executeUpdate() != 1) {
+                    throw new SQLException("Gagal menyimpan header transaksi.");
+                }
+
+                for (Detail_Transaksi detail : details) {
+                    if (detail == null || detail.getIdBarang() == null || detail.getJumlah() <= 0) {
+                        throw new SQLException("Detail transaksi tidak valid.");
+                    }
+
+                    String nextIdDetail = getNextIdDetail(conn);
+                    detail.setIdDetail(nextIdDetail);
+                    detail.setIdTransaksi(transaksi.getIdTransaksi());
+
+                    detailPs.clearParameters();
+                    detailPs.setString(1, detail.getIdDetail());
+                    detailPs.setString(2, detail.getIdTransaksi());
+                    detailPs.setString(3, detail.getIdBarang());
+                    detailPs.setInt(4, detail.getJumlah());
+                    detailPs.setDouble(5, detail.getHargaSatuan());
+
+                    if (detailPs.executeUpdate() != 1) {
+                        throw new SQLException("Gagal menyimpan detail transaksi untuk barang " + detail.getIdBarang() + ".");
+                    }
+
+                    stokPs.clearParameters();
+                    stokPs.setInt(1, detail.getJumlah());
+                    stokPs.setString(2, detail.getIdBarang());
+                    stokPs.setInt(3, detail.getJumlah());
+
+                    if (stokPs.executeUpdate() != 1) {
+                        throw new SQLException("Stok barang " + detail.getIdBarang() + " tidak mencukupi.");
+                    }
+                }
+
+                conn.commit();
+                return true;
+            } catch (SQLException e) {
+                conn.rollback();
+                System.err.println("Error saving transaksi atomically: " + e.getMessage());
+                e.printStackTrace();
+                return false;
+            } finally {
+                conn.setAutoCommit(originalAutoCommit);
+            }
+        } catch (SQLException e) {
+            System.err.println("Error preparing transaksi save: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     public static boolean updateTransaksi(Transaksi transaksi) {
         String query = "UPDATE transaksi SET tgl_transaksi = ?, id_user = ?, total = ? WHERE id_transaksi = ?";
         try (Connection conn = koneksi.koneksiDB();
@@ -203,5 +277,20 @@ public class TransaksiDAO {
             return null;
         }
         return value.format(SQL_DATE_TIME_FORMATTER);
+    }
+
+    private static String getNextIdDetail(Connection conn) throws SQLException {
+        String query = "SELECT id_detail FROM detail_transaksi ORDER BY id_detail DESC LIMIT 1";
+        try (Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(query)) {
+            if (rs.next()) {
+                String lastId = rs.getString("id_detail");
+                int lastNum = Integer.parseInt(lastId.substring(3));
+                return String.format("DTL%03d", lastNum + 1);
+            }
+        } catch (NumberFormatException e) {
+            throw new SQLException("Format id_detail tidak valid.", e);
+        }
+        return "DTL001";
     }
 }

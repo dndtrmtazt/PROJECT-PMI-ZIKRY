@@ -93,7 +93,7 @@ public class KasirDashboardController {
             // Jika kita berada di dalam view konten (seperti TransaksiView)
             setupSortHeaders();
             loadProducts(isDarkMode);
-            setupSearch(isDarkMode);
+            setupSearch();
             setupPayment();
             setupRealTimeClock();
         }
@@ -139,6 +139,7 @@ public class KasirDashboardController {
     private void setupLogout() {
         btnLogout.setOnAction(e -> {
             try {
+                UserSession.getInstance().logout();
                 Stage stage = (Stage) btnLogout.getScene().getWindow();
 
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/FXML/LoginView.fxml"));
@@ -758,26 +759,21 @@ public class KasirDashboardController {
             String idTransaksi = TransaksiDAO.getNextIdTransaksi();
             String idUser = UserSession.getInstance().getUserId();
 
+            if (idUser == null || idUser.trim().isEmpty()) {
+                showAlert("Error", "Session user tidak ditemukan. Silakan login ulang.");
+                return;
+            }
+
             Transaksi trx = new Transaksi();
             trx.setIdTransaksi(idTransaksi);
             trx.setTglTransaksi(LocalDateTime.now());
             trx.setIdUser(idUser);
             trx.setTotal(totalBelanja);
 
-            boolean trxSaved = TransaksiDAO.insertTransaksi(trx);
+            boolean trxSaved = TransaksiDAO.saveTransaksiWithDetails(trx, new java.util.ArrayList<>(cartItems));
             if (!trxSaved) {
-                showAlert("Error", "Gagal menyimpan data transaksi ke database!");
+                showAlert("Error", "Gagal menyimpan transaksi. Periksa stok barang dan coba lagi.");
                 return;
-            }
-
-            for (Detail_Transaksi item : cartItems) {
-                String idDetail = DetailTransaksiDAO.getNextIdDetail();
-                item.setIdDetail(idDetail);
-                item.setIdTransaksi(idTransaksi);
-                DetailTransaksiDAO.insertDetail(item);
-                
-                // Kurangi stok di database
-                BarangDAO.reduceStok(item.getIdBarang(), item.getJumlah());
             }
 
             showAlert("Sukses", "Transaksi Berhasil Disimpan!");
@@ -800,11 +796,11 @@ public class KasirDashboardController {
 
 
     // --- PENCARIAN PRODUK ---
-    private void setupSearch(boolean isDarkMode) {
+    private void setupSearch() {
         if (txtSearch == null) return;
         txtSearch.focusedProperty().addListener((obs, wasFocused, isFocused) -> setStyleClass(hboxSearch, "focused", isFocused));
         txtSearch.textProperty().addListener((obs, old, newVal) -> {
-            filterProducts(newVal, isDarkMode);
+            filterProducts(newVal, MainController.isDarkMode);
         });
     }
 

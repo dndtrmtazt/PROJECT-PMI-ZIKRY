@@ -7,17 +7,21 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
+import javafx.scene.control.TextFormatter;
 import javafx.scene.layout.AnchorPane;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 public class DetailBarangController {
 
     @FXML private Label lblHeaderDetail;
     @FXML private TextField txtIdBarang, txtNamaBarang, txtIdKategori, txtStok, txtHargaBeli, txtHargaJual;
     @FXML private Button btnBatal, btnSimpan, btnHapus;
+    private final NumberFormat numberFormat = NumberFormat.getIntegerInstance(new Locale("id", "ID"));
 
     /**
      * FUNGSI UTAMA: Menampilkan data dari tabel ke dalam form.
@@ -31,8 +35,8 @@ public class DetailBarangController {
         txtStok.setText(String.valueOf(stok));
 
         // Untuk editing, kita masukkan angka murni saja tanpa "Rp" agar mudah di-parse
-        txtHargaBeli.setText(String.valueOf((long)hBeli));
-        txtHargaJual.setText(String.valueOf((long)hJual));
+        txtHargaBeli.setText(numberFormat.format((long) hBeli));
+        txtHargaJual.setText(numberFormat.format((long) hJual));
     }
 
     /**
@@ -44,12 +48,25 @@ public class DetailBarangController {
 
         try (Connection conn = koneksi.koneksiDB();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            int stok = Integer.parseInt(txtStok.getText());
+            double hargaBeli = parseFormattedNumber(txtHargaBeli.getText());
+            double hargaJual = parseFormattedNumber(txtHargaJual.getText());
+
+            if (stok < 0) {
+                showAlert("Error Input", "Stok tidak boleh negatif!");
+                return;
+            }
+
+            if (hargaBeli < 0 || hargaJual < 0) {
+                showAlert("Error Input", "Harga tidak boleh negatif!");
+                return;
+            }
 
             pstmt.setString(1, txtNamaBarang.getText());
             pstmt.setString(2, txtIdKategori.getText());
-            pstmt.setInt(3, Integer.parseInt(txtStok.getText()));
-            pstmt.setDouble(4, Double.parseDouble(txtHargaBeli.getText()));
-            pstmt.setDouble(5, Double.parseDouble(txtHargaJual.getText()));
+            pstmt.setInt(3, stok);
+            pstmt.setDouble(4, hargaBeli);
+            pstmt.setDouble(5, hargaJual);
             pstmt.setString(6, txtIdBarang.getText());
 
             int rowsAffected = pstmt.executeUpdate();
@@ -97,7 +114,41 @@ public class DetailBarangController {
 
     @FXML
     public void initialize() {
+        setupCurrencyField(txtHargaBeli);
+        setupCurrencyField(txtHargaJual);
         setDarkMode(MainController.isDarkMode);
+    }
+
+    private void setupCurrencyField(TextField field) {
+        if (field == null) {
+            return;
+        }
+
+        field.setTextFormatter(new TextFormatter<>(change -> {
+            String newText = change.getControlNewText();
+            String digitsOnly = newText.replaceAll("[^0-9]", "");
+
+            if (digitsOnly.isEmpty()) {
+                change.setText("");
+                change.setRange(0, change.getControlText().length());
+                return change;
+            }
+
+            try {
+                long value = Long.parseLong(digitsOnly);
+                String formatted = numberFormat.format(value);
+                change.setText(formatted);
+                change.setRange(0, change.getControlText().length());
+                return change;
+            } catch (NumberFormatException e) {
+                return null;
+            }
+        }));
+    }
+
+    private double parseFormattedNumber(String value) {
+        String normalized = value == null ? "" : value.replace(".", "").replaceAll("[^0-9]", "").trim();
+        return normalized.isEmpty() ? 0 : Double.parseDouble(normalized);
     }
 
     public void setDarkMode(boolean enabled) {
