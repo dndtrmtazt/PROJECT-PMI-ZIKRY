@@ -33,7 +33,7 @@
                                             <children><ImageView fitHeight="30.0" fitWidth="30.0"><image><Image url="@../../Images/ICON29.png" /></image></ImageView></children>
                                         </VBox>
                                         <Label minWidth="120.0" text="Nama Toko" />
-                                        <TextField fx:id="txtNamaToko" editable="false" prefHeight="35.0" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-font-weight: bold;" text="Toko Zikry" HBox.hgrow="ALWAYS" />
+                                        <TextField fx:id="txtNamaToko" editable="false" focusTraversable="false" prefHeight="35.0" text="Toko Zikry" HBox.hgrow="ALWAYS" />
                                     </children>
                                 </HBox>
 
@@ -43,7 +43,7 @@
                                             <children><ImageView fitHeight="30.0" fitWidth="30.0"><image><Image url="@../../Images/ICON30.png" /></image></ImageView></children>
                                         </VBox>
                                         <Label minWidth="120.0" text="Nomor Telepon" />
-                                        <TextField fx:id="txtTelp" editable="false" prefHeight="35.0" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-font-weight: bold;" text="+62 812-3456-7890" HBox.hgrow="ALWAYS" />
+                                        <TextField fx:id="txtTelp" editable="false" focusTraversable="false" prefHeight="35.0" text="+62 812-3456-7890" HBox.hgrow="ALWAYS" />
                                     </children>
                                 </HBox>
 
@@ -53,7 +53,7 @@
                                             <children><ImageView fitHeight="30.0" fitWidth="30.0"><image><Image url="@../../Images/ICON31.png" /></image></ImageView></children>
                                         </VBox>
                                         <Label minWidth="120.0" text="Alamat" />
-                                        <TextField fx:id="txtAlamat" editable="false" prefHeight="35.0" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-font-weight: bold;" text="Jl. Mawar No. 123, Jakarta" HBox.hgrow="ALWAYS" />
+                                        <TextField fx:id="txtAlamat" editable="false" focusTraversable="false" prefHeight="35.0" text="Jl. Mawar No. 123, Jakarta" HBox.hgrow="ALWAYS" />
                                     </children>
                                 </HBox>
 
@@ -63,15 +63,17 @@
                                             <children><ImageView fitHeight="25.0" fitWidth="25.0"><image><Image url="@../../Images/ICON32.png" /></image></ImageView></children>
                                         </VBox>
                                         <Label minWidth="120.0" text="Email" />
-                                        <TextField fx:id="txtEmail" editable="false" prefHeight="35.0" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-font-weight: bold;" text="tokozikry123@gmail.com" HBox.hgrow="ALWAYS" />
+                                        <TextField fx:id="txtEmail" editable="false" focusTraversable="false" prefHeight="35.0" text="tokozikry123@gmail.com" HBox.hgrow="ALWAYS" />
                                     </children>
                                 </HBox>
                             </children>
                         </VBox>
 
-                        <HBox alignment="CENTER_RIGHT">
+                        <HBox alignment="CENTER_RIGHT" spacing="15.0">
                             <children>
-                                <Button fx:id="btnEdit" onAction="#handleEdit" prefHeight="35.0" prefWidth="150.0" style="-fx-background-color: #3498DB; -fx-text-fill: white; -fx-background-radius: 8; -fx-font-family: 'Inter Medium'; -fx-cursor: hand;" text="Edit" />
+                                <Button fx:id="btnBatal" managed="false" onAction="#handleBatal" prefHeight="35.0" prefWidth="120.0" style="-fx-background-color: #E2E8F0; -fx-text-fill: #1E293B; -fx-background-radius: 8; -fx-font-family: 'Inter Medium'; -fx-cursor: hand; -fx-font-weight: bold;" text="Batal" visible="false" />
+
+                                <Button fx:id="btnEdit" onAction="#handleEdit" prefHeight="35.0" prefWidth="150.0" style="-fx-background-color: #3498DB; -fx-text-fill: white; -fx-background-radius: 8; -fx-font-family: 'Inter Medium'; -fx-cursor: hand; -fx-font-weight: bold;" text="Edit" />
                             </children>
                         </HBox>
                     </children>

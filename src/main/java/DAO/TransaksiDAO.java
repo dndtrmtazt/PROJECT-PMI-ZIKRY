@@ -8,172 +8,106 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
+import model.Detail_Transaksi;
 import model.Transaksi;
 
+/**
+ * Data Access Object (DAO) untuk tabel transaksi.
+ * Alur: Menangani penyimpanan transaksi induk dan proses checkout aman (Atomic Transaction).
+ */
 public class TransaksiDAO {
     private static final DateTimeFormatter SQL_DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
+    /**
+     * Method getNextIdTransaksi: Membuat ID transaksi baru (TRK001, TRK002, dst).
+     */
     public static String getNextIdTransaksi() {
         String query = "SELECT id_transaksi FROM transaksi ORDER BY id_transaksi DESC LIMIT 1";
         try (Connection conn = koneksi.koneksiDB();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(query)) {
             if (rs.next()) {
+                // [1] Ambil ID terakhir dan tambah angka urutnya
                 String lastId = rs.getString("id_transaksi");
                 int lastNum = Integer.parseInt(lastId.substring(3));
                 return String.format("TRK%03d", lastNum + 1);
             }
         } catch (SQLException | NumberFormatException e) {
-            System.err.println("Error generating next id_transaksi: " + e.getMessage());
+            e.printStackTrace();
         }
         return "TRK001";
     }
 
-    public static List<Transaksi> getAllTransaksi() {
-        List<Transaksi> listTransaksi = new ArrayList<>();
-        String query = "SELECT id_transaksi, tgl_transaksi, id_user, total FROM transaksi";
-        try (Connection conn = koneksi.koneksiDB();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(query)) {
-            while (rs.next()) {
-                Transaksi transaksi = new Transaksi();
-                transaksi.setIdTransaksi(rs.getString("id_transaksi"));
-                transaksi.setTglTransaksi(readDateTime(rs, "tgl_transaksi"));
-                transaksi.setIdUser(rs.getString("id_user"));
-                transaksi.setTotal(rs.getDouble("total"));
-                listTransaksi.add(transaksi);
+    /**
+     * Method prosesCheckout: Alur penyimpanan transaksi paling penting (Atomic).
+     * Alur: 1. Simpan Header -> 2. Simpan Detail -> 3. Kurangi Stok -> 4. Commit/Rollback.
+     */
+    public static boolean prosesCheckout(Transaksi transaksi, List<Detail_Transaksi> details) {
+        String queryInsertTrx = "INSERT INTO transaksi (id_transaksi, tgl_transaksi, id_user, total) VALUES (?, ?, ?, ?)";
+        try (Connection conn = koneksi.koneksiDB()) {
+            // [1] MATIKAN auto-commit agar semua operasi menjadi satu kesatuan (All or Nothing)
+            conn.setAutoCommit(false);
+            try (PreparedStatement psTrx = conn.prepareStatement(queryInsertTrx)) {
+                // [2] Langkah 1: Simpan data utama Transaksi
+                psTrx.setString(1, transaksi.getIdTransaksi());
+                psTrx.setString(2, formatDateTime(transaksi.getTglTransaksi()));
+                psTrx.setString(3, transaksi.getIdUser());
+                psTrx.setDouble(4, transaksi.getTotal());
+                psTrx.executeUpdate();
+
+                // [3] Langkah 2: Looping untuk simpan setiap item detail dan kurangi stok barang
+                for (Detail_Transaksi detail : details) {
+                    // Simpan baris detail barang
+                    if (!DetailTransaksiDAO.insertDetail(conn, detail)) {
+                        throw new SQLException("Gagal simpan detail barang");
+                    }
+                    // Kurangi stok fisik di gudang, jika gagal (stok kurang) maka lempar exception
+                    if (!BarangDAO.reduceStok(conn, detail.getIdBarang(), detail.getJumlah())) {
+                        throw new SQLException("Stok barang tidak mencukupi");
+                    }
+                }
+                // [4] Final: Jika semua aman, simpan permanen ke disk
+                conn.commit();
+                return true;
+            } catch (SQLException ex) {
+                // [5] Rollback: Batalkan semua jika ada satu saja yang error untuk menjaga konsistensi
+                conn.rollback();
+                return false;
+            } finally {
+                conn.setAutoCommit(true);
             }
         } catch (SQLException e) {
-            System.err.println("Error getting all transaksi: " + e.getMessage());
-            e.printStackTrace();
+            return false;
         }
-        return listTransaksi;
     }
 
-    public static Transaksi getTransaksiById(String idTransaksi) {
-        String query = "SELECT id_transaksi, tgl_transaksi, id_user, total FROM transaksi WHERE id_transaksi = ?";
-        try (Connection conn = koneksi.koneksiDB();
-             PreparedStatement ps = conn.prepareStatement(query)) {
-            ps.setString(1, idTransaksi);
-            
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                Transaksi transaksi = new Transaksi();
-                transaksi.setIdTransaksi(rs.getString("id_transaksi"));
-                transaksi.setTglTransaksi(readDateTime(rs, "tgl_transaksi"));
-                transaksi.setIdUser(rs.getString("id_user"));
-                transaksi.setTotal(rs.getDouble("total"));
-                return transaksi;
-            }
-        } catch (SQLException e) {
-            System.err.println("Error getting transaksi by id: " + e.getMessage());
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public static List<Transaksi> getTransaksiByUser(String idUser) {
-        List<Transaksi> listTransaksi = new ArrayList<>();
-        String query = "SELECT id_transaksi, tgl_transaksi, id_user, total FROM transaksi WHERE id_user = ? ORDER BY tgl_transaksi DESC";
-        try (Connection conn = koneksi.koneksiDB();
-             PreparedStatement ps = conn.prepareStatement(query)) {
-            ps.setString(1, idUser);
-            
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                Transaksi transaksi = new Transaksi();
-                transaksi.setIdTransaksi(rs.getString("id_transaksi"));
-                transaksi.setTglTransaksi(readDateTime(rs, "tgl_transaksi"));
-                transaksi.setIdUser(rs.getString("id_user"));
-                transaksi.setTotal(rs.getDouble("total"));
-                listTransaksi.add(transaksi);
-            }
-        } catch (SQLException e) {
-            System.err.println("Error getting transaksi by user: " + e.getMessage());
-            e.printStackTrace();
-        }
-        return listTransaksi;
-    }
-
-    public static boolean insertTransaksi(Transaksi transaksi) {
-        String query = "INSERT INTO transaksi (id_transaksi, tgl_transaksi, id_user, total) VALUES (?, ?, ?, ?)";
-        try (Connection conn = koneksi.koneksiDB();
-             PreparedStatement ps = conn.prepareStatement(query)) {
-            ps.setString(1, transaksi.getIdTransaksi());
-            ps.setString(2, formatDateTime(transaksi.getTglTransaksi()));
-            ps.setString(3, transaksi.getIdUser());
-            ps.setDouble(4, transaksi.getTotal());
-            
-            int result = ps.executeUpdate();
-            System.out.println("Transaksi inserted: " + transaksi.getIdTransaksi());
-            return result > 0;
-        } catch (SQLException e) {
-            System.err.println("Error inserting transaksi: " + e.getMessage());
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-    public static boolean updateTransaksi(Transaksi transaksi) {
-        String query = "UPDATE transaksi SET tgl_transaksi = ?, id_user = ?, total = ? WHERE id_transaksi = ?";
-        try (Connection conn = koneksi.koneksiDB();
-             PreparedStatement ps = conn.prepareStatement(query)) {
-            ps.setString(1, formatDateTime(transaksi.getTglTransaksi()));
-            ps.setString(2, transaksi.getIdUser());
-            ps.setDouble(3, transaksi.getTotal());
-            ps.setString(4, transaksi.getIdTransaksi());
-            
-            System.out.println("Transaksi updated: " + transaksi.getIdTransaksi());
-            return ps.executeUpdate() > 0;
-        } catch (SQLException e) {
-            System.err.println("Error updating transaksi: " + e.getMessage());
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-    public static boolean deleteTransaksi(String idTransaksi) {
-        String query = "DELETE FROM transaksi WHERE id_transaksi = ?";
-        try (Connection conn = koneksi.koneksiDB();
-             PreparedStatement ps = conn.prepareStatement(query)) {
-            ps.setString(1, idTransaksi);
-            
-            System.out.println("Transaksi deleted: " + idTransaksi);
-            return ps.executeUpdate() > 0;
-        } catch (SQLException e) {
-            System.err.println("Error deleting transaksi: " + e.getMessage());
-            e.printStackTrace();
-        }
-        return false;
-    }
-
+    /**
+     * Method getTotalPenjualanByDate: Menghitung total omset uang masuk pada tanggal tertentu.
+     */
     public static double getTotalPenjualanByDate(LocalDate tanggal) {
         String query = "SELECT COALESCE(SUM(total), 0) FROM transaksi WHERE DATE(tgl_transaksi) = ?";
         try (Connection conn = koneksi.koneksiDB();
              PreparedStatement ps = conn.prepareStatement(query)) {
             ps.setString(1, tanggal.toString());
             ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                return rs.getDouble(1);
-            }
+            if (rs.next()) return rs.getDouble(1);
         } catch (SQLException e) {
-            System.err.println("Error getting total penjualan by date: " + e.getMessage());
             e.printStackTrace();
         }
         return 0;
     }
 
+    /**
+     * Method getJumlahTransaksiByDate: Menghitung berapa kali transaksi terjadi pada tanggal tertentu.
+     */
     public static int getJumlahTransaksiByDate(LocalDate tanggal) {
         String query = "SELECT COUNT(*) FROM transaksi WHERE DATE(tgl_transaksi) = ?";
         try (Connection conn = koneksi.koneksiDB();
              PreparedStatement ps = conn.prepareStatement(query)) {
             ps.setString(1, tanggal.toString());
             ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                return rs.getInt(1);
-            }
+            if (rs.next()) return rs.getInt(1);
         } catch (SQLException e) {
-            System.err.println("Error getting jumlah transaksi by date: " + e.getMessage());
             e.printStackTrace();
         }
         return 0;
@@ -181,15 +115,9 @@ public class TransaksiDAO {
 
     private static LocalDateTime readDateTime(ResultSet rs, String columnName) throws SQLException {
         String value = rs.getString(columnName);
-        if (value == null || value.trim().isEmpty()) {
-            return null;
-        }
-
+        if (value == null || value.trim().isEmpty()) return null;
         String normalizedValue = value.replace('T', ' ');
-        if (normalizedValue.length() == 16) {
-            normalizedValue += ":00";
-        }
-
+        if (normalizedValue.length() == 16) normalizedValue += ":00";
         try {
             return LocalDateTime.parse(normalizedValue, SQL_DATE_TIME_FORMATTER);
         } catch (DateTimeParseException e) {
@@ -199,9 +127,6 @@ public class TransaksiDAO {
     }
 
     private static String formatDateTime(LocalDateTime value) {
-        if (value == null) {
-            return null;
-        }
-        return value.format(SQL_DATE_TIME_FORMATTER);
+        return (value == null) ? null : value.format(SQL_DATE_TIME_FORMATTER);
     }
 }

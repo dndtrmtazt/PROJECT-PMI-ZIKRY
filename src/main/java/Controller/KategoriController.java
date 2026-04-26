@@ -4,12 +4,12 @@ import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader; // Tambahkan ini
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Parent; // Tambahkan ini
-import javafx.scene.Scene; // Tambahkan ini
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -17,13 +17,18 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
-import javafx.stage.Modality; // Tambahkan ini
-import javafx.stage.Stage; // Tambahkan ini
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import DAO.KategoriDAO;
 import model.Kategori;
 
+/**
+ * Controller untuk mengelola daftar Kategori Barang.
+ * Alur: Menampilkan data kategori dalam bentuk baris kustom, serta menangani aksi Tambah, Edit, dan Hapus.
+ */
 public class KategoriController implements Initializable {
 
+    // [1] Deklarasi komponen UI dari FXML
     @FXML private VBox paneRoot, vboxKategoriList, vboxContent;
     @FXML private HBox vboxHeader, hboxSearch, hboxTableHead;
     @FXML private Label lblTitle, lblDaftarKategori;
@@ -32,69 +37,88 @@ public class KategoriController implements Initializable {
 
     private KategoriDAO kategoriDAO = new KategoriDAO();
 
+    /**
+     * Method initialize: Mengatur tampilan awal halaman kategori.
+     */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        // [1] Memuat data kategori dari database
         loadDataKategori();
-        // Pastikan MainController.isDarkMode sudah terdefinisi
+        // [2] Menyesuaikan tema visual (Dark/Light)
         setDarkMode(MainController.isDarkMode);
     }
 
-    // --- 1. PERBAIKAN TOMBOL TAMBAH ---
+    /**
+     * Method handleTambahKategori: Menangani aksi klik tombol tambah.
+     */
     @FXML
     private void handleTambahKategori() {
-        showKategoriDialog(null); // Membuka dialog kosong
+        showKategoriDialog(null); // Membuka form dalam mode 'Baru'
     }
 
-    // --- 2. PERBAIKAN TOMBOL EDIT ---
+    /**
+     * Method handleEdit: Menangani aksi klik tombol edit pada baris kategori.
+     */
     private void handleEdit(Kategori k) {
-        showKategoriDialog(k); // Membuka dialog dengan data
+        showKategoriDialog(k); // Membuka form dengan data kategori yang dipilih
     }
 
+    /**
+     * Method showKategoriDialog: Memunculkan jendela Pop-up Form Kategori.
+     * Alur: 1. Load FXML Form -> 2. Set Data (Update/Add) -> 3. Tampilkan & Tunggu -> 4. Refresh List.
+     */
     private void showKategoriDialog(Kategori k) {
         try {
-            // PERBAIKAN: Sesuai struktur folder di image_e93605.png
+            // [1] Mencari lokasi file desain form
             URL fxmlLocation = getClass().getResource("/FXML/Admin/FormKategori.fxml");
-
-            if (fxmlLocation == null) {
-                throw new java.io.FileNotFoundException("File FormKategori.fxml tidak ada di resources/FXML/Admin/");
-            }
-
             FXMLLoader loader = new FXMLLoader(fxmlLocation);
             Parent root = loader.load();
 
+            // [2] Mengirim data kategori ke controller form
             FormKategoriController controller = loader.getController();
             controller.setData(k);
 
+            // [3] Membuat dan menampilkan Stage (Window) baru secara Modal
             Stage stage = new Stage();
             stage.setTitle(k == null ? "Tambah Data Kategori" : "Edit Data Kategori");
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setScene(new Scene(root));
             stage.showAndWait();
 
+            // [4] Refresh data di layar utama setelah form ditutup
             loadDataKategori();
         } catch (Exception e) {
-            System.err.println("Gagal membuka Form Kategori: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
+    /**
+     * Method loadDataKategori: Mengambil data dari database dan merendernya ke VBox.
+     * Alur: 1. Clear List -> 2. Ambil dari DAO -> 3. Looping untuk membuat baris HBox -> 4. Add ke Container.
+     */
     private void loadDataKategori() {
         if (vboxKategoriList == null) return;
 
+        // [1] Bersihkan tampilan lama
         vboxKategoriList.getChildren().clear();
         List<Kategori> list = kategoriDAO.getAllKategori();
+        
+        // [2] Tentukan variabel warna sesuai tema aktif
         boolean isDark = MainController.isDarkMode;
         String textColor = isDark ? "white" : "#2C3E50";
         String rowBg = isDark ? "#1e1e1e" : "#FFFFFF";
         String borderColor = isDark ? "#333333" : "#E0E0E0";
 
+        // [3] Looping data hasil query database
         int no = 1;
         for (Kategori k : list) {
+            // [4] Membuat wadah baris (HBox) secara programmatically
             HBox baris = new HBox(10);
             baris.setAlignment(Pos.CENTER_LEFT);
             baris.setPadding(new Insets(10, 15, 10, 15));
             baris.setStyle("-fx-background-color: " + rowBg + "; -fx-border-color: " + borderColor + "; -fx-border-width: 0 0 1 0;");
 
+            // [5] Menambahkan Label No, ID, dan Nama Kategori
             Label lblNo = new Label(String.valueOf(no++));
             lblNo.setMinWidth(91.0); lblNo.setStyle("-fx-text-fill: " + textColor + ";");
 
@@ -107,15 +131,16 @@ public class KategoriController implements Initializable {
             Region spacer = new Region();
             HBox.setHgrow(spacer, Priority.ALWAYS);
 
+            // [6] Menambahkan tombol aksi (Edit & Hapus) di akhir baris
             HBox actionBox = new HBox(10);
             actionBox.setMinWidth(180.0);
             actionBox.setAlignment(Pos.CENTER_LEFT);
 
             Button btnEdit = createActionButton("Edit", "#4A90E2", "/Images/pencil_white.png");
-            btnEdit.setOnAction(e -> handleEdit(k)); // Listener klik Edit
+            btnEdit.setOnAction(e -> handleEdit(k));
 
             Button btnHapus = createActionButton("Hapus", "#F87171", "/Images/trash_white.png");
-            btnHapus.setOnAction(e -> handleHapus(k)); // Listener klik Hapus
+            btnHapus.setOnAction(e -> handleHapus(k));
 
             actionBox.getChildren().addAll(btnEdit, btnHapus);
             baris.getChildren().addAll(lblNo, lblId, lblNama, spacer, actionBox);
@@ -123,7 +148,11 @@ public class KategoriController implements Initializable {
         }
     }
 
+    /**
+     * Method handleHapus: Menangani proses penghapusan data kategori.
+     */
     private void handleHapus(Kategori k) {
+        // [1] Tampilkan dialog konfirmasi hapus
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
         confirm.setTitle("Konfirmasi Hapus");
         confirm.setHeaderText(null);
@@ -131,16 +160,17 @@ public class KategoriController implements Initializable {
 
         confirm.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
-                // Pastikan method ini ada di DAO kamu
+                // [2] Eksekusi penghapusan di database
                 if (kategoriDAO.deleteKategori(k.getIdKategori())) {
-                    loadDataKategori(); // Refresh tampilan
-                } else {
-                    System.err.println("Gagal menghapus data dari DB.");
+                    loadDataKategori(); // Refresh tampilan jika sukses
                 }
             }
         });
     }
 
+    /**
+     * Method createActionButton: Fungsi pembantu untuk membuat tombol bergambar (ikon).
+     */
     private Button createActionButton(String text, String color, String iconPath) {
         Button btn = new Button(text);
         btn.setMinWidth(Region.USE_PREF_SIZE);
@@ -153,7 +183,11 @@ public class KategoriController implements Initializable {
         return btn;
     }
 
+    /**
+     * Method setDarkMode: Menyesuaikan visual halaman sesuai tema aktif.
+     */
     public void setDarkMode(boolean enabled) {
+        // [1] Inisialisasi variabel warna tema
         String bgMain = enabled ? "#121212" : "#F4F4F4";
         String bgCard = enabled ? "#1E1E1E" : "white";
         String textColor = enabled ? "white" : "#2C3E50";
@@ -161,30 +195,14 @@ public class KategoriController implements Initializable {
         String headerBg = enabled ? "#2C2C2C" : "#F8FAFC";
         String inputBg = enabled ? "#2C2C2C" : "white";
 
+        // [2] Terapkan style CSS pada kontainer dan input pencarian
         if (paneRoot != null) paneRoot.setStyle("-fx-background-color: " + bgMain + ";");
         if (vboxHeader != null) vboxHeader.setStyle("-fx-background-color: #4A76A8;");
-        if (lblTitle != null) lblTitle.setStyle("-fx-text-fill: white; -fx-font-weight: bold;");
-        if (hboxSearch != null) {
-            hboxSearch.setStyle("-fx-background-color: " + bgCard + "; -fx-background-radius: 10; -fx-border-color: " + borderColor + "; -fx-border-radius: 10;");
-        }
-        if (txtSearchKategori != null) {
-            txtSearchKategori.setStyle("-fx-background-radius: 8; -fx-border-radius: 8; -fx-background-color: " + inputBg + "; -fx-border-color: " + borderColor + "; -fx-text-fill: " + textColor + "; -fx-prompt-text-fill: " + (enabled ? "#A1A1AA" : "#9CA3AF") + ";");
-        }
-        if (vboxContent != null) {
-            vboxContent.setStyle("-fx-background-color: " + bgCard + "; -fx-background-radius: 10; -fx-border-color: " + borderColor + "; -fx-border-radius: 10;");
-        }
-        if (lblDaftarKategori != null) {
-            lblDaftarKategori.setStyle("-fx-font-family: 'Inter Medium'; -fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: " + textColor + ";");
-        }
-        if (hboxTableHead != null) {
-            hboxTableHead.setStyle("-fx-background-color: " + headerBg + "; -fx-background-radius: 5; -fx-border-color: " + borderColor + "; -fx-border-width: 0 0 1 0;");
-            hboxTableHead.getChildren().forEach(node -> {
-                if (node instanceof Label) {
-                    Label label = (Label) node;
-                    label.setStyle("-fx-font-weight: bold; -fx-text-fill: " + textColor + ";");
-                }
-            });
-        }
+        if (hboxSearch != null) hboxSearch.setStyle("-fx-background-color: " + bgCard + "; -fx-background-radius: 10; -fx-border-color: " + borderColor + "; -fx-border-radius: 10;");
+        if (txtSearchKategori != null) txtSearchKategori.setStyle("-fx-background-color: " + inputBg + "; -fx-border-color: " + borderColor + "; -fx-text-fill: " + textColor + ";");
+        if (vboxContent != null) vboxContent.setStyle("-fx-background-color: " + bgCard + "; -fx-background-radius: 10;");
+
+        // [3] Refresh list baris kategori agar warnanya ikut berubah
         loadDataKategori();
     }
 }

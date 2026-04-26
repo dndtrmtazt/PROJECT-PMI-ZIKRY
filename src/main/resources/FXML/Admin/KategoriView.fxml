@@ -36,9 +36,6 @@
                                 <Label fx:id="lblDaftarKategori" style="-fx-font-family: 'Inter Medium'; -fx-font-size: 18; -fx-font-weight: bold;" text="Daftar Kategori" />
                                 <Region HBox.hgrow="ALWAYS" />
                                 <Button fx:id="btnTambah" mnemonicParsing="false" onAction="#handleTambahKategori" prefHeight="35.0" prefWidth="220.0" style="-fx-background-color: #5CB85C; -fx-text-fill: white; -fx-background-radius: 8; -fx-font-family: 'Inter Medium';" text="+ Tambahkan Data Kategori">
-                                    <graphic>
-                                        <ImageView fitHeight="16.0" fitWidth="16.0"><image><Image url="@../../Images/LOGO.png" /></image></ImageView>
-                                    </graphic>
                                 </Button>
                             </children>
                         </HBox>

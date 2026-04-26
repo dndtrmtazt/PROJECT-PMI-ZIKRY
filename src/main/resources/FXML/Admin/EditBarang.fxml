@@ -12,9 +12,9 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox fx:id="paneRoot" prefHeight="650.0" prefWidth="917.0" style="-fx-background-color: #F4F4F4;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.EditBarangController">
+<VBox fx:id="paneRoot" prefHeight="650.0" prefWidth="917.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.EditBarangController">
     <children>
-        <HBox fx:id="hboxHeader" alignment="CENTER_LEFT" prefHeight="70.0" style="-fx-background-color: #4A76A8;">
+        <HBox fx:id="hboxHeader" alignment="CENTER_LEFT" prefHeight="70.0">
             <children>
                 <Label fx:id="lblTitle" text="Edit Data Barang" textFill="WHITE">
                     <font><Font name="System Bold" size="26.0" /></font>
@@ -26,12 +26,12 @@
         <VBox alignment="TOP_CENTER" spacing="30.0" VBox.vgrow="ALWAYS">
             <padding><Insets bottom="30.0" left="30.0" right="30.0" top="30.0" /></padding>
             <children>
-                <VBox fx:id="vboxFormCard" prefHeight="634.0" prefWidth="850.0" spacing="10.0" style="-fx-background-color: white; -fx-background-radius: 15; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 15, 0, 0, 8);" VBox.vgrow="ALWAYS">
+                <VBox fx:id="vboxFormCard" spacing="10.0" VBox.vgrow="ALWAYS">
                     <children>
-                        <GridPane hgap="100.0" vgap="25.0">
+                        <GridPane hgap="40.0" vgap="25.0">
                             <columnConstraints>
-                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                <ColumnConstraints percentWidth="50.0" hgrow="ALWAYS" />
+                                <ColumnConstraints percentWidth="50.0" hgrow="ALWAYS" />
                             </columnConstraints>
                             <rowConstraints>
                                 <RowConstraints minHeight="10.0" prefHeight="75.0" vgrow="SOMETIMES" />
@@ -41,21 +41,21 @@
                             <children>
                                 <VBox spacing="8.0">
                                     <children>
-                                        <Label fx:id="lblIdBarang" style="-fx-font-family: 'Inter Medium'; -fx-font-size: 14px; -fx-font-weight: bold;" text="ID Barang" />
-                                        <TextField fx:id="txtIdBarang" prefHeight="45.0" promptText="Masukkan ID Barang" style="-fx-background-radius: 8; -fx-border-color: #D1D5DB; -fx-border-radius: 8; -fx-font-size: 13px;" />
+                                        <Label fx:id="lblIdBarang" text="ID Barang" />
+                                        <TextField fx:id="txtIdBarang" prefHeight="45.0" />
                                     </children>
                                 </VBox>
                                 <VBox spacing="8.0" GridPane.columnIndex="1">
                                     <children>
-                                        <Label fx:id="lblNamaBarang" style="-fx-font-family: 'Inter Medium'; -fx-font-size: 14px; -fx-font-weight: bold;" text="Nama Barang" />
-                                        <TextField fx:id="txtNamaBarang" prefHeight="45.0" promptText="Masukkan Nama Barang" style="-fx-background-radius: 8; -fx-border-color: #D1D5DB; -fx-border-radius: 8; -fx-font-size: 13px;" />
+                                        <Label fx:id="lblNamaBarang" text="Nama Barang" />
+                                        <TextField fx:id="txtNamaBarang" prefHeight="45.0" />
                                     </children>
                                 </VBox>
 
                                 <VBox spacing="8.0" GridPane.rowIndex="1">
                                     <children>
-                                        <Label fx:id="lblIdKategori" style="-fx-font-family: 'Inter Medium'; -fx-font-size: 14px; -fx-font-weight: bold;" text="ID Kategori" />
-                                        <ComboBox fx:id="cmbKategori" maxWidth="Infinity" prefHeight="45.0" promptText="Pilih Kategori" style="-fx-background-radius: 8; -fx-border-color: #D1D5DB; -fx-border-radius: 8; -fx-font-size: 13px;" />
+                                        <Label fx:id="lblIdKategori" text="ID Kategori" />
+                                        <ComboBox fx:id="cmbKategori" maxWidth="Infinity" prefHeight="45.0" />
                                     </children>
                                 </VBox>
 
@@ -63,14 +63,14 @@
                                     <children>
                                         <VBox spacing="8.0" HBox.hgrow="ALWAYS">
                                             <children>
-                                                <Label fx:id="lblStok" style="-fx-font-family: 'Inter Medium'; -fx-font-size: 14px; -fx-font-weight: bold;" text="Stok" />
-                                                <TextField fx:id="txtStok" maxWidth="Infinity" prefHeight="45.0" promptText="Stok" style="-fx-background-radius: 8; -fx-border-color: #D1D5DB; -fx-border-radius: 8; -fx-font-size: 13px;" />
+                                                <Label fx:id="lblStok" text="Stok" />
+                                                <TextField fx:id="txtStok" maxWidth="Infinity" prefHeight="45.0" />
                                             </children>
                                         </VBox>
-                                        <VBox alignment="TOP_LEFT" spacing="8.0" HBox.hgrow="ALWAYS">
+                                        <VBox spacing="8.0" HBox.hgrow="ALWAYS">
                                             <children>
-                                                <Label fx:id="lblSatuan" style="-fx-font-family: 'Inter Medium'; -fx-font-size: 14px; -fx-font-weight: bold;" text="Satuan" />
-                                                <ComboBox fx:id="cbSatuan" maxWidth="1.7976931348623157E308" minWidth="100.0" prefHeight="45.0" promptText="Pcs" style="-fx-background-radius: 8; -fx-border-color: #D1D5DB; -fx-border-radius: 8; -fx-font-size: 13px;" />
+                                                <Label fx:id="lblSatuan" text="Satuan" />
+                                                <ComboBox fx:id="cbSatuan" maxWidth="Infinity" prefHeight="45.0" />
                                             </children>
                                         </VBox>
                                     </children>
@@ -78,28 +78,26 @@
 
                                 <VBox spacing="8.0" GridPane.rowIndex="2">
                                     <children>
-                                        <Label fx:id="lblHargaBeli" style="-fx-font-family: 'Inter Medium'; -fx-font-size: 14px; -fx-font-weight: bold;" text="Harga Beli" />
-                                        <TextField fx:id="txtHargaBeli" prefHeight="45.0" promptText="Masukkan Harga Beli" style="-fx-background-radius: 8; -fx-border-color: #D1D5DB; -fx-border-radius: 8; -fx-font-size: 13px;" />
+                                        <Label fx:id="lblHargaBeli" text="Harga Beli" />
+                                        <TextField fx:id="txtHargaBeli" prefHeight="45.0" />
                                     </children>
                                 </VBox>
                                 <VBox spacing="8.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
                                     <children>
-                                        <Label fx:id="lblHargaJual" style="-fx-font-family: 'Inter Medium'; -fx-font-size: 14px; -fx-font-weight: bold;" text="Harga Jual" />
-                                        <TextField fx:id="txtHargaJual" prefHeight="45.0" promptText="Masukkan Harga Jual" style="-fx-background-radius: 8; -fx-border-color: #D1D5DB; -fx-border-radius: 8; -fx-font-size: 13px;" />
+                                        <Label fx:id="lblHargaJual" text="Harga Jual" />
+                                        <TextField fx:id="txtHargaJual" prefHeight="45.0" />
                                     </children>
                                 </VBox>
                             </children>
                             <VBox.margin><Insets bottom="30.0" left="40.0" right="40.0" top="30.0" /></VBox.margin>
                         </GridPane>
 
-                        <HBox fx:id="hboxFooter" alignment="CENTER" prefHeight="92.0" spacing="20.0" style="-fx-background-color: White; -fx-background-radius: 0 0 15 15;">
-                            <padding>
-                                <Insets bottom="30.0" left="40.0" right="40.0" top="12.0" />
-                            </padding>
+                        <HBox fx:id="hboxFooter" alignment="CENTER" prefHeight="92.0" spacing="20.0">
+                            <padding><Insets bottom="30.0" left="40.0" right="40.0" top="12.0" /></padding>
                             <children>
-                                <Button fx:id="btnSimpan" onAction="#handleSimpan" prefHeight="45.0" prefWidth="250.0" style="-fx-background-color: #4A76A8; -fx-text-fill: white; -fx-background-radius: 8; -fx-font-family: 'Inter Medium'; -fx-font-weight: bold; -fx-cursor: hand;" text="Simpan Perubahan" />
-                                <Button fx:id="btnHapus" onAction="#handleHapus" prefHeight="45.0" prefWidth="120.0" style="-fx-background-color: #D9534F; -fx-text-fill: white; -fx-background-radius: 8; -fx-font-family: 'Inter Medium'; -fx-font-weight: bold; -fx-cursor: hand;" text="Hapus" />
-                                <Button fx:id="btnBatal" onAction="#handleBatal" prefHeight="45.0" prefWidth="120.0" style="-fx-background-color: #E5E7EB; -fx-text-fill: #374151; -fx-background-radius: 8; -fx-font-family: 'Inter Medium'; -fx-font-weight: bold; -fx-cursor: hand;" text="Batal" />
+                                <Button fx:id="btnBatal" onAction="#handleBatal" prefHeight="45.0" prefWidth="120.0" text="Batal" />
+                                <Button fx:id="btnSimpan" onAction="#handleSimpan" prefHeight="45.0" prefWidth="250.0" text="Simpan Perubahan" />
+                                <Button fx:id="btnHapus" onAction="#handleHapus" prefHeight="45.0" prefWidth="120.0" text="Hapus" />
                             </children>
                         </HBox>
                     </children>

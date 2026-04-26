@@ -4,6 +4,7 @@ import javafx.animation.FadeTransition;
 import java.text.NumberFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
@@ -46,27 +47,32 @@ import model.Transaksi;
 import config.UserSession;
 import java.io.IOException;
 
+/**
+ * Controller utama untuk dashboard Kasir.
+ * Alur: Menangani pemilihan barang, manajemen keranjang, dan proses checkout/simpan transaksi.
+ */
 public class KasirDashboardController {
-    private enum SortField {
-        NONE,
-        NAMA,
-        STOK,
-        HARGA
-    }
+    private enum SortField { NONE, NAMA, STOK, HARGA }
 
-    // --- KOMPONEN UI (Sesuai ID di FXML) ---
+    // [1] Deklarasi komponen Sidebar & Layout Utama
     @FXML private AnchorPane paneRoot;
-    @FXML private VBox vboxSidebar, vboxMainContent, vboxProductCard, vboxCart, vboxProdukList, vboxCartList;
-    @FXML private HBox hboxThemeToggle, hboxSearch, hboxProductHeader, hboxCartHeader;
+    @FXML private VBox vboxSidebar, vboxMainContent;
+    @FXML private HBox hboxThemeToggle;
+    @FXML private ImageView imgLogo, imgLightMode, imgDarkMode, imgLogout;
+    @FXML private Button btnLightMode, btnDarkMode, btnLogout, btnTransaksi;
+    @FXML private Label lblLogo;
+
+    // [2] Deklarasi komponen Area Transaksi (Produk & Keranjang)
+    @FXML private VBox vboxProductCard, vboxCart, vboxProdukList, vboxCartList, vboxSummary;
+    @FXML private HBox hboxSearch, hboxProductHeader, hboxCartHeader;
     @FXML private ScrollPane scrollProduct, scrollCart;
-    @FXML private Label lblLogo, lblTanggal, lblListProduk, lblHeaderNama, lblHeaderStok, lblHeaderHarga, lblKeranjangBelanja;
+    @FXML private Label lblTanggal, lblListProduk, lblHeaderNama, lblHeaderStok, lblHeaderHarga, lblKeranjangBelanja;
     @FXML private Label lblCartHeaderItem, lblCartHeaderQty, lblCartHeaderHarga, lblCartHeaderSubtotal;
     @FXML private Label lblTotalBelanjaText, lblTotalBelanja, lblKembalianText, lblKembalian, lblSearchIcon;
     @FXML private TextField txtSearch, txtBayar;
-    @FXML private ImageView imgLogo, imgLightMode, imgDarkMode, imgLogout;
-    @FXML private Button btnLightMode, btnDarkMode, btnLogout, btnSimpanCetak, btnTransaksi;
+    @FXML private Button btnSimpanCetak;
 
-    // --- DATA STATE ---
+    // [3] Variabel data penunjang transaksi
     private List<Barang> allBarang;
     private ObservableList<Detail_Transaksi> cartItems = FXCollections.observableArrayList();
     private double totalBelanja = 0;
@@ -74,769 +80,616 @@ public class KasirDashboardController {
     private boolean isThemeTransitionRunning = false;
     private SortField activeSortField = SortField.NONE;
     private boolean sortAscending = true;
-
     private final NumberFormat nfIndo = NumberFormat.getInstance(new Locale("id", "ID"));
 
-    // --- PENGATURAN AWAL ---
+    /**
+     * Method initialize: Menyiapkan layar kasir dan memuat data awal.
+     */
     @FXML
     public void initialize() {
         nfIndo.setMaximumFractionDigits(0);
         boolean isDarkMode = MainController.isDarkMode;
 
+        // [1] Jika ini adalah Sidebar utama (Outer Shell)
         if (vboxSidebar != null) {
-            // Jika kita berada di Dashboard (Shell/Layout utama)
             setupSidebarActions();
-            // Load TransaksiView sebagai halaman default
             loadPage("/FXML/Kasir/TransaksiView.fxml");
-        } else {
-            // Jika kita berada di dalam view konten (seperti TransaksiView)
+        } 
+        // [2] Jika ini adalah Area Transaksi (Inner View)
+        else {
+            allBarang = BarangDAO.getAllBarang();
             setupSortHeaders();
             loadProducts(isDarkMode);
             setupSearch(isDarkMode);
             setupPayment();
             setupRealTimeClock();
         }
-
         setDarkMode(isDarkMode);
     }
 
+    /**
+     * Method: Menyiapkan aksi tombol-tombol pada sidebar.
+     */
     private void setupSidebarActions() {
-        if (btnTransaksi != null) {
-            btnTransaksi.setOnAction(e -> loadPage("/FXML/Kasir/TransaksiView.fxml"));
-            btnTransaksi.setOnMouseEntered(e -> updateTransaksiButtonStyle(MainController.isDarkMode, true));
-            btnTransaksi.setOnMouseExited(e -> updateTransaksiButtonStyle(MainController.isDarkMode, false));
-        }
+        if (btnTransaksi != null) btnTransaksi.setOnAction(e -> loadPage("/FXML/Kasir/TransaksiView.fxml"));
         if (btnLightMode != null) btnLightMode.setOnAction(e -> animateThemeTransition(false));
         if (btnDarkMode != null)  btnDarkMode.setOnAction(e -> animateThemeTransition(true));
         if (btnLogout != null)    setupLogout();
     }
 
+    /**
+     * Method: Memuat halaman FXML ke dalam area konten utama secara dinamis.
+     */
     private void loadPage(String fxmlPath) {
         if (vboxMainContent == null) return;
         try {
             vboxMainContent.getChildren().clear();
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
             Parent root = loader.load();
-
-            // Agar konten mengisi seluruh area VBox
             VBox.setVgrow(root, Priority.ALWAYS);
-
             vboxMainContent.getChildren().add(root);
-
-            // Sinkronisasi tema ke controller yang baru dimuat
             currentContentController = loader.getController();
-            if (currentContentController != null) {
-                currentContentController.setDarkMode(MainController.isDarkMode);
-            }
-        } catch (IOException e) {
-            System.err.println("Gagal memuat halaman: " + fxmlPath);
-            e.printStackTrace();
-        }
+            if (currentContentController != null) currentContentController.setDarkMode(MainController.isDarkMode);
+        } catch (IOException e) { e.printStackTrace(); }
     }
 
-    // --- LOGOUT ---
+    /**
+     * Method: Menangani proses keluar (logout) dan kembali ke halaman login.
+     */
     private void setupLogout() {
         btnLogout.setOnAction(e -> {
             try {
                 Stage stage = (Stage) btnLogout.getScene().getWindow();
                 stage.close();
-
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/FXML/LoginView.fxml"));
                 Parent root = loader.load();
                 Stage loginStage = new Stage();
                 loginStage.setScene(new Scene(root));
                 loginStage.setTitle("PMI Toko Zikry - Login");
-                loginStage.setMaximized(true);
                 loginStage.show();
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
+            } catch (IOException ex) { ex.printStackTrace(); }
         });
     }
 
-    // --- DARK MODE ---
+    /**
+     * Method setDarkMode: Mengatur warna visual aplikasi agar sesuai tema gelap/terang.
+     */
     public void setDarkMode(boolean enabled) {
+        // [1] Menentukan variabel warna berdasarkan tema
         MainController.isDarkMode = enabled;
+        if (currentContentController != null) currentContentController.setDarkMode(enabled);
 
-        // Propagasi ke controller konten yang sedang aktif
-        if (currentContentController != null) {
-            currentContentController.setDarkMode(enabled);
-        }
+        String bgMain      = enabled ? "#121212" : "#efefef";
+        String bgSidebar   = enabled ? "#1e1e1e" : "#f8f8f8";
+        String bgCard      = enabled ? "#1e1e1e" : "#ffffff";
+        String borderColor = enabled ? "#333333" : "#d9d9d9";
+        String bgHeader    = enabled ? "#333333" : "#e0e0e0";
+        String textColor   = enabled ? "#FFFFFF" : "#111111";
 
-        String bgMain     = enabled ? "#121212" : "#efefef";
-        String bgSidebar  = enabled ? "#1e1e1e" : "#f8f8f8";
-        String borderColor= enabled ? "#333333" : "#d9d9d9";
-        String bgCard     = enabled ? "#1e1e1e" : "#ffffff";
-        String bgHeader   = enabled ? "#333333" : "#dcdcdc";
-        String textColor  = enabled ? "-fx-text-fill: white;" : "-fx-text-fill: #111111;";
-        String labelMuted = enabled ? "-fx-text-fill: #bbbbbb;" : "-fx-text-fill: #9a9a9a;";
-
-        if (paneRoot != null)       paneRoot.setStyle("-fx-background-color: " + bgMain + ";");
-        if (vboxSidebar != null)    vboxSidebar.setStyle("-fx-background-color: " + bgSidebar + "; -fx-border-color: " + borderColor + "; -fx-border-width: 0 1 0 0;");
+        // [2] Menerapkan style ke container utama dan sidebar
+        if (paneRoot != null) paneRoot.setStyle("-fx-background-color: " + bgMain + ";");
+        if (vboxSidebar != null) vboxSidebar.setStyle("-fx-background-color: " + bgSidebar + "; -fx-border-color: " + borderColor + "; -fx-border-width: 0 1 0 0;");
         if (vboxMainContent != null) vboxMainContent.setStyle("-fx-background-color: " + bgMain + ";");
 
-        if (lblLogo != null)            lblLogo.setStyle("-fx-font-weight: bold; " + textColor);
-        if (lblTanggal != null)         lblTanggal.setStyle(textColor);
-        if (lblListProduk != null)      lblListProduk.setStyle("-fx-font-weight: bold; " + textColor);
-        if (lblKeranjangBelanja != null) lblKeranjangBelanja.setStyle("-fx-font-weight: bold; " + textColor);
+        // [3] Mengganti gambar ikon dan logo sesuai tema
+        try {
+            if (imgLogo != null) imgLogo.setImage(new Image(getClass().getResourceAsStream(enabled ? "/Images/LOGO2.png" : "/Images/LOGO.png")));
+            if (imgLogout != null) imgLogout.setImage(new Image(getClass().getResourceAsStream(enabled ? "/Images/ICON33.png" : "/Images/ICON6.png")));
 
-        if (hboxSearch != null)  hboxSearch.setStyle("-fx-background-color: " + bgCard + "; -fx-background-radius: 8; -fx-border-color: #d3d3d3; -fx-border-radius: 8;");
-        if (txtSearch != null)   txtSearch.setStyle("-fx-background-color: transparent; " + textColor + "-fx-font-size: 11px;");
-        if (lblSearchIcon != null) lblSearchIcon.setStyle(labelMuted);
-
-        if (vboxProductCard != null)   vboxProductCard.setStyle("-fx-background-color: " + bgCard + "; -fx-background-radius: 10; -fx-border-color: " + borderColor + "; -fx-border-radius: 10;");
-        if (hboxProductHeader != null) hboxProductHeader.setStyle("-fx-background-color: " + bgHeader + ";");
-        if (lblHeaderNama != null)     lblHeaderNama.setStyle("-fx-font-weight: bold; -fx-cursor: hand; " + textColor);
-        if (lblHeaderStok != null)     lblHeaderStok.setStyle("-fx-font-weight: bold; -fx-cursor: hand; " + textColor);
-        if (lblHeaderHarga != null)    lblHeaderHarga.setStyle("-fx-font-weight: bold; -fx-cursor: hand; " + textColor);
-
-        if (scrollProduct != null) {
-            scrollProduct.setStyle("-fx-background: " + bgCard + "; -fx-background-color: transparent;");
-            scrollProduct.getStyleClass().remove("dark");
             if (enabled) {
-                scrollProduct.getStyleClass().add("dark");
+                if (imgLightMode != null) imgLightMode.setImage(new Image(getClass().getResourceAsStream("/Images/ICON3.png")));
+                if (imgDarkMode != null) imgDarkMode.setImage(new Image(getClass().getResourceAsStream("/Images/ICON4DARK.png")));
+            } else {
+                if (imgLightMode != null) imgLightMode.setImage(new Image(getClass().getResourceAsStream("/Images/ICON3.png")));
+                if (imgDarkMode != null) imgDarkMode.setImage(new Image(getClass().getResourceAsStream("/Images/ICON4.png")));
+            }
+        } catch (Exception e) { }
+
+        // [4] Mengatur style tombol dan scrollbar kustom
+        if (btnTransaksi != null) {
+            btnTransaksi.setStyle("-fx-background-color: " + (enabled ? "#2c2c2c" : "#dce9f7") + "; -fx-background-radius: 10; -fx-border-color: transparent; -fx-text-fill: " + (enabled ? "#4da3ff" : "#3b6ea7") + "; -fx-font-weight: bold; -fx-padding: 0 0 0 10; -fx-cursor: hand;");
+        }
+
+        if (btnLogout != null) {
+            btnLogout.setStyle("-fx-background-color: transparent; -fx-text-fill: " + textColor + "; -fx-font-size: 12px; -fx-cursor: hand;");
+        }
+
+        if (paneRoot != null) {
+            paneRoot.getStylesheets().removeIf(s -> s.startsWith("data:text/css"));
+            if (enabled) {
+                paneRoot.getStylesheets().add("data:text/css," +
+                        ".scroll-bar:vertical {-fx-background-color: #2b2b2b; -fx-pref-width: 14; -fx-min-width: 14;}" +
+                        ".scroll-bar:horizontal {-fx-background-color: #2b2b2b; -fx-pref-height: 14; -fx-min-height: 14;}" +
+                        ".scroll-bar .thumb {-fx-background-color: #555555; -fx-background-radius: 10;}" +
+                        ".scroll-bar .track {-fx-background-color: #1e1e1e;}" +
+                        ".scroll-bar .increment-button, .scroll-bar .decrement-button {-fx-padding: 0;}" +
+                        ".scroll-bar .increment-arrow, .scroll-bar .decrement-arrow {-fx-shape: \"\";}");
             }
         }
-        if (vboxProdukList != null) vboxProdukList.setStyle("-fx-background-color: " + bgCard + ";");
 
-        if (vboxCart != null)           vboxCart.setStyle("-fx-background-color: " + bgCard + "; -fx-background-radius: 10; -fx-border-color: " + borderColor + "; -fx-border-radius: 10;");
-        if (hboxCartHeader != null)     hboxCartHeader.setStyle("-fx-background-color: " + bgHeader + ";");
-        if (lblCartHeaderItem != null)  lblCartHeaderItem.setStyle("-fx-font-weight: bold; " + textColor);
-        if (lblCartHeaderQty != null)   lblCartHeaderQty.setStyle("-fx-font-weight: bold; " + textColor);
-        if (lblCartHeaderHarga != null) lblCartHeaderHarga.setStyle("-fx-font-weight: bold; " + textColor);
-        if (lblCartHeaderSubtotal != null) lblCartHeaderSubtotal.setStyle("-fx-font-weight: bold; " + textColor);
+        // [5] Mengatur style area keranjang dan ringkasan pembayaran
+        String scrollAreaStyle = "-fx-background: transparent; -fx-background-color: transparent; -fx-viewport-fill: transparent;";
+        if (scrollProduct != null) scrollProduct.setStyle(scrollAreaStyle);
+        if (scrollCart != null) scrollCart.setStyle(scrollAreaStyle);
 
-        if (scrollCart != null)   scrollCart.setStyle("-fx-background: " + bgCard + "; -fx-background-color: transparent;");
-        if (vboxCartList != null) vboxCartList.setStyle("-fx-background-color: " + bgCard + ";");
+        if (txtBayar != null) {
+            txtBayar.setStyle("-fx-background-color: " + (enabled ? "#2C2C2C" : "white") + "; -fx-text-fill: " + textColor + "; " +
+                    "-fx-background-radius: 10; -fx-border-radius: 10; -fx-border-color: " + borderColor + "; -fx-font-size: 15px;");
+        }
+        if (hboxSearch != null) hboxSearch.setStyle("-fx-background-color: " + bgCard + "; -fx-background-radius: 10; -fx-border-color: " + borderColor + "; -fx-border-radius: 10;");
+        if (txtSearch != null) txtSearch.setStyle("-fx-background-color: transparent; -fx-text-fill: " + textColor + "; -fx-font-size: 15px;");
+        if (vboxProductCard != null) vboxProductCard.setStyle("-fx-background-color: " + bgCard + "; -fx-background-radius: 10; -fx-border-color: " + borderColor + "; -fx-border-radius: 10;");
+        if (vboxCart != null) vboxCart.setStyle("-fx-background-color: " + bgCard + "; -fx-background-radius: 10; -fx-border-color: " + borderColor + "; -fx-border-radius: 10;");
 
-        if (lblTotalBelanjaText != null) lblTotalBelanjaText.setStyle("-fx-font-weight: bold; " + textColor);
-        if (lblTotalBelanja != null)     lblTotalBelanja.setStyle("-fx-font-weight: bold; " + textColor);
-        if (lblKembalianText != null)    lblKembalianText.setStyle("-fx-font-weight: bold; " + textColor);
+        if (hboxProductHeader != null) {
+            hboxProductHeader.setStyle("-fx-background-color: " + bgHeader + ";");
+            hboxProductHeader.setPrefHeight(45);
+        }
+        if (hboxCartHeader != null) {
+            hboxCartHeader.setStyle("-fx-background-color: " + bgHeader + ";");
+            hboxCartHeader.setPrefHeight(45);
+        }
 
-        if (txtBayar != null) txtBayar.setStyle(
-                "-fx-background-color: " + (enabled ? "#333333" : "white") + "; "
-                        + textColor
-                        + "-fx-background-radius: 8; -fx-font-size: 10.5px; -fx-border-color: #d3d3d3; -fx-border-radius: 8;"
-        );
+        if (vboxSummary != null) {
+            vboxSummary.setStyle("-fx-border-color: " + bgHeader + " transparent transparent transparent; -fx-border-width: 1 0 0 0; " +
+                    "-fx-background-color: " + bgCard + "; -fx-background-radius: 0 0 10 10;");
+        }
 
-        if (hboxThemeToggle != null) hboxThemeToggle.setStyle("-fx-background-color: " + bgCard + "; -fx-border-color: #cfcfcf; -fx-border-radius: 20; -fx-background-radius: 20;");
-        if (btnLightMode != null)    btnLightMode.setStyle("-fx-background-color: " + (enabled ? "transparent" : "#efefef") + "; -fx-background-radius: 18; -fx-cursor: hand;");
-        if (btnDarkMode != null)     btnDarkMode.setStyle("-fx-background-color: " + (enabled ? "#444444" : "transparent") + "; -fx-background-radius: 18; -fx-cursor: hand;");
-        if (btnTransaksi != null)    updateTransaksiButtonStyle(enabled, btnTransaksi.isHover());
-        if (btnLogout != null)       btnLogout.setStyle("-fx-background-color: transparent; " + textColor + "-fx-font-size: 12px; -fx-padding: 0;");
+        if (hboxThemeToggle != null) hboxThemeToggle.setStyle("-fx-background-color: " + (enabled ? "#2c2c2c" : "white") + "; -fx-border-color: #cfcfcf; -fx-border-radius: 30; -fx-background-radius: 30;");
+        if (btnLightMode != null) btnLightMode.setStyle("-fx-background-color: " + (enabled ? "transparent" : "#efefef") + "; -fx-background-radius: 20; -fx-cursor: hand;");
+        if (btnDarkMode != null) btnDarkMode.setStyle("-fx-background-color: " + (enabled ? "#555555" : "transparent") + "; -fx-background-radius: 20; -fx-cursor: hand;");
 
-        try {
-            if (imgLogo != null)      imgLogo.setImage(new Image(getClass().getResourceAsStream(enabled ? "/Images/LOGO2.png" : "/Images/LOGO.png")));
-            if (imgLightMode != null) imgLightMode.setImage(new Image(getClass().getResourceAsStream(enabled ? "/Images/ICON3DARK.png" : "/Images/ICON3.png")));
-            if (imgDarkMode != null)  imgDarkMode.setImage(new Image(getClass().getResourceAsStream(enabled ? "/Images/ICON4DARK.png" : "/Images/ICON4.png")));
-            if (imgLogout != null)    imgLogout.setImage(new Image(getClass().getResourceAsStream(enabled ? "/Images/ICON33.png" : "/Images/ICON6.png")));
-        } catch (Exception e) { /* abaikan jika gambar tidak ditemukan */ }
+        Label[] labels = {lblListProduk, lblKeranjangBelanja, lblHeaderNama, lblHeaderStok, lblHeaderHarga,
+                lblCartHeaderItem, lblCartHeaderQty, lblCartHeaderHarga, lblCartHeaderSubtotal,
+                lblTotalBelanjaText, lblTotalBelanja, lblKembalianText, lblTanggal, lblLogo};
+        for(Label l : labels) if(l != null) l.setStyle("-fx-text-fill: " + textColor + "; -fx-font-weight: bold;");
 
-        displayProducts(allBarang, enabled);
+        // [6] Refresh UI produk dan keranjang dengan warna baru
+        refreshProductList(enabled);
         updateCartUI();
     }
 
+    /**
+     * Method refreshProductList: Menampilkan daftar produk terbaru sesuai filter pencarian.
+     */
+    private void refreshProductList(boolean isDarkMode) {
+        if (vboxProdukList == null || allBarang == null) return;
+        List<Barang> currentList = allBarang;
+        // [1] Filter produk berdasarkan keyword pencarian
+        if (txtSearch != null && !txtSearch.getText().isEmpty()) {
+            String query = txtSearch.getText().toLowerCase().trim();
+            currentList = currentList.stream()
+                    .filter(b -> b.getNamaBarang().toLowerCase().contains(query) || b.getIdBarang().toLowerCase().contains(query))
+                    .collect(Collectors.toList());
+        }
+        // [2] Urutkan dan tampilkan produk ke layar
+        displayProducts(getSortedProducts(currentList), isDarkMode);
+    }
+
+    /**
+     * Method: Memberikan efek transisi smooth saat berganti tema.
+     */
     private void animateThemeTransition(boolean enabled) {
         if (MainController.isDarkMode == enabled || isThemeTransitionRunning) return;
-        if (paneRoot == null) {
-            setDarkMode(enabled);
-            return;
-        }
-
         isThemeTransitionRunning = true;
-        setThemeButtonsDisabled(true);
-
         FadeTransition fadeOut = new FadeTransition(Duration.millis(170), paneRoot);
-        fadeOut.setFromValue(1.0);
-        fadeOut.setToValue(0.72);
-        fadeOut.setInterpolator(Interpolator.EASE_BOTH);
+        fadeOut.setFromValue(1.0); fadeOut.setToValue(0.72);
         fadeOut.setOnFinished(event -> {
             setDarkMode(enabled);
-
             FadeTransition fadeIn = new FadeTransition(Duration.millis(170), paneRoot);
-            fadeIn.setFromValue(0.72);
-            fadeIn.setToValue(1.0);
-            fadeIn.setInterpolator(Interpolator.EASE_BOTH);
-            fadeIn.setOnFinished(finishEvent -> {
-                isThemeTransitionRunning = false;
-                setThemeButtonsDisabled(false);
-            });
+            fadeIn.setFromValue(0.72); fadeIn.setToValue(1.0);
+            fadeIn.setOnFinished(finishEvent -> { isThemeTransitionRunning = false; });
             fadeIn.play();
         });
         fadeOut.play();
     }
 
-    private void setThemeButtonsDisabled(boolean disabled) {
-        if (btnLightMode != null) btnLightMode.setDisable(disabled);
-        if (btnDarkMode != null) btnDarkMode.setDisable(disabled);
-    }
-
-    private void updateTransaksiButtonStyle(boolean darkMode, boolean hovered) {
-        if (btnTransaksi == null) return;
-
-        String backgroundColor;
-        String borderColor;
-        String textColor;
-
-        if (darkMode) {
-            backgroundColor = hovered ? "#202020" : "#151515";
-            borderColor = hovered ? "#353535" : "#2a2a2a";
-            textColor = "#4da3ff";
-        } else {
-            backgroundColor = hovered ? "#cfe1f5" : "#dce9f7";
-            borderColor = hovered ? "#c1d7ef" : "transparent";
-            textColor = "#3b6ea7";
-        }
-
-        btnTransaksi.setStyle(
-                "-fx-background-color: " + backgroundColor + "; "
-                        + "-fx-background-radius: 10; "
-                        + "-fx-border-color: " + borderColor + "; "
-                        + "-fx-border-width: 1; "
-                        + "-fx-border-radius: 10; "
-                        + "-fx-text-fill: " + textColor + "; "
-                        + "-fx-font-size: 12px; "
-                        + "-fx-font-weight: normal; "
-                        + "-fx-padding: 0 0 0 10; "
-                        + "-fx-cursor: hand;"
-        );
-    }
-
-    // --- JAM REAL-TIME ---
+    /**
+     * Method: Menjalankan jam digital secara real-time di pojok layar.
+     */
     private void setupRealTimeClock() {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("EEEE, d MMM yyyy | HH:mm:ss 'WITA'");
-        Timeline clock = new Timeline(
-                new KeyFrame(Duration.ZERO, e -> {
-                    if (lblTanggal != null) lblTanggal.setText(LocalDateTime.now().format(dtf));
-                }),
-                new KeyFrame(Duration.seconds(1))
-        );
-        clock.setCycleCount(Timeline.INDEFINITE);
-        clock.play();
+        Timeline clock = new Timeline(new KeyFrame(Duration.ZERO, e -> { if (lblTanggal != null) lblTanggal.setText(LocalDateTime.now().format(dtf)); }), new KeyFrame(Duration.seconds(1)));
+        clock.setCycleCount(Timeline.INDEFINITE); clock.play();
     }
 
-    // --- LOAD DATA DARI DATABASE ---
+    /**
+     * Method: Mengambil ulang data produk dari database.
+     */
     private void loadProducts(boolean isDarkMode) {
         allBarang = BarangDAO.getAllBarang();
-        // Gunakan filter pencarian jika ada
-        if (txtSearch != null && !txtSearch.getText().isEmpty()) {
-            filterProducts(txtSearch.getText(), isDarkMode);
-        } else {
-            displayProducts(getSortedProducts(allBarang), isDarkMode);
-        }
+        refreshProductList(isDarkMode);
     }
 
-    private void filterProducts(String query, boolean isDarkMode) {
-        if (allBarang == null) return;
-        List<Barang> filtered = allBarang.stream()
-                .filter(b -> b.getNamaBarang().toLowerCase().contains(query.toLowerCase())
-                        || b.getIdBarang().toLowerCase().contains(query.toLowerCase()))
-                .collect(Collectors.toList());
-        displayProducts(getSortedProducts(filtered), isDarkMode);
-    }
-
+    /**
+     * Method: Menyiapkan klik pada header tabel untuk fitur sorting data.
+     */
     private void setupSortHeaders() {
-        if (lblHeaderNama != null) {
-            lblHeaderNama.setOnMouseClicked(event -> toggleSort(SortField.NAMA));
-        }
-        if (lblHeaderStok != null) {
-            lblHeaderStok.setOnMouseClicked(event -> toggleSort(SortField.STOK));
-        }
-        if (lblHeaderHarga != null) {
-            lblHeaderHarga.setOnMouseClicked(event -> toggleSort(SortField.HARGA));
-        }
-        updateSortHeaderText();
+        if (lblHeaderNama != null) lblHeaderNama.setOnMouseClicked(event -> toggleSort(SortField.NAMA));
+        if (lblHeaderStok != null) lblHeaderStok.setOnMouseClicked(event -> toggleSort(SortField.STOK));
+        if (lblHeaderHarga != null) lblHeaderHarga.setOnMouseClicked(event -> toggleSort(SortField.HARGA));
     }
 
+    /**
+     * Method: Mengganti urutan pengurutan (A-Z atau Z-A).
+     */
     private void toggleSort(SortField sortField) {
-        if (activeSortField == sortField) {
-            sortAscending = !sortAscending;
-        } else {
-            activeSortField = sortField;
-            sortAscending = true;
-        }
-
-        updateSortHeaderText();
-        if (txtSearch != null && !txtSearch.getText().trim().isEmpty()) {
-            filterProducts(txtSearch.getText(), MainController.isDarkMode);
-        } else {
-            displayProducts(getSortedProducts(allBarang), MainController.isDarkMode);
-        }
+        if (activeSortField == sortField) sortAscending = !sortAscending;
+        else { activeSortField = sortField; sortAscending = true; }
+        refreshProductList(MainController.isDarkMode);
     }
 
+    /**
+     * Method: Mengurutkan list produk berdasarkan kriteria yang dipilih.
+     */
     private List<Barang> getSortedProducts(List<Barang> products) {
-        if (products == null) {
-            return List.of();
-        }
-
-        Comparator<Barang> comparator;
+        if (products == null || activeSortField == SortField.NONE) return products;
+        Comparator<Barang> comp;
         switch (activeSortField) {
-            case NONE:
-                return products;
-            case STOK:
-                comparator = Comparator.comparingInt(this::getDisplayStock)
-                        .thenComparing(barang -> barang.getNamaBarang().toLowerCase());
-                break;
-            case HARGA:
-                comparator = Comparator.comparingDouble(Barang::getHargaJual)
-                        .thenComparing(barang -> barang.getNamaBarang().toLowerCase());
-                break;
-            case NAMA:
-            default:
-                comparator = Comparator.comparing(barang -> barang.getNamaBarang().toLowerCase());
-                break;
+            case STOK: comp = Comparator.comparingInt(this::getDisplayStock); break;
+            case HARGA: comp = Comparator.comparingDouble(Barang::getHargaJual); break;
+            case NAMA: default: comp = Comparator.comparing(b -> b.getNamaBarang().toLowerCase()); break;
         }
-
-        if (!sortAscending) {
-            comparator = comparator.reversed();
-        }
-
-        return products.stream()
-                .sorted(comparator)
-                .collect(Collectors.toList());
+        if (!sortAscending) comp = comp.reversed();
+        return products.stream().sorted(comp).collect(Collectors.toList());
     }
 
-    private int getDisplayStock(Barang barang) {
-        if (barang == null) {
-            return 0;
-        }
-
-        String barangId = barang.getIdBarang() == null ? "" : barang.getIdBarang().trim();
+    /**
+     * Method: Menghitung sisa stok tampilan (Stok Gudang - Jumlah di Keranjang).
+     */
+    private int getDisplayStock(Barang b) {
         int qtyInCart = 0;
         for (Detail_Transaksi item : cartItems) {
-            String itemBarangId = item.getIdBarang() == null ? "" : item.getIdBarang().trim();
-            if (itemBarangId.equalsIgnoreCase(barangId)) {
+            if (item.getIdBarang().trim().equalsIgnoreCase(b.getIdBarang().trim())) {
                 qtyInCart += item.getJumlah();
             }
         }
-
-        return barang.getStok() - qtyInCart;
+        return b.getStok() - qtyInCart;
     }
 
-    private void updateSortHeaderText() {
-        if (lblHeaderNama != null) {
-            lblHeaderNama.setText(buildHeaderText("Nama Produk", SortField.NAMA));
-        }
-        if (lblHeaderStok != null) {
-            lblHeaderStok.setText(buildHeaderText("Stok", SortField.STOK));
-        }
-        if (lblHeaderHarga != null) {
-            lblHeaderHarga.setText(buildHeaderText("Harga", SortField.HARGA));
-        }
-    }
-
-    private String buildHeaderText(String title, SortField field) {
-        if (activeSortField == SortField.NONE) {
-            return title;
-        }
-
-        if (activeSortField != field) {
-            return title + " ↕";
-        }
-
-        return title + (sortAscending ? " ↑" : " ↓");
-    }
-
-    // --- TAMPILKAN LIST PRODUK ---
-    // FIX: Hitung stok yang tersedia = stok DB - qty yang sudah di keranjang
+    /**
+     * Method: Melakukan rendering baris produk ke dalam container VBox.
+     */
     private void displayProducts(List<Barang> products, boolean isDarkMode) {
         if (vboxProdukList == null) return;
         vboxProdukList.getChildren().clear();
-        String textColor = isDarkMode ? "-fx-text-fill: white;" : "-fx-text-fill: #111111;";
-
+        String textColor = isDarkMode ? "white" : "#111111";
+        String lineColor = isDarkMode ? "#333333" : "#EEEEEE";
         if (products == null) return;
-        for (Barang barang : products) {
-            int displayStok = getDisplayStock(barang);
-
-            vboxProdukList.getChildren().add(createProductRow(barang, displayStok, textColor));
-
-            Region line = new Region();
-            line.setMinHeight(1);
-            line.setMaxHeight(1);
-            line.setStyle("-fx-background-color: " + (isDarkMode ? "#333333" : "#EEEEEE") + ";");
-            vboxProdukList.getChildren().add(line);
+        for (int i = 0; i < products.size(); i++) {
+            vboxProdukList.getChildren().add(createProductRow(products.get(i), getDisplayStock(products.get(i)), textColor));
+            if (i < products.size() - 1) {
+                Region line = new Region(); line.setMinHeight(1); line.setMaxHeight(1); line.setStyle("-fx-background-color: " + lineColor + ";");
+                VBox.setMargin(line, new Insets(0, 20, 0, 20)); vboxProdukList.getChildren().add(line);
+            }
         }
     }
 
-    // --- DESAIN BARIS PRODUK ---
+    /**
+     * Method: Membuat komponen baris produk secara programmatically.
+     */
     private HBox createProductRow(Barang barang, int displayStok, String textColor) {
-        HBox row = new HBox(10);
+        HBox row = new HBox();
         row.setAlignment(Pos.CENTER_LEFT);
-        row.setPrefHeight(55);
-        row.setPadding(new Insets(5, 20, 5, 20));
+        row.setPrefHeight(50);
+        row.setPadding(new Insets(0, 20, 0, 20));
 
         Label name = new Label(barang.getNamaBarang());
         name.setMaxWidth(Double.MAX_VALUE);
         HBox.setHgrow(name, Priority.ALWAYS);
-        name.setStyle(textColor + "-fx-font-size: 11.5px; -fx-font-weight: bold;");
+        name.setStyle("-fx-text-fill: " + textColor + "; -fx-font-size: 14px; -fx-font-weight: bold;");
 
-        // Tampilkan stok yang sudah dikurangi qty keranjang
         Label stok = new Label(String.valueOf(displayStok));
         stok.setMinWidth(80);
-        stok.setPrefWidth(80);
-        stok.setMaxWidth(80);
         stok.setAlignment(Pos.CENTER);
-        // Warna merah jika stok habis
-        stok.setStyle((displayStok <= 0 ? "-fx-text-fill: #e74c3c;" : textColor) + "-fx-font-size: 11.5px;");
+        stok.setStyle("-fx-text-fill: " + (displayStok <= 0 ? "#e74c3c" : textColor) + "; -fx-font-size: 14px;");
 
         Label harga = new Label("Rp " + nfIndo.format(barang.getHargaJual()));
-        harga.setMinWidth(120);
-        harga.setPrefWidth(120);
-        harga.setMaxWidth(120);
-        harga.setAlignment(Pos.CENTER);
-        harga.setStyle(textColor + "-fx-font-size: 11.5px; -fx-font-weight: bold;");
+        harga.setMinWidth(150);
+        harga.setPadding(new Insets(0, 0, 0, 15));
+        harga.setStyle("-fx-text-fill: " + textColor + "; -fx-font-size: 14px; -fx-font-weight: bold;");
+
+        // [1] Tombol Tambah Barang ke Keranjang
+        VBox btnContainer = new VBox();
+        btnContainer.setMinWidth(120);
+        btnContainer.setAlignment(Pos.CENTER);
 
         Button btnAdd = new Button(displayStok <= 0 ? "Habis" : "+ Tambah");
-        btnAdd.setMinWidth(90);
-        btnAdd.setPrefWidth(90);
-        btnAdd.setMaxWidth(90);
-        // Disable tombol jika stok sudah habis
+        btnAdd.setMinWidth(85);
+        btnAdd.setMinHeight(32);
         btnAdd.setDisable(displayStok <= 0);
-        btnAdd.setStyle(displayStok <= 0
-                ? "-fx-background-color: #cccccc; -fx-text-fill: #888888; -fx-background-radius: 5; -fx-font-size: 10.5px; -fx-font-weight: bold;"
-                : "-fx-background-color: #2ecc71; -fx-text-fill: white; -fx-background-radius: 5; -fx-font-size: 10.5px; -fx-font-weight: bold; -fx-cursor: hand;");
-        btnAdd.setOnAction(e -> addToCart(barang));
 
-        row.getChildren().addAll(name, stok, harga, btnAdd);
+        String bgGreen = "#5cb85c";
+        String baseBtnStyle = "-fx-text-fill: white; -fx-background-radius: 8; -fx-font-weight: bold; -fx-cursor: hand; -fx-background-color: ";
+
+        if (displayStok <= 0) {
+            btnAdd.setStyle("-fx-background-color: #cccccc; -fx-text-fill: #888888; -fx-background-radius: 8;");
+        } else {
+            btnAdd.setStyle(baseBtnStyle + bgGreen + ";");
+        }
+
+        final Barang fBarang = barang;
+        btnAdd.setOnAction(e -> addToCart(fBarang));
+
+        btnContainer.getChildren().add(btnAdd);
+        row.getChildren().addAll(name, stok, harga, btnContainer);
         return row;
     }
 
-    // --- TAMBAH KE KERANJANG ---
+    /**
+     * Method addToCart: Menambahkan produk yang dipilih ke keranjang belanja.
+     */
     private void addToCart(Barang barang) {
-        // Ambil data terbaru dari DB
-        Barang latestBarang = BarangDAO.getBarangById(barang.getIdBarang());
-        if (latestBarang == null) return;
+        // [1] Cek stok terbaru dari database
+        Barang bLatest = BarangDAO.getBarangById(barang.getIdBarang());
+        if (bLatest == null) return;
         
-        String bId = (latestBarang.getIdBarang() != null) ? latestBarang.getIdBarang().trim() : "";
-
-        // Hitung total qty di keranjang untuk barang ini (Gunakan loop agar pasti sinkron)
-        int currentQtyInCart = 0;
+        String cleanId = bLatest.getIdBarang().trim();
         Detail_Transaksi existing = null;
         for (Detail_Transaksi item : cartItems) {
-            String itemBId = (item.getIdBarang() != null) ? item.getIdBarang().trim() : "";
-            if (itemBId.equalsIgnoreCase(bId)) {
-                currentQtyInCart += item.getJumlah();
-                existing = item; // Simpan referensi jika sudah ada
-            }
+            if (item.getIdBarang().trim().equalsIgnoreCase(cleanId)) { existing = item; break; }
         }
-
-        // Cek apakah masih bisa nambah (Stok DB > total di keranjang)
-        if (latestBarang.getStok() > currentQtyInCart) {
+        
+        // [2] Jika barang sudah ada di keranjang, tambah jumlahnya. Jika belum, buat baru.
+        int currentQtyInCart = (existing != null) ? existing.getJumlah() : 0;
+        if (bLatest.getStok() > currentQtyInCart) {
             if (existing != null) {
                 existing.setJumlah(existing.getJumlah() + 1);
                 existing.setSubtotal(existing.getJumlah() * existing.getHargaSatuan());
             } else {
                 Detail_Transaksi newItem = new Detail_Transaksi();
-                newItem.setIdBarang(latestBarang.getIdBarang());
-                newItem.setJumlah(1);
-                newItem.setHargaSatuan(latestBarang.getHargaJual());
-                newItem.setSubtotal(latestBarang.getHargaJual());
+                newItem.setIdBarang(cleanId); newItem.setJumlah(1);
+                newItem.setHargaSatuan(bLatest.getHargaJual()); newItem.setSubtotal(bLatest.getHargaJual());
                 cartItems.add(newItem);
             }
-        } else {
-            showAlert("Stok Habis", "Maaf, stok barang di gudang sudah habis!");
-        }
-
-        loadProducts(MainController.isDarkMode);
+        } else { new Alert(Alert.AlertType.WARNING, "Stok tidak cukup!").showAndWait(); }
+        
+        // [3] Refresh tampilan produk dan keranjang
+        refreshProductList(MainController.isDarkMode);
         updateCartUI();
     }
 
-    // --- UPDATE TAMPILAN KERANJANG ---
+    /**
+     * Method updateCartUI: Merender ulang daftar barang di keranjang belanja.
+     */
     private void updateCartUI() {
         if (vboxCartList == null) return;
-        vboxCartList.getChildren().clear();
-        totalBelanja = 0;
+        vboxCartList.getChildren().clear(); totalBelanja = 0;
         boolean isDark = MainController.isDarkMode;
-        String textColor = isDark ? "-fx-text-fill: white;" : "-fx-text-fill: #111111;";
-
-        for (Detail_Transaksi item : cartItems) {
-            Barang b = findBarangById(item.getIdBarang());
+        String textColor = isDark ? "white" : "#111111";
+        String lineColor = isDark ? "#333333" : "#D9D9D9";
+        
+        // [1] Looping isi keranjang dan hitung total belanja
+        for (int i = 0; i < cartItems.size(); i++) {
+            Detail_Transaksi item = cartItems.get(i);
+            Barang b = findBarangInList(item.getIdBarang());
             if (b != null) {
                 totalBelanja += item.getSubtotal();
                 vboxCartList.getChildren().add(createCartRow(item, b, textColor));
-
-                Region line = new Region();
-                line.setMinHeight(1);
-                line.setMaxHeight(1);
-                line.setStyle("-fx-background-color: " + (isDark ? "#333333" : "#EEEEEE") + ";");
-                vboxCartList.getChildren().add(line);
+                if (i < cartItems.size() - 1) {
+                    Region line = new Region(); line.setMinHeight(1); line.setMaxHeight(1); line.setStyle("-fx-background-color: " + lineColor + ";");
+                    VBox.setMargin(line, new Insets(0, 15, 0, 15)); vboxCartList.getChildren().add(line);
+                }
             }
         }
-
+        // [2] Update teks total belanja dan kembalian
         if (lblTotalBelanja != null) lblTotalBelanja.setText("Rp " + nfIndo.format(totalBelanja));
         updateKembalian();
     }
 
-    // --- DESAIN BARIS KERANJANG ---
-    private HBox createCartRow(Detail_Transaksi item, Barang barang, String textColor) {
-        boolean isDark = MainController.isDarkMode;
-        HBox row = new HBox(5);
-        row.setAlignment(Pos.CENTER_LEFT);
-        row.setPadding(new Insets(8, 10, 8, 10));
-        row.setMinHeight(50);
-
-        // Nama Barang
-        Label name = new Label(barang.getNamaBarang());
-        name.setMinWidth(40);
-        name.setMaxWidth(Double.MAX_VALUE);
-        HBox.setHgrow(name, Priority.ALWAYS);
-        name.setWrapText(true);
-        name.setStyle(textColor + "-fx-font-size: 11px; -fx-line-spacing: -1px;");
-
-        // Kontrol Qty (tombol - angka +)
-        HBox qtyBox = new HBox(0);
-        qtyBox.setAlignment(Pos.CENTER);
-        qtyBox.setMinWidth(55);
-        qtyBox.setMaxWidth(55);
-        qtyBox.setPrefWidth(55);
-        qtyBox.setPrefHeight(22);
-        qtyBox.setStyle(
-                "-fx-border-color: " + (isDark ? "#444444" : "#D1D5DB") + ";"
-                        + "-fx-border-radius: 4;"
-                        + "-fx-background-color: " + (isDark ? "#333333" : "white") + ";"
-                        + "-fx-background-radius: 4;"
-        );
-
-        String btnTextColor = isDark ? "-fx-text-fill: white;" : "-fx-text-fill: black;";
-        String commonStyle  = btnTextColor + "-fx-font-size: 10px; -fx-padding: 0;";
-
-        Button btnMinus = new Button("-");
-        btnMinus.setMinWidth(17);
-        btnMinus.setPrefHeight(22);
-        btnMinus.setStyle("-fx-background-color: transparent; -fx-border-color: " + (isDark ? "#444444" : "#D1D5DB") + "; -fx-border-width: 0 1 0 0; " + commonStyle + "-fx-cursor: hand;");
-
-        Label lblQty = new Label(String.valueOf(item.getJumlah()));
-        lblQty.setMinWidth(20);
-        lblQty.setAlignment(Pos.CENTER);
-        lblQty.setStyle(commonStyle + "-fx-font-weight: bold;");
-
-        Button btnPlus = new Button("+");
-        btnPlus.setMinWidth(17);
-        btnPlus.setPrefHeight(22);
-        btnPlus.setStyle("-fx-background-color: transparent; -fx-border-color: " + (isDark ? "#444444" : "#D1D5DB") + "; -fx-border-width: 0 0 0 1; " + commonStyle + "-fx-cursor: hand;");
-
-        btnMinus.setOnAction(e -> handleMinus(item, barang));
-        btnPlus.setOnAction(e -> handlePlus(item, barang));
-
-        qtyBox.getChildren().addAll(btnMinus, lblQty, btnPlus);
-
-        // Harga satuan
-        Label harga = new Label("Rp " + nfIndo.format(item.getHargaSatuan()));
-        harga.setMinWidth(80);
-        harga.setPrefWidth(80);
-        harga.setMaxWidth(80);
-        harga.setAlignment(Pos.CENTER);
-        harga.setStyle(textColor + "-fx-font-size: 10px;");
-
-        Label sub = new Label("Rp " + nfIndo.format(item.getSubtotal()));
-        sub.setMinWidth(90);
-        sub.setPrefWidth(90);
-        sub.setMaxWidth(Double.MAX_VALUE);
-        sub.setAlignment(Pos.CENTER_RIGHT);
-        sub.setStyle(textColor + "-fx-font-weight: bold; -fx-font-size: 10.5px;");
-
-        row.getChildren().addAll(name, qtyBox, harga, sub);
-        return row;
-    }
-
-    // --- KURANGI QTY DI KERANJANG ---
-    private void handleMinus(Detail_Transaksi item, Barang barang) {
-        if (item.getJumlah() > 1) {
-            item.setJumlah(item.getJumlah() - 1);
-            item.setSubtotal(item.getJumlah() * item.getHargaSatuan());
-        } else {
-            cartItems.remove(item);
-        }
-        loadProducts(MainController.isDarkMode);
-        updateCartUI();
-    }
-
-    // --- TAMBAH QTY DI KERANJANG ---
-    private void handlePlus(Detail_Transaksi item, Barang barang) {
-        Barang latestBarang = BarangDAO.getBarangById(item.getIdBarang());
-        if (latestBarang == null) return;
-
-        String bId = (latestBarang.getIdBarang() != null) ? latestBarang.getIdBarang().trim() : "";
-
-        // Hitung total qty di keranjang untuk barang ini
-        int currentQtyInCart = 0;
-        for (Detail_Transaksi cartItem : cartItems) {
-            String itemBId = (cartItem.getIdBarang() != null) ? cartItem.getIdBarang().trim() : "";
-            if (itemBId.equalsIgnoreCase(bId)) {
-                currentQtyInCart += cartItem.getJumlah();
-            }
-        }
-
-        // Cek apakah masih bisa nambah (Stok DB > total di keranjang)
-        if (latestBarang.getStok() > currentQtyInCart) {
-            item.setJumlah(item.getJumlah() + 1);
-            item.setSubtotal(item.getJumlah() * item.getHargaSatuan());
-            loadProducts(MainController.isDarkMode);
-            updateCartUI();
-        } else {
-            showAlert("Stok Tidak Cukup", "Maaf, stok barang di gudang sudah habis!");
-        }
-    }
-
-    // --- HELPER: Cari barang berdasarkan ID ---
-    private Barang findBarangById(String id) {
+    /**
+     * Method: Mencari data Barang berdasarkan ID dari list internal.
+     */
+    private Barang findBarangInList(String id) {
         if (allBarang == null || id == null) return null;
-        String searchId = id.trim();
-        for (Barang b : allBarang) {
-            String bId = (b.getIdBarang() != null) ? b.getIdBarang().trim() : "";
-            if (bId.equalsIgnoreCase(searchId)) {
-                return b;
-            }
-        }
+        for (Barang b : allBarang) { if (b.getIdBarang().trim().equalsIgnoreCase(id.trim())) return b; }
         return null;
     }
 
-    // --- FITUR PEMBAYARAN ---
-    private void setupPayment() {
-        if (txtBayar == null) return;
+    /**
+     * Method: Membuat baris item di dalam keranjang belanja (dengan tombol +/-).
+     */
+    private HBox createCartRow(Detail_Transaksi item, Barang b, String textColor) {
+        boolean isDark = MainController.isDarkMode;
+        HBox row = new HBox();
+        row.setAlignment(Pos.CENTER_LEFT);
+        row.setPrefHeight(65);
+        row.setPadding(new Insets(0, 15, 0, 15));
 
-        txtBayar.setTextFormatter(new TextFormatter<>(change -> {
-            String newText = change.getControlNewText();
-            String digitsOnly = newText.replaceAll("[^0-9]", "");
+        Label name = new Label(b.getNamaBarang());
+        name.setMaxWidth(Double.MAX_VALUE);
+        HBox.setHgrow(name, Priority.ALWAYS);
+        name.setStyle("-fx-text-fill: " + textColor + "; -fx-font-size: 13px; -fx-font-weight: bold;");
 
-            if (digitsOnly.isEmpty()) {
-                change.setText("");
-                change.setRange(0, change.getControlText().length());
-                return change;
-            }
+        // [1] Kontrol jumlah (Quantity Selector)
+        VBox qtyContainer = new VBox();
+        qtyContainer.setAlignment(Pos.CENTER);
+        qtyContainer.setMinWidth(80);
 
-            try {
-                long value = Long.parseLong(digitsOnly);
-                String formatted = nfIndo.format(value);
-                change.setText(formatted);
-                change.setRange(0, change.getControlText().length());
-                return change;
-            } catch (NumberFormatException e) {
-                return null;
-            }
-        }));
+        HBox qtyBox = new HBox(0);
+        qtyBox.setAlignment(Pos.CENTER);
+        String sepColor = isDark ? "#555555" : "#D1D5DB";
+        qtyBox.setStyle("-fx-border-color: " + sepColor + "; -fx-border-radius: 6; -fx-background-color: " + (isDark ? "#2A2A2A" : "white") + "; -fx-background-radius: 6;");
 
-        txtBayar.textProperty().addListener((obs, old, newVal) -> updateKembalian());
+        Button m = new Button("-");
+        Label q = new Label(String.valueOf(item.getJumlah()));
+        Button p = new Button("+");
 
-        if (btnSimpanCetak != null) btnSimpanCetak.setOnAction(e -> handleCheckout());
+        final Detail_Transaksi fItem = item;
+        final Barang fBarang = b;
+
+        m.setOnAction(e -> {
+            if (fItem.getJumlah() > 1) {
+                fItem.setJumlah(fItem.getJumlah()-1);
+                fItem.setSubtotal(fItem.getJumlah()*fItem.getHargaSatuan());
+            } else { cartItems.remove(fItem); }
+            refreshProductList(MainController.isDarkMode); updateCartUI();
+        });
+
+        p.setOnAction(e -> handlePlus(fItem, fBarang));
+
+        qtyBox.getChildren().addAll(m, q, p);
+        qtyContainer.getChildren().add(qtyBox);
+
+        // [2] Label harga satuan dan subtotal item
+        Label s = new Label("Rp " + nfIndo.format(item.getSubtotal()));
+        s.setMinWidth(90);
+        s.setAlignment(Pos.CENTER_RIGHT);
+        s.setStyle("-fx-text-fill: " + textColor + "; -fx-font-weight: bold; -fx-font-size: 13px;");
+
+        row.getChildren().addAll(name, qtyContainer, s);
+        return row;
     }
 
-    // --- UPDATE KEMBALIAN ---
+    /**
+     * Method: Menangani aksi tambah jumlah (+) di keranjang dengan pengecekan stok.
+     */
+    private void handlePlus(Detail_Transaksi item, Barang b) {
+        Barang bLatest = BarangDAO.getBarangById(b.getIdBarang());
+        if (bLatest != null && bLatest.getStok() > item.getJumlah()) {
+            item.setJumlah(item.getJumlah() + 1); item.setSubtotal(item.getJumlah() * item.getHargaSatuan());
+        } else { new Alert(Alert.AlertType.WARNING, "Stok tidak mencukupi!").showAndWait(); }
+        refreshProductList(MainController.isDarkMode); updateCartUI();
+    }
+
+    /**
+     * Method setupPayment: Menyiapkan logika pembayaran (input uang bayar).
+     */
+    private void setupPayment() {
+        // [1] Pasang aksi tombol Checkout (Simpan & Cetak)
+        if (btnSimpanCetak != null) {
+            btnSimpanCetak.setOnAction(e -> handleCheckout());
+        }
+
+        // [2] Pasang listener format angka otomatis pada kolom Bayar
+        if (txtBayar != null) {
+            txtBayar.textProperty().addListener((obs, old, val) -> {
+                if (!val.isEmpty()) {
+                    String digits = val.replaceAll("[^0-9]", "");
+                    if (!digits.equals("")) {
+                        try {
+                            long value = Long.parseLong(digits);
+                            String formatted = nfIndo.format(value);
+                            if (!val.equals(formatted)) {
+                                txtBayar.setText(formatted);
+                                txtBayar.positionCaret(formatted.length());
+                            }
+                        } catch (Exception e) {}
+                    }
+                }
+                updateKembalian();
+            });
+        }
+    }
+
+    /**
+     * Method: Menghitung selisih uang bayar dengan total belanja secara real-time.
+     */
     private void updateKembalian() {
         if (lblKembalian == null || txtBayar == null) return;
         try {
-            String cleanVal = txtBayar.getText().replaceAll("[^0-9]", "");
-            double bayar  = cleanVal.isEmpty() ? 0 : Double.parseDouble(cleanVal);
-            double kembali = bayar - totalBelanja;
+            String payText = txtBayar.getText().replaceAll("[^0-9]", "");
+            double nominalBayar = payText.isEmpty() ? 0 : Double.parseDouble(payText);
+            double kembali = nominalBayar - totalBelanja;
             lblKembalian.setText("Rp " + nfIndo.format(kembali));
-            lblKembalian.setStyle(kembali >= 0
-                    ? "-fx-text-fill: #2ecc71; -fx-font-weight: bold;"
-                    : "-fx-text-fill: #e74c3c; -fx-font-weight: bold;");
-        } catch (Exception e) {
-            lblKembalian.setText("Rp 0");
-        }
+            lblKembalian.setStyle(kembali < 0 ? "-fx-text-fill: #d32f2f; -fx-font-weight: bold;" : "-fx-text-fill: #2ecc71; -fx-font-weight: bold;");
+        } catch (Exception e) { lblKembalian.setText("Rp 0"); }
     }
 
-    // --- CHECKOUT & SIMPAN TRANSAKSI ---
+    /**
+     * Method handleCheckout: Memulai proses pembayaran.
+     * Alur: 1. Cek keranjang -> 2. Cek kecukupan uang -> 3. Tampilkan pop-up konfirmasi.
+     */
+    @FXML
     private void handleCheckout() {
+        // [1] Pastikan keranjang tidak kosong
         if (cartItems.isEmpty()) {
-            showAlert("Peringatan", "Keranjang belanja masih kosong!");
+            new Alert(Alert.AlertType.WARNING, "Keranjang belanja masih kosong!").showAndWait();
             return;
         }
 
-        String cleanVal = txtBayar.getText().replaceAll("[^0-9]", "");
-        double nominalBayar = cleanVal.isEmpty() ? 0 : Double.parseDouble(cleanVal);
-
+        // [2] Pastikan uang bayar cukup
+        String payText = txtBayar.getText().replaceAll("[^0-9]", "");
+        double nominalBayar = payText.isEmpty() ? 0 : Double.parseDouble(payText);
         if (nominalBayar < totalBelanja) {
-            showAlert("Gagal", "Uang pembayaran tidak cukup!");
+            new Alert(Alert.AlertType.ERROR, "Uang pembayaran tidak cukup!").showAndWait();
             return;
         }
 
+        // [3] Memuat Pop-Up konfirmasi kustom
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/FXML/Kasir/Pop Up Simpan & Cetak.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/FXML/Kasir/PopUpSimpan&Cetak.fxml"));
             Parent root = loader.load();
 
-            PopUpSimpanCetakController controller = loader.getController();
-            controller.setData(totalBelanja, nominalBayar);
+            PopUpSimpanCetakController popupController = loader.getController();
+            popupController.setData(totalBelanja, nominalBayar);
 
             Stage popupStage = new Stage();
             popupStage.initModality(Modality.APPLICATION_MODAL);
-            popupStage.initOwner(btnSimpanCetak.getScene().getWindow());
             popupStage.initStyle(StageStyle.UNDECORATED);
             popupStage.setScene(new Scene(root));
-            popupStage.centerOnScreen();
             popupStage.showAndWait();
 
-            if (controller.isConfirmed()) {
+            // [4] Jika user menekan tombol 'Cetak' di pop-up, jalankan simpan transaksi
+            if (popupController.isConfirmed()) {
                 simpanTransaksi();
             }
-
-        } catch (IOException e) {
-            showAlert("Error", "Gagal memuat popup: " + e.getMessage());
+        } catch (Exception e) {
             e.printStackTrace();
+            new Alert(Alert.AlertType.ERROR, "Gagal memuat desain pop-up konfirmasi!").showAndWait();
         }
     }
 
+    /**
+     * Method simpanTransaksi: Menyimpan data ke database (Transaksi & Detail).
+     * Alur: 1. Buat Header Transaksi -> 2. Buat ID Detail -> 3. Eksekusi Checkout DAO -> 4. Reset Form.
+     */
     private void simpanTransaksi() {
         try {
-            String idTransaksi = TransaksiDAO.getNextIdTransaksi();
-            String idUser = UserSession.getInstance().getUserId();
-
+            // [1] Menyiapkan objek transaksi baru
+            String idT = TransaksiDAO.getNextIdTransaksi();
             Transaksi trx = new Transaksi();
-            trx.setIdTransaksi(idTransaksi);
+            trx.setIdTransaksi(idT);
             trx.setTglTransaksi(LocalDateTime.now());
-            trx.setIdUser(idUser);
+            trx.setIdUser(UserSession.getInstance().getUserId());
             trx.setTotal(totalBelanja);
 
-            boolean trxSaved = TransaksiDAO.insertTransaksi(trx);
-            if (!trxSaved) {
-                showAlert("Error", "Gagal menyimpan data transaksi ke database!");
-                return;
+            // [2] Menyiapkan ID Detail secara urut untuk setiap item di keranjang
+            String lastIdDetailStr = DetailTransaksiDAO.getNextIdDetail();
+            int lastDetailNum = 1;
+            if (lastIdDetailStr != null && lastIdDetailStr.startsWith("DTL")) {
+                try { lastDetailNum = Integer.parseInt(lastIdDetailStr.substring(3)); } catch (NumberFormatException ignored) {}
             }
 
-            for (Detail_Transaksi item : cartItems) {
-                String idDetail = DetailTransaksiDAO.getNextIdDetail();
-                item.setIdDetail(idDetail);
-                item.setIdTransaksi(idTransaksi);
-                DetailTransaksiDAO.insertDetail(item);
-                
-                // Kurangi stok di database
-                BarangDAO.reduceStok(item.getIdBarang(), item.getJumlah());
+            for (Detail_Transaksi i : cartItems) {
+                i.setIdTransaksi(idT);
+                i.setIdDetail(String.format("DTL%03d", lastDetailNum++));
             }
 
-            showAlert("Sukses", "Transaksi Berhasil Disimpan!");
+            // [3] Eksekusi database (Simpan data & Kurangi stok secara atomik)
+            boolean isSuccess = TransaksiDAO.prosesCheckout(trx, cartItems);
 
-            cartItems.clear();
-            if (txtBayar != null)        txtBayar.clear();
-            totalBelanja = 0;
-            if (lblTotalBelanja != null) lblTotalBelanja.setText("Rp 0");
-            if (lblKembalian != null)    lblKembalian.setText("Rp 0");
-            if (lblKembalian != null)    lblKembalian.setStyle("-fx-text-fill: black; -fx-font-weight: bold;");
-
-            loadProducts(MainController.isDarkMode);
-            updateCartUI();
-
+            // [4] Jika berhasil, bersihkan form dan update list produk
+            if (isSuccess) {
+                cartItems.clear();
+                txtBayar.clear();
+                allBarang = BarangDAO.getAllBarang();
+                refreshProductList(MainController.isDarkMode);
+                updateCartUI();
+                new Alert(Alert.AlertType.INFORMATION, "Transaksi Berhasil disimpan dan diproses.").showAndWait();
+            } else {
+                new Alert(Alert.AlertType.ERROR, "Transaksi Gagal! Cek kembali stok barang Anda.").showAndWait();
+            }
         } catch (Exception e) {
-            showAlert("Error Database", "Gagal menyimpan transaksi: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
-
-    // --- PENCARIAN PRODUK ---
+    /**
+     * Method setupSearch: Mengaktifkan filter produk setiap kali user mengetik di kolom cari.
+     */
     private void setupSearch(boolean isDarkMode) {
         if (txtSearch == null) return;
-        txtSearch.textProperty().addListener((obs, old, newVal) -> {
-            filterProducts(newVal, isDarkMode);
-        });
-    }
-
-    // --- POPUP NOTIFIKASI ---
-    private void showAlert(String title, String content) {
-        Alert a = new Alert(Alert.AlertType.INFORMATION);
-        a.setTitle(title);
-        a.setHeaderText(null);
-        a.setContentText(content);
-        a.showAndWait();
+        txtSearch.textProperty().addListener((obs, old, val) -> refreshProductList(MainController.isDarkMode));
     }
 }

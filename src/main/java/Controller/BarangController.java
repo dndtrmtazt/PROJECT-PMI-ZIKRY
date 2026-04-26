@@ -21,8 +21,13 @@ import java.sql.*;
 import java.text.NumberFormat;
 import java.util.Locale;
 
+/**
+ * Controller untuk mengelola tampilan Data Barang.
+ * Alur: Menampilkan daftar barang, fitur pencarian, dan navigasi tambah/edit.
+ */
 public class BarangController {
 
+    // [1] Deklarasi komponen UI dari file FXML
     @FXML private VBox paneRoot, vboxTableCard;
     @FXML private HBox hboxSearch, hboxHeader;
     @FXML private TableView<Barang> tableBarang;
@@ -33,24 +38,29 @@ public class BarangController {
     @FXML private TextField txtCari;
     @FXML private Label lblDaftarBarang, lblTitle;
 
+    // [2] List penampung data barang yang bersifat observable (otomatis update ke tabel)
     private ObservableList<Barang> listBarang = FXCollections.observableArrayList();
 
+    /**
+     * Method initialize: Menyiapkan data dan komponen saat halaman dibuka.
+     */
     @FXML
     public void initialize() {
-        // 1. Mapping Kolom
+        // [1] Mapping properti model Barang ke kolom-kolom tabel
         colId.setCellValueFactory(new PropertyValueFactory<>("idBarang"));
         colNama.setCellValueFactory(new PropertyValueFactory<>("namaBarang"));
         colKategori.setCellValueFactory(new PropertyValueFactory<>("idKategori"));
         colSatuan.setCellValueFactory(new PropertyValueFactory<>("satuan"));
         colStok.setCellValueFactory(new PropertyValueFactory<>("stok"));
 
+        // [2] Mengatur perataan teks dan fitur pengurutan pada kolom tabel
         tableBarang.getColumns().forEach(column -> column.setStyle("-fx-alignment: CENTER-LEFT;"));
         colId.setSortable(true);
         colNama.setSortable(true);
         colStok.setSortable(true);
         tableBarang.setItems(listBarang);
 
-        // 2. FITUR DOUBLE CLICK PADA BARIS TABEL
+        // [3] Mengaktifkan fitur Double Click pada baris tabel untuk mengedit barang
         tableBarang.setRowFactory(tv -> {
             TableRow<Barang> row = new TableRow<>();
             row.setStyle("-fx-cursor: hand;");
@@ -62,36 +72,72 @@ public class BarangController {
             return row;
         });
 
-        // 3. Format Rupiah & Load Data
+        // [4] Format angka ke mata uang Rupiah dan memuat data dari database
         setupFormatRupiah(colHargaBeli, "hargaBeli");
         setupFormatRupiah(colHargaJual, "hargaJual");
         loadData();
         setupPencarian();
-        
-        // Load CSS
+
+        // [5] Memuat file CSS tambahan untuk mempercantik tabel
         try {
             tableBarang.getStylesheets().add(getClass().getResource("/CSS/tabel.css").toExternalForm());
         } catch (Exception e) {}
 
+        // [6] Menyesuaikan tema (Dark/Light Mode) sesuai pengaturan global
         setDarkMode(MainController.isDarkMode);
     }
 
+    /**
+     * Method: Mengatur tampilan tema gelap (Dark Mode) secara dinamis.
+     */
     public void setDarkMode(boolean enabled) {
+        // [1] Menentukan variabel warna berdasarkan status tema
         String bgMain = enabled ? "#121212" : "#F4F4F4";
         String bgCard = enabled ? "#1e1e1e" : "white";
         String textColor = enabled ? "white" : "#2C3E50";
         String borderColor = enabled ? "#333333" : "#D1D5DB";
 
-        if (paneRoot != null) paneRoot.setStyle("-fx-background-color: " + bgMain + ";");
+        // [2] Mengatur style latar belakang utama dan scrollbar kustom
+        if (paneRoot != null) {
+            paneRoot.setStyle("-fx-background-color: " + bgMain + ";");
+
+            paneRoot.getStylesheets().removeIf(s -> s.startsWith("data:text/css"));
+            if (enabled) {
+                paneRoot.getStylesheets().add("data:text/css," +
+                        ".scroll-bar:vertical {" +
+                        "    -fx-background-color: #2b2b2b;" +
+                        "    -fx-pref-width: 14;" +
+                        "    -fx-min-width: 14;" +
+                        "}" +
+                        ".scroll-bar .thumb {" +
+                        "    -fx-background-color: #555555;" +
+                        "    -fx-background-radius: 5;" +
+                        "}" +
+                        ".scroll-bar .thumb:hover {" +
+                        "    -fx-background-color: #777777;" +
+                        "}" +
+                        ".scroll-bar .track {" +
+                        "    -fx-background-color: #1e1e1e;" +
+                        "}" +
+                        ".scroll-bar .increment-button, .scroll-bar .decrement-button {" +
+                        "    -fx-padding: 0;" +
+                        "}" +
+                        ".scroll-bar .increment-arrow, .scroll-bar .decrement-arrow {" +
+                        "    -fx-shape: \"\";" +
+                        "}");
+            }
+        }
+
+        // [3] Mengatur warna header, teks, kotak pencarian, dan kartu tabel
         if (hboxHeader != null) hboxHeader.setStyle("-fx-background-color: #4A76A8;");
         if (lblTitle != null) lblTitle.setStyle("-fx-text-fill: white;");
         if (hboxSearch != null) hboxSearch.setStyle("-fx-background-color: " + bgCard + "; -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5);");
         if (vboxTableCard != null) vboxTableCard.setStyle("-fx-background-color: " + bgCard + "; -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5);");
-        
+
         if (lblDaftarBarang != null) lblDaftarBarang.setStyle("-fx-text-fill: " + textColor + "; -fx-font-weight: bold; -fx-font-size: 20px;");
         if (txtCari != null) txtCari.setStyle("-fx-background-radius: 10; -fx-background-color: " + (enabled ? "#2c2c2c" : "white") + "; -fx-text-fill: " + textColor + "; -fx-border-color: " + borderColor + "; -fx-border-radius: 10;");
 
-        // Sync Table Background
+        // [4] Menambah atau menghapus class 'dark' pada tabel
         if (tableBarang != null) {
             tableBarang.getStyleClass().remove("dark");
             if (enabled) {
@@ -100,19 +146,21 @@ public class BarangController {
         }
     }
 
+    /**
+     * Method loadData: Mengambil data barang dari database SQLite.
+     */
     private void loadData() {
+        // [1] Membersihkan list lama sebelum memuat data baru
         listBarang.clear();
-
-        // 1. PASTIKAN QUERY PAKE LEFT JOIN
         String query = "SELECT b.*, k.nama_kategori FROM barang b " +
                 "LEFT JOIN kategori k ON b.id_kategori = k.id_kategori";
 
+        // [2] Menjalankan query SQL dan memasukkan hasilnya ke dalam listBarang
         try (Connection conn = koneksi.koneksiDB();
              Statement st = conn.createStatement();
              ResultSet rs = st.executeQuery(query)) {
 
             while (rs.next()) {
-                // 2. MASUKKAN 8 DATA (HARUS URUT!)
                 listBarang.add(new Barang(
                         rs.getString("id_barang"),
                         rs.getString("nama_barang"),
@@ -124,29 +172,38 @@ public class BarangController {
                         rs.getDouble("harga_jual")
                 ));
             }
-            System.out.println("✓ Berhasil memuat " + listBarang.size() + " data barang.");
         } catch (SQLException e) {
             System.err.println("✗ Gagal tarik data: " + e.getMessage());
-            e.printStackTrace();
         }
     }
 
+    /**
+     * Method setupPencarian: Mengaktifkan fitur filter data secara real-time.
+     */
     private void setupPencarian() {
+        // [1] Membuat FilteredList berbasis list utama barang
         FilteredList<Barang> filteredData = new FilteredList<>(listBarang, p -> true);
+        
+        // [2] Menambahkan listener pada kolom pencarian
         txtCari.textProperty().addListener((observable, oldValue, newValue) -> {
             filteredData.setPredicate(barang -> {
                 if (newValue == null || newValue.isEmpty()) return true;
                 String lowerCaseFilter = newValue.toLowerCase();
+                // Filter berdasarkan Nama atau ID Barang
                 return barang.getNamaBarang().toLowerCase().contains(lowerCaseFilter) ||
                         barang.getIdBarang().toLowerCase().contains(lowerCaseFilter);
             });
         });
 
+        // [3] Menghubungkan data yang sudah difilter dengan fitur pengurutan tabel
         SortedList<Barang> sortedData = new SortedList<>(filteredData);
         sortedData.comparatorProperty().bind(tableBarang.comparatorProperty());
         tableBarang.setItems(sortedData);
     }
 
+    /**
+     * Method: Mengatur format tampilan sel tabel menjadi mata uang Rupiah.
+     */
     private void setupFormatRupiah(TableColumn<Barang, Double> col, String property) {
         col.setCellValueFactory(new PropertyValueFactory<>(property));
         col.setCellFactory(tc -> new TableCell<Barang, Double>() {
@@ -155,6 +212,7 @@ public class BarangController {
                 super.updateItem(price, empty);
                 if (empty || price == null) setText(null);
                 else {
+                    // Gunakan format mata uang Indonesia (IDR) tanpa desimal
                     NumberFormat nf = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
                     nf.setMaximumFractionDigits(0);
                     setText(nf.format(price));
@@ -163,30 +221,36 @@ public class BarangController {
         });
     }
 
+    /**
+     * Method handleEditBarang: Mengalihkan tampilan ke halaman Edit Barang.
+     */
     @FXML
     private void handleEditBarang() {
+        // [1] Mengambil item yang dipilih dari tabel
         Barang selected = tableBarang.getSelectionModel().getSelectedItem();
-
+        
+        // [2] Jika ada item terpilih, panggil halaman EditBarang dan kirim datanya
         if (selected != null && MainController.getInstance() != null) {
             FXMLLoader loader = MainController.getInstance().panggilHalaman("EditBarang");
             if (loader != null) {
                 EditBarangController controller = loader.getController();
-
-                // KIRIM 8 PARAMETER (Harus urut sesuai method di EditBarangController)
                 controller.initData(
-                        selected.getIdBarang(),      // 1
-                        selected.getNamaBarang(),    // 2
-                        selected.getIdKategori(),    // 3
-                        selected.getNamaKategori(),  // 4 (DATA BARU)
-                        selected.getStok(),          // 5
-                        selected.getSatuan(),       // 6 (DATA BARU)
-                        selected.getHargaBeli(),     // 7
-                        selected.getHargaJual()      // 8
+                        selected.getIdBarang(),
+                        selected.getNamaBarang(),
+                        selected.getIdKategori(),
+                        selected.getNamaKategori(),
+                        selected.getStok(),
+                        selected.getSatuan(),
+                        selected.getHargaBeli(),
+                        selected.getHargaJual()
                 );
             }
         }
     }
 
+    /**
+     * Method handleTambahBarang: Membuka halaman formulir penambahan barang baru.
+     */
     @FXML
     private void handleTambahBarang() {
         if (MainController.getInstance() != null) {
