@@ -208,10 +208,6 @@ public class TambahBarangController {
             }
         }
 
-        // 1. Tentukan warna untuk Prompt Text (Tulisan bayangan di dalam ComboBox/TextField)
-        // Kalau dark mode, kita kasih putih/abu terang biar kelihatan
-        String promptColor = enabled ? "#B0B0B0" : "#757575";
-
         // 2. Tambahkan -fx-prompt-text-fill ke dalam txtStyle
         String txtStyle = "-fx-background-radius: 8; -fx-border-radius: 8; " +
                 "-fx-border-color: " + borderColor + "; " +

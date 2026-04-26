@@ -24,7 +24,6 @@ import model.Kategori;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.NumberFormat;
 import java.util.List;
@@ -135,17 +134,6 @@ public class EditBarangController {
 
     @FXML
     private void handleSimpan() {
-        String idBaru = idBarangAsli;
-
-        // 1. CEK DUPLIKAT JIKA ID DIUBAH
-        if (!idBaru.equals(idBarangAsli)) {
-            if (isIdExists(idBaru)) {
-                showAlert(Alert.AlertType.ERROR, "Kode Digunakan",
-                        "Kode barang '" + idBaru + "' sudah ada di database. Gunakan kode lain!");
-                return;
-            }
-        }
-
         if (isInputValid()) {
             boolean confirmed = showCustomConfirmationDialog(
                     "Konfirmasi perubahan?",
@@ -162,6 +150,7 @@ public class EditBarangController {
 
             try (Connection conn = koneksi.koneksiDB();
                  PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                String idBaru = idBarangAsli;
 
                 String idKat = cmbKategori.getValue().split(" - ")[0];
 
@@ -182,18 +171,6 @@ public class EditBarangController {
                 showAlert(Alert.AlertType.ERROR, "Error Database", e.getMessage());
             }
         }
-    }
-
-    // Fungsi cek ID di database
-    private boolean isIdExists(String id) {
-        String sql = "SELECT COUNT(*) FROM barang WHERE id_barang = ?";
-        try (Connection conn = koneksi.koneksiDB();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, id);
-            ResultSet rs = pstmt.executeQuery();
-            if (rs.next()) return rs.getInt(1) > 0;
-        } catch (SQLException e) { e.printStackTrace(); }
-        return false;
     }
 
     @FXML

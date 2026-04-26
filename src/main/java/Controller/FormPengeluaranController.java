@@ -16,6 +16,8 @@ import javafx.stage.Stage;
 import DAO.PengeluaranDAO;
 import model.Pengeluaran;
 import java.time.LocalDate;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 public class FormPengeluaranController implements Initializable {
 
@@ -27,6 +29,7 @@ public class FormPengeluaranController implements Initializable {
 
     private boolean isEdit = false;
     private String idLama;
+    private final NumberFormat numberFormat = NumberFormat.getIntegerInstance(new Locale("id", "ID"));
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -37,32 +40,8 @@ public class FormPengeluaranController implements Initializable {
         Tooltip tipNominal = new Tooltip("Hanya angka yang diperbolehkan!");
         tipNominal.setStyle("-fx-background-color: #E74C3C; -fx-text-fill: white; -fx-font-weight: bold;");
 
-        // Validasi input nominal: Hanya angka yang diperbolehkan
-        txtNominal.setTextFormatter(new TextFormatter<>(change -> {
-            String newText = change.getControlNewText();
-
-            // Cek apakah input baru sesuai dengan pola angka (\d*)
-            if (newText.matches("\\d*")) {
-                return change;
-            }
-
-            // Jika user mengetik huruf, tampilkan peringatan Tooltip
-            Point2D p = txtNominal.localToScene(0.0, 0.0);
-            if (p != null && txtNominal.getScene() != null) {
-                tipNominal.show(txtNominal,
-                        p.getX() + txtNominal.getScene().getWindow().getX() + 10,
-                        p.getY() + txtNominal.getScene().getWindow().getY() - 30
-                );
-
-                // Sembunyikan tooltip otomatis setelah 1.5 detik
-                new Thread(() -> {
-                    try { Thread.sleep(1500); } catch (InterruptedException e) {}
-                    Platform.runLater(() -> tipNominal.hide());
-                }).start();
-            }
-
-            return null; // Menolak perubahan jika bukan angka
-        }));
+        setupNominalFormatter(tipNominal);
+        setupJenisFormatter();
     }
 
     public void setData(Pengeluaran p) {
@@ -75,8 +54,7 @@ public class FormPengeluaranController implements Initializable {
 
             txtId.setText(p.getIdPengeluaran());
             dpTanggal.setValue(p.getTglPengeluaran());
-            // Format agar nominal tidak muncul desimal (.0) di form
-            txtNominal.setText(String.format("%.0f", p.getNominal()));
+            txtNominal.setText(numberFormat.format((long) p.getNominal()));
             txtJenis.setText(p.getJenis());
         } else {
             isEdit = false;
@@ -106,6 +84,11 @@ public class FormPengeluaranController implements Initializable {
 
             if (idUser == null || idUser.trim().isEmpty()) {
                 tampilkanPesan("Session user tidak ditemukan. Silakan login ulang.", Alert.AlertType.ERROR);
+                return;
+            }
+
+            if (!jenis.matches(".*[A-Za-z].*")) {
+                tampilkanPesan("Jenis pengeluaran harus mengandung huruf dan tidak boleh angka saja.", Alert.AlertType.WARNING);
                 return;
             }
 
@@ -147,6 +130,51 @@ public class FormPengeluaranController implements Initializable {
         alert.setHeaderText(null);
         alert.setContentText(pesan);
         alert.showAndWait();
+    }
+
+    private void setupNominalFormatter(Tooltip tipNominal) {
+        txtNominal.setTextFormatter(new TextFormatter<>(change -> {
+            String newText = change.getControlNewText();
+            String digitsOnly = newText.replaceAll("[^0-9]", "");
+
+            if (digitsOnly.isEmpty()) {
+                change.setText("");
+                change.setRange(0, change.getControlText().length());
+                return change;
+            }
+
+            try {
+                long value = Long.parseLong(digitsOnly);
+                String formatted = numberFormat.format(value);
+                change.setText(formatted);
+                change.setRange(0, change.getControlText().length());
+                return change;
+            } catch (NumberFormatException e) {
+                Point2D p = txtNominal.localToScene(0.0, 0.0);
+                if (p != null && txtNominal.getScene() != null) {
+                    tipNominal.show(txtNominal,
+                            p.getX() + txtNominal.getScene().getWindow().getX() + 10,
+                            p.getY() + txtNominal.getScene().getWindow().getY() - 30
+                    );
+
+                    new Thread(() -> {
+                        try {
+                            Thread.sleep(1500);
+                        } catch (InterruptedException ignored) {
+                        }
+                        Platform.runLater(tipNominal::hide);
+                    }).start();
+                }
+                return null;
+            }
+        }));
+    }
+
+    private void setupJenisFormatter() {
+        txtJenis.setTextFormatter(new TextFormatter<>(change -> {
+            String newText = change.getControlNewText();
+            return newText.matches("[\\p{L}\\s/&.,()\\-]*") ? change : null;
+        }));
     }
 
     public void setDarkMode(boolean enabled) {
