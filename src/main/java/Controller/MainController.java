@@ -26,6 +26,8 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 
 public class MainController {
 
@@ -235,10 +237,9 @@ public class MainController {
             setStyleClass(btn, "active", true);
         }
         
-        try {
-            iconView.setFitWidth(18); iconView.setFitHeight(18);
-            setSidebarIconBlue(iconView, iconName);
-        } catch (Exception e) {}
+        iconView.setFitWidth(18);
+        iconView.setFitHeight(18);
+        setSidebarIconBlue(iconView, iconName);
     }
 
     private void restoreActiveMenu() {
@@ -272,16 +273,14 @@ public class MainController {
                 
                 if (icons[i] != null) {
                     icons[i].setFitWidth(18); icons[i].setFitHeight(18);
-                    try {
-                        String iconName = originalIcons[i];
-                        if (isDarkMode) {
-                            setSidebarIconColor(icons[i], iconName, DARK_INACTIVE_ICON);
-                        } else if (icons[i] == imgDashboard) {
-                            setSidebarIconBlue(icons[i], iconName);
-                        } else {
-                            icons[i].setImage(new Image(getClass().getResourceAsStream("/Images/" + iconName)));
-                        }
-                    } catch (Exception e) {}
+                    String iconName = originalIcons[i];
+                    if (isDarkMode) {
+                        setSidebarIconColor(icons[i], iconName, DARK_INACTIVE_ICON);
+                    } else if (icons[i] == imgDashboard) {
+                        setSidebarIconBlue(icons[i], iconName);
+                    } else {
+                        setImageIfPresent(icons[i], "/Images/" + iconName);
+                    }
                 }
             }
         }
@@ -294,8 +293,10 @@ public class MainController {
     private void setSidebarIconColor(ImageView iconView, String iconName, Color color) {
         if (iconView == null || iconName == null || color == null) return;
 
-        Image source = new Image(getClass().getResourceAsStream("/Images/" + iconName));
-        iconView.setImage(recolorIcon(source, color));
+        Image source = loadImageResource("/Images/" + iconName);
+        if (source != null) {
+            iconView.setImage(recolorIcon(source, color));
+        }
     }
 
     private Image recolorIcon(Image source, Color color) {
@@ -329,12 +330,10 @@ public class MainController {
         setStyleClass(mainPane, "dark", true);
         clearInlineStyles(mainPane, sidebarVBox, lblLogo, hboxThemeToggle, btnLogout);
         
-        try {
-            if (imgLogo != null) imgLogo.setImage(new Image(getClass().getResourceAsStream("/Images/LOGO2.png")));
-            if (imgLightMode != null) imgLightMode.setImage(new Image(getClass().getResourceAsStream("/Images/ICON3DARK.png")));
-            if (imgDarkMode != null) imgDarkMode.setImage(new Image(getClass().getResourceAsStream("/Images/ICON4DARK.png")));
-            if (imgLogout != null) imgLogout.setImage(new Image(getClass().getResourceAsStream("/Images/ICON33.png")));
-        } catch (Exception e) {}
+        setImageIfPresent(imgLogo, "/Images/LOGO2.png");
+        setImageIfPresent(imgLightMode, "/Images/ICON3DARK.png");
+        setImageIfPresent(imgDarkMode, "/Images/ICON4DARK.png");
+        setImageIfPresent(imgLogout, "/Images/ICON33.png");
 
         setStyleClass(btnDarkMode, "active", true);
         setStyleClass(btnLightMode, "active", false);
@@ -349,12 +348,10 @@ public class MainController {
         setStyleClass(mainPane, "dark", false);
         clearInlineStyles(mainPane, sidebarVBox, lblLogo, hboxThemeToggle, btnLogout);
         
-        try {
-            if (imgLogo != null) imgLogo.setImage(new Image(getClass().getResourceAsStream("/Images/LOGO.png")));
-            if (imgLightMode != null) imgLightMode.setImage(new Image(getClass().getResourceAsStream("/Images/ICON3.png")));
-            if (imgDarkMode != null) imgDarkMode.setImage(new Image(getClass().getResourceAsStream("/Images/ICON4.png")));
-            if (imgLogout != null) imgLogout.setImage(new Image(getClass().getResourceAsStream("/Images/ICON6.png")));
-        } catch (Exception e) {}
+        setImageIfPresent(imgLogo, "/Images/LOGO.png");
+        setImageIfPresent(imgLightMode, "/Images/ICON3.png");
+        setImageIfPresent(imgDarkMode, "/Images/ICON4.png");
+        setImageIfPresent(imgLogout, "/Images/ICON6.png");
 
         setStyleClass(btnLightMode, "active", true);
         setStyleClass(btnDarkMode, "active", false);
@@ -366,8 +363,7 @@ public class MainController {
 
     @FXML
     private void handleThemeChange(ActionEvent event) {
-        if (event.getSource() == btnDarkMode) switchThemeWithAnimation(true);
-        else switchThemeWithAnimation(false);
+        switchThemeWithAnimation(event.getSource() == btnDarkMode);
     }
 
     private void switchThemeWithAnimation(boolean darkModeTarget) {
@@ -438,7 +434,11 @@ public class MainController {
         try {
             UserSession.getInstance().logout();
             Stage stage = (Stage) btnLogout.getScene().getWindow();
-            Parent root = FXMLLoader.load(getClass().getResource("/FXML/LoginView.fxml"));
+            URL loginView = getClass().getResource("/FXML/LoginView.fxml");
+            if (loginView == null) {
+                return;
+            }
+            Parent root = FXMLLoader.load(loginView);
             stage.setResizable(true);
             stage.setMaximized(false);
             stage.setScene(new Scene(root));
@@ -446,5 +446,25 @@ public class MainController {
             stage.show();
             stage.setMaximized(true);
         } catch (IOException e) { e.printStackTrace(); }
+    }
+
+    private Image loadImageResource(String resourcePath) {
+        if (resourcePath == null) {
+            return null;
+        }
+
+        InputStream stream = getClass().getResourceAsStream(resourcePath);
+        return stream != null ? new Image(stream) : null;
+    }
+
+    private void setImageIfPresent(ImageView imageView, String resourcePath) {
+        if (imageView == null) {
+            return;
+        }
+
+        Image image = loadImageResource(resourcePath);
+        if (image != null) {
+            imageView.setImage(image);
+        }
     }
 }

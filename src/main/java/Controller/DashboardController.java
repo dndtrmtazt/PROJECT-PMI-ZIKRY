@@ -18,6 +18,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import java.io.InputStream;
 import java.net.URL;
 import java.text.NumberFormat;
 import java.time.LocalDate;
@@ -155,11 +156,9 @@ public class DashboardController implements Initializable {
         updateActionButtonArrow(btnCard2, enabled);
         updateActionButtonArrow(btnCard4, enabled);
 
-        try {
-            if (imgLightMode != null) imgLightMode.setImage(new Image(getClass().getResourceAsStream(enabled ? "/Images/ICON3DARK.png" : "/Images/ICON3.png")));
-            if (imgDarkMode != null) imgDarkMode.setImage(new Image(getClass().getResourceAsStream(enabled ? "/Images/ICON4DARK.png" : "/Images/ICON4.png")));
-            if (imgLogout != null) imgLogout.setImage(new Image(getClass().getResourceAsStream(enabled ? "/Images/ICON33.png" : "/Images/ICON6.png")));
-        } catch (Exception e) {}
+        setImageIfPresent(imgLightMode, enabled ? "/Images/ICON3DARK.png" : "/Images/ICON3.png");
+        setImageIfPresent(imgDarkMode, enabled ? "/Images/ICON4DARK.png" : "/Images/ICON4.png");
+        setImageIfPresent(imgLogout, enabled ? "/Images/ICON33.png" : "/Images/ICON6.png");
 
         if (scrollStok != null) {
             scrollStok.setStyle("-fx-background: transparent; -fx-background-color: transparent;");
@@ -203,17 +202,6 @@ public class DashboardController implements Initializable {
         lblKosong.setStyle("-fx-text-fill: " + (isDark ? "#d0d0d0" : "#4B5563") + "; -fx-font-weight: bold;");
         hBox.getChildren().add(lblKosong);
         return hBox;
-    }
-
-    private String getDashboardButtonStyle(boolean enabled, String textColor, String borderColor) {
-        String buttonBg = enabled ? "#333333" : "white";
-        return "-fx-background-color: " + buttonBg + "; " +
-                "-fx-text-fill: " + textColor + "; " +
-                "-fx-border-color: " + borderColor + "; " +
-                "-fx-border-width: 1; " +
-                "-fx-background-radius: 9; " +
-                "-fx-border-radius: 9; " +
-                "-fx-cursor: hand;";
     }
 
     private HBox buatBarisStok(String nama, int sisa, boolean isDark) {
@@ -275,6 +263,17 @@ public class DashboardController implements Initializable {
             if (node != null) {
                 node.setStyle("");
             }
+        }
+    }
+
+    private void setImageIfPresent(ImageView imageView, String resourcePath) {
+        if (imageView == null || resourcePath == null) {
+            return;
+        }
+
+        InputStream stream = getClass().getResourceAsStream(resourcePath);
+        if (stream != null) {
+            imageView.setImage(new Image(stream));
         }
     }
 }

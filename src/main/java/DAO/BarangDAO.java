@@ -17,15 +17,7 @@ public class BarangDAO {
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(query)) {
             while (rs.next()) {
-                Barang barang = new Barang();
-                barang.setIdBarang(rs.getString("id_barang"));
-                barang.setNamaBarang(rs.getString("nama_barang"));
-                barang.setIdKategori(rs.getString("id_kategori"));
-                barang.setStok(rs.getInt("stok"));
-                barang.setSatuan(rs.getString("satuan"));
-                barang.setHargaBeli(rs.getDouble("harga_beli"));
-                barang.setHargaJual(rs.getDouble("harga_jual"));
-                listBarang.add(barang);
+                listBarang.add(mapBarang(rs));
             }
         } catch (SQLException e) {
             System.err.println("Error getting all barang: " + e.getMessage());
@@ -39,18 +31,11 @@ public class BarangDAO {
         try (Connection conn = koneksi.koneksiDB();
              PreparedStatement ps = conn.prepareStatement(query)) {
             ps.setString(1, idBarang);
-            
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                Barang barang = new Barang();
-                barang.setIdBarang(rs.getString("id_barang"));
-                barang.setNamaBarang(rs.getString("nama_barang"));
-                barang.setIdKategori(rs.getString("id_kategori"));
-                barang.setStok(rs.getInt("stok"));
-                barang.setSatuan(rs.getString("satuan"));
-                barang.setHargaBeli(rs.getDouble("harga_beli"));
-                barang.setHargaJual(rs.getDouble("harga_jual"));
-                return barang;
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return mapBarang(rs);
+                }
             }
         } catch (SQLException e) {
             System.err.println("Error getting barang by id: " + e.getMessage());
@@ -65,18 +50,11 @@ public class BarangDAO {
         try (Connection conn = koneksi.koneksiDB();
              PreparedStatement ps = conn.prepareStatement(query)) {
             ps.setString(1, idKategori);
-            
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                Barang barang = new Barang();
-                barang.setIdBarang(rs.getString("id_barang"));
-                barang.setNamaBarang(rs.getString("nama_barang"));
-                barang.setIdKategori(rs.getString("id_kategori"));
-                barang.setStok(rs.getInt("stok"));
-                barang.setSatuan(rs.getString("satuan"));
-                barang.setHargaBeli(rs.getDouble("harga_beli"));
-                barang.setHargaJual(rs.getDouble("harga_jual"));
-                listBarang.add(barang);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    listBarang.add(mapBarang(rs));
+                }
             }
         } catch (SQLException e) {
             System.err.println("Error getting barang by kategori: " + e.getMessage());
@@ -229,23 +207,28 @@ public class BarangDAO {
             ps.setInt(1, batasStok);
             ps.setInt(2, limit);
 
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                Barang barang = new Barang();
-                barang.setIdBarang(rs.getString("id_barang"));
-                barang.setNamaBarang(rs.getString("nama_barang"));
-                barang.setIdKategori(rs.getString("id_kategori"));
-                barang.setStok(rs.getInt("stok"));
-                barang.setSatuan(rs.getString("satuan"));
-                barang.setHargaBeli(rs.getDouble("harga_beli"));
-                barang.setHargaJual(rs.getDouble("harga_jual"));
-                listBarang.add(barang);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    listBarang.add(mapBarang(rs));
+                }
             }
         } catch (SQLException e) {
             System.err.println("Error getting barang stok menipis: " + e.getMessage());
             e.printStackTrace();
         }
         return listBarang;
+    }
+
+    private static Barang mapBarang(ResultSet rs) throws SQLException {
+        Barang barang = new Barang();
+        barang.setIdBarang(rs.getString("id_barang"));
+        barang.setNamaBarang(rs.getString("nama_barang"));
+        barang.setIdKategori(rs.getString("id_kategori"));
+        barang.setStok(rs.getInt("stok"));
+        barang.setSatuan(rs.getString("satuan"));
+        barang.setHargaBeli(rs.getDouble("harga_beli"));
+        barang.setHargaJual(rs.getDouble("harga_jual"));
+        return barang;
     }
 
     private static boolean isBlank(String value) {

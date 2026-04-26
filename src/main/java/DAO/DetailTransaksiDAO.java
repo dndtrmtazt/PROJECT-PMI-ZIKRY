@@ -30,17 +30,11 @@ public class DetailTransaksiDAO {
         try (Connection conn = koneksi.koneksiDB();
              PreparedStatement ps = conn.prepareStatement(query)) {
             ps.setString(1, idTransaksi);
-            
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                Detail_Transaksi detail = new Detail_Transaksi();
-                detail.setIdDetail(rs.getString("id_detail"));
-                detail.setIdTransaksi(rs.getString("id_transaksi"));
-                detail.setIdBarang(rs.getString("id_barang"));
-                detail.setJumlah(rs.getInt("jumlah"));
-                detail.setHargaSatuan(rs.getDouble("harga_satuan"));
-                detail.setSubtotal(rs.getDouble("subtotal"));
-                listDetail.add(detail);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    listDetail.add(mapDetail(rs));
+                }
             }
         } catch (SQLException e) {
             System.err.println("Error getting detail transaksi: " + e.getMessage());
@@ -54,17 +48,11 @@ public class DetailTransaksiDAO {
         try (Connection conn = koneksi.koneksiDB();
              PreparedStatement ps = conn.prepareStatement(query)) {
             ps.setString(1, idDetail);
-            
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                Detail_Transaksi detail = new Detail_Transaksi();
-                detail.setIdDetail(rs.getString("id_detail"));
-                detail.setIdTransaksi(rs.getString("id_transaksi"));
-                detail.setIdBarang(rs.getString("id_barang"));
-                detail.setJumlah(rs.getInt("jumlah"));
-                detail.setHargaSatuan(rs.getDouble("harga_satuan"));
-                detail.setSubtotal(rs.getDouble("subtotal"));
-                return detail;
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return mapDetail(rs);
+                }
             }
         } catch (SQLException e) {
             System.err.println("Error getting detail by id: " + e.getMessage());
@@ -124,5 +112,16 @@ public class DetailTransaksiDAO {
             e.printStackTrace();
         }
         return false;
+    }
+
+    private static Detail_Transaksi mapDetail(ResultSet rs) throws SQLException {
+        Detail_Transaksi detail = new Detail_Transaksi();
+        detail.setIdDetail(rs.getString("id_detail"));
+        detail.setIdTransaksi(rs.getString("id_transaksi"));
+        detail.setIdBarang(rs.getString("id_barang"));
+        detail.setJumlah(rs.getInt("jumlah"));
+        detail.setHargaSatuan(rs.getDouble("harga_satuan"));
+        detail.setSubtotal(rs.getDouble("subtotal"));
+        return detail;
     }
 }

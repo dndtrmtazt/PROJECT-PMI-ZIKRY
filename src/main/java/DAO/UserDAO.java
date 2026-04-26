@@ -17,11 +17,7 @@ public class UserDAO {
              ResultSet rs = stmt.executeQuery(query)) {
 
             while (rs.next()) {
-                User user = new User();
-                user.setIdUser(rs.getString("id_user"));
-                user.setNamaLengkap(rs.getString("nama_lengkap"));
-                user.setRole(rs.getString("role"));
-                listUser.add(user);
+                listUser.add(mapUser(rs));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -35,14 +31,11 @@ public class UserDAO {
              PreparedStatement ps = conn.prepareStatement(query)) {
             ps.setString(1, idUser);
             ps.setString(2, password);
-            ResultSet rs = ps.executeQuery();
 
-            if (rs.next()) {
-                User user = new User();
-                user.setIdUser(rs.getString("id_user"));
-                user.setRole(rs.getString("role"));
-                user.setNamaLengkap(rs.getString("nama_lengkap"));
-                return user;
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return mapUser(rs);
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -68,21 +61,17 @@ public class UserDAO {
         }
     }
 
-    /**
-     * DI SINI PERBAIKANNYA: Method sekarang menerima 5 parameter agar ID bisa diedit
-     */
     public static boolean updateUser(String idLama, String idBaru, String nama, String role, String pass) {
-        // Query ini mengubah id_user yang lama menjadi id_user yang baru
         String query = "UPDATE user SET id_user = ?, nama_lengkap = ?, role = ?, user_password = ? WHERE id_user = ?";
 
         try (Connection conn = koneksi.koneksiDB();
              PreparedStatement ps = conn.prepareStatement(query)) {
 
-            ps.setString(1, idBaru);   // ID Baru yang diketik di aplikasi
+            ps.setString(1, idBaru);
             ps.setString(2, nama);
             ps.setString(3, role.toLowerCase());
             ps.setString(4, pass);
-            ps.setString(5, idLama);   // ID Asli yang dipakai sebagai patokan WHERE
+            ps.setString(5, idLama);
 
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -103,5 +92,13 @@ public class UserDAO {
             e.printStackTrace();
             return false;
         }
+    }
+
+    private static User mapUser(ResultSet rs) throws SQLException {
+        User user = new User();
+        user.setIdUser(rs.getString("id_user"));
+        user.setNamaLengkap(rs.getString("nama_lengkap"));
+        user.setRole(rs.getString("role"));
+        return user;
     }
 }

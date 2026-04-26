@@ -16,10 +16,7 @@ public class KategoriDAO {
              ResultSet rs = stmt.executeQuery(query)) {
 
             while (rs.next()) {
-                Kategori kategori = new Kategori();
-                kategori.setIdKategori(rs.getString("id_kategori"));
-                kategori.setNamaKategori(rs.getString("nama_kategori"));
-                listKategori.add(kategori);
+                listKategori.add(mapKategori(rs));
             }
             System.out.println("DEBUG: Berhasil menarik " + listKategori.size() + " data dari DB.");
 
@@ -43,16 +40,14 @@ public class KategoriDAO {
         }
     }
 
-    // --- PERBAIKAN UTAMA: Tambahkan parameter oldId ---
     public static boolean updateKategori(Kategori kategori, String oldId) {
-        // Query ini memungkinkan kita mengubah id_kategori itu sendiri
         String query = "UPDATE kategori SET id_kategori = ?, nama_kategori = ? WHERE id_kategori = ?";
         try (Connection conn = koneksi.koneksiDB();
              PreparedStatement ps = conn.prepareStatement(query)) {
 
-            ps.setString(1, kategori.getIdKategori()); // ID Baru
-            ps.setString(2, kategori.getNamaKategori()); // Nama Baru
-            ps.setString(3, oldId); // ID Lama (untuk mencari data di baris yang benar)
+            ps.setString(1, kategori.getIdKategori());
+            ps.setString(2, kategori.getNamaKategori());
+            ps.setString(3, oldId);
 
             int rowsUpdated = ps.executeUpdate();
             System.out.println("DEBUG: Rows updated: " + rowsUpdated);
@@ -74,5 +69,12 @@ public class KategoriDAO {
             e.printStackTrace();
             return false;
         }
+    }
+
+    private static Kategori mapKategori(ResultSet rs) throws SQLException {
+        Kategori kategori = new Kategori();
+        kategori.setIdKategori(rs.getString("id_kategori"));
+        kategori.setNamaKategori(rs.getString("nama_kategori"));
+        return kategori;
     }
 }

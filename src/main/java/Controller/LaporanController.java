@@ -38,7 +38,7 @@ public class LaporanController implements Initializable {
     @FXML private TableColumn<Laporan, Double> colPengeluaran;
     @FXML private TableColumn<Laporan, Integer> colTransaksi;
 
-    private ObservableList<Laporan> masterData = FXCollections.observableArrayList();
+    private final ObservableList<Laporan> masterData = FXCollections.observableArrayList();
     private final Locale localeID = new Locale("id", "ID");
     private final NumberFormat nf = NumberFormat.getCurrencyInstance(localeID);
 
@@ -49,9 +49,10 @@ public class LaporanController implements Initializable {
         updateSummary();
 
         // Load CSS for table
-        try {
-            tableLaporan.getStylesheets().add(getClass().getResource("/CSS/tabel.css").toExternalForm());
-        } catch (Exception e) {}
+        URL tableCss = getClass().getResource("/CSS/tabel.css");
+        if (tableCss != null) {
+            tableLaporan.getStylesheets().add(tableCss.toExternalForm());
+        }
 
         setDarkMode(MainController.isDarkMode);
     }
@@ -95,10 +96,6 @@ public class LaporanController implements Initializable {
     }
 
     private void updateSummary() {
-        double totalPenjualan = 0;
-        double totalPengeluaran = 0;
-        int totalTransaksi = 0;
-
         // For summary cards, let's show data for "today" or total if no data today
         String today = LocalDate.now().toString();
         Laporan summary = masterData.stream()
@@ -107,13 +104,9 @@ public class LaporanController implements Initializable {
                 .orElse(null);
 
         if (summary != null) {
-            totalPenjualan = summary.getTotalPenjualan();
-            totalPengeluaran = summary.getTotalPengeluaran();
-            totalTransaksi = summary.getJumlahTransaksi();
-
-            lblTotalPenjualan.setText(nf.format(totalPenjualan));
-            lblTotalPengeluaran.setText(nf.format(totalPengeluaran));
-            lblTotalTransaksi.setText(totalTransaksi + " Transaksi");
+            lblTotalPenjualan.setText(nf.format(summary.getTotalPenjualan()));
+            lblTotalPengeluaran.setText(nf.format(summary.getTotalPengeluaran()));
+            lblTotalTransaksi.setText(summary.getJumlahTransaksi() + " Transaksi");
         } else {
             // If no data for today, maybe show 0 or overall average/total?
             // Let's show 0 for "Penjualan Hari Ini" as it's specific

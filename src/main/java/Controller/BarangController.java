@@ -6,17 +6,14 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
-import java.io.IOException;
+import javafx.scene.layout.VBox;
+import java.net.URL;
 import java.sql.*;
 import java.text.NumberFormat;
 import java.util.Locale;
@@ -33,7 +30,7 @@ public class BarangController {
     @FXML private TextField txtCari;
     @FXML private Label lblDaftarBarang, lblTitle;
 
-    private ObservableList<Barang> listBarang = FXCollections.observableArrayList();
+    private final ObservableList<Barang> listBarang = FXCollections.observableArrayList();
 
     @FXML
     public void initialize() {
@@ -69,9 +66,10 @@ public class BarangController {
         setupPencarian();
         
         // Load CSS
-        try {
-            tableBarang.getStylesheets().add(getClass().getResource("/CSS/tabel.css").toExternalForm());
-        } catch (Exception e) {}
+        URL tableCss = getClass().getResource("/CSS/tabel.css");
+        if (tableCss != null) {
+            tableBarang.getStylesheets().add(tableCss.toExternalForm());
+        }
 
         setDarkMode(MainController.isDarkMode);
     }

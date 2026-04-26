@@ -10,7 +10,6 @@ import model.Pengeluaran;
 
 public class PengeluaranDAO {
 
-    // 1. Tambahkan 'static' agar bisa dipanggil langsung tanpa 'new'
     public static List<Pengeluaran> getAllPengeluaran() {
         List<Pengeluaran> listPengeluaran = new ArrayList<>();
         String query = "SELECT * FROM pengeluaran ORDER BY tgl_pengeluaran DESC, id_pengeluaran ASC";
@@ -20,13 +19,7 @@ public class PengeluaranDAO {
              ResultSet rs = stmt.executeQuery(query)) {
 
             while (rs.next()) {
-                Pengeluaran p = new Pengeluaran();
-                p.setIdPengeluaran(rs.getString("id_pengeluaran"));
-                p.setTglPengeluaran(readLocalDate(rs, "tgl_pengeluaran"));
-                p.setNominal(rs.getDouble("nominal"));
-                p.setJenis(rs.getString("jenis"));
-                p.setIdUser(rs.getString("id_user"));
-                listPengeluaran.add(p);
+                listPengeluaran.add(mapPengeluaran(rs));
             }
         } catch (SQLException e) {
             System.err.println("Gagal Mengambil Data Pengeluaran: " + e.getMessage());
@@ -34,7 +27,6 @@ public class PengeluaranDAO {
         return listPengeluaran;
     }
 
-    // 2. Tambahkan 'static'
     public static boolean addPengeluaran(Pengeluaran p) {
         String query = "INSERT INTO pengeluaran (id_pengeluaran, tgl_pengeluaran, nominal, jenis, id_user) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = koneksi.koneksiDB();
@@ -53,7 +45,6 @@ public class PengeluaranDAO {
         }
     }
 
-    // 3. Tambahkan 'static' dan parameter idLama tetap dipertahankan
     public static boolean updatePengeluaran(Pengeluaran p, String oldId) {
         String query = "UPDATE pengeluaran SET id_pengeluaran = ?, tgl_pengeluaran = ?, nominal = ?, jenis = ?, id_user = ? WHERE id_pengeluaran = ?";
         try (Connection conn = koneksi.koneksiDB();
@@ -73,7 +64,6 @@ public class PengeluaranDAO {
         }
     }
 
-    // 4. Tambahkan 'static'
     public static boolean deletePengeluaran(String idPengeluaran) {
         String query = "DELETE FROM pengeluaran WHERE id_pengeluaran = ?";
         try (Connection conn = koneksi.koneksiDB();
@@ -91,9 +81,11 @@ public class PengeluaranDAO {
         try (Connection conn = koneksi.koneksiDB();
              PreparedStatement ps = conn.prepareStatement(query)) {
             ps.setString(1, tanggal.toString());
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                return rs.getDouble(1);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getDouble(1);
+                }
             }
         } catch (SQLException e) {
             System.err.println("Gagal Mengambil Total Pengeluaran Harian: " + e.getMessage());
@@ -101,8 +93,18 @@ public class PengeluaranDAO {
         return 0;
     }
 
-    private static LocalDate readLocalDate(ResultSet rs, String columnName) throws SQLException {
-        String value = rs.getString(columnName);
+    private static Pengeluaran mapPengeluaran(ResultSet rs) throws SQLException {
+        Pengeluaran pengeluaran = new Pengeluaran();
+        pengeluaran.setIdPengeluaran(rs.getString("id_pengeluaran"));
+        pengeluaran.setTglPengeluaran(readPengeluaranDate(rs));
+        pengeluaran.setNominal(rs.getDouble("nominal"));
+        pengeluaran.setJenis(rs.getString("jenis"));
+        pengeluaran.setIdUser(rs.getString("id_user"));
+        return pengeluaran;
+    }
+
+    private static LocalDate readPengeluaranDate(ResultSet rs) throws SQLException {
+        String value = rs.getString("tgl_pengeluaran");
         if (value == null || value.trim().isEmpty()) {
             return null;
         }
@@ -110,7 +112,7 @@ public class PengeluaranDAO {
         try {
             return LocalDate.parse(value);
         } catch (DateTimeParseException e) {
-            Date sqlDate = rs.getDate(columnName);
+            Date sqlDate = rs.getDate("tgl_pengeluaran");
             return sqlDate != null ? sqlDate.toLocalDate() : null;
         }
     }

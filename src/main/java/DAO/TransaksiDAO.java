@@ -37,12 +37,7 @@ public class TransaksiDAO {
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(query)) {
             while (rs.next()) {
-                Transaksi transaksi = new Transaksi();
-                transaksi.setIdTransaksi(rs.getString("id_transaksi"));
-                transaksi.setTglTransaksi(readDateTime(rs, "tgl_transaksi"));
-                transaksi.setIdUser(rs.getString("id_user"));
-                transaksi.setTotal(rs.getDouble("total"));
-                listTransaksi.add(transaksi);
+                listTransaksi.add(mapTransaksi(rs));
             }
         } catch (SQLException e) {
             System.err.println("Error getting all transaksi: " + e.getMessage());
@@ -56,15 +51,11 @@ public class TransaksiDAO {
         try (Connection conn = koneksi.koneksiDB();
              PreparedStatement ps = conn.prepareStatement(query)) {
             ps.setString(1, idTransaksi);
-            
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                Transaksi transaksi = new Transaksi();
-                transaksi.setIdTransaksi(rs.getString("id_transaksi"));
-                transaksi.setTglTransaksi(readDateTime(rs, "tgl_transaksi"));
-                transaksi.setIdUser(rs.getString("id_user"));
-                transaksi.setTotal(rs.getDouble("total"));
-                return transaksi;
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return mapTransaksi(rs);
+                }
             }
         } catch (SQLException e) {
             System.err.println("Error getting transaksi by id: " + e.getMessage());
@@ -79,15 +70,11 @@ public class TransaksiDAO {
         try (Connection conn = koneksi.koneksiDB();
              PreparedStatement ps = conn.prepareStatement(query)) {
             ps.setString(1, idUser);
-            
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                Transaksi transaksi = new Transaksi();
-                transaksi.setIdTransaksi(rs.getString("id_transaksi"));
-                transaksi.setTglTransaksi(readDateTime(rs, "tgl_transaksi"));
-                transaksi.setIdUser(rs.getString("id_user"));
-                transaksi.setTotal(rs.getDouble("total"));
-                listTransaksi.add(transaksi);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    listTransaksi.add(mapTransaksi(rs));
+                }
             }
         } catch (SQLException e) {
             System.err.println("Error getting transaksi by user: " + e.getMessage());
@@ -242,9 +229,11 @@ public class TransaksiDAO {
         try (Connection conn = koneksi.koneksiDB();
              PreparedStatement ps = conn.prepareStatement(query)) {
             ps.setString(1, tanggal.toString());
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                return rs.getInt(1);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
             }
         } catch (SQLException e) {
             System.err.println("Error getting jumlah transaksi by date: " + e.getMessage());
@@ -253,8 +242,17 @@ public class TransaksiDAO {
         return 0;
     }
 
-    private static LocalDateTime readDateTime(ResultSet rs, String columnName) throws SQLException {
-        String value = rs.getString(columnName);
+    private static Transaksi mapTransaksi(ResultSet rs) throws SQLException {
+        Transaksi transaksi = new Transaksi();
+        transaksi.setIdTransaksi(rs.getString("id_transaksi"));
+        transaksi.setTglTransaksi(readTransaksiDateTime(rs));
+        transaksi.setIdUser(rs.getString("id_user"));
+        transaksi.setTotal(rs.getDouble("total"));
+        return transaksi;
+    }
+
+    private static LocalDateTime readTransaksiDateTime(ResultSet rs) throws SQLException {
+        String value = rs.getString("tgl_transaksi");
         if (value == null || value.trim().isEmpty()) {
             return null;
         }
@@ -267,7 +265,7 @@ public class TransaksiDAO {
         try {
             return LocalDateTime.parse(normalizedValue, SQL_DATE_TIME_FORMATTER);
         } catch (DateTimeParseException e) {
-            Timestamp timestamp = rs.getTimestamp(columnName);
+            Timestamp timestamp = rs.getTimestamp("tgl_transaksi");
             return timestamp != null ? timestamp.toLocalDateTime() : null;
         }
     }

@@ -22,6 +22,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import DAO.PengeluaranDAO;
 import model.Pengeluaran;
+import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
@@ -38,8 +39,6 @@ public class PengeluaranController implements Initializable {
     @FXML private Button btnSearch, btnTambahPengeluaran;
     @FXML private ScrollPane scrollPengeluaran;
     @FXML private VBox LyrPengeluaran;
-
-    private PengeluaranDAO pengeluaranDAO = new PengeluaranDAO();
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -144,11 +143,11 @@ public class PengeluaranController implements Initializable {
             actionBox.setMinWidth(160.0); actionBox.setAlignment(Pos.CENTER);
 
             // Listener Edit
-            Button btnEdit = createActionButton("Edit", "#3498DB", "/Images/pencil_white.png");
+            Button btnEdit = createActionButton("Edit", "#3498DB", null);
             btnEdit.setOnAction(e -> showPengeluaranDialog(p));
 
             // Listener Hapus
-            Button btnHapus = createActionButton("Hapus", "#E74C3C", "/Images/trash_white.png");
+            Button btnHapus = createActionButton("Hapus", "#E74C3C", null);
             btnHapus.setOnAction(e -> handleHapus(p));
 
             actionBox.getChildren().addAll(btnEdit, btnHapus);
@@ -158,7 +157,7 @@ public class PengeluaranController implements Initializable {
     }
 
     private List<Pengeluaran> getFilteredPengeluaran() {
-        List<Pengeluaran> allPengeluaran = pengeluaranDAO.getAllPengeluaran();
+        List<Pengeluaran> allPengeluaran = PengeluaranDAO.getAllPengeluaran();
         String keyword = txtSearchPengeluaran != null && txtSearchPengeluaran.getText() != null
                 ? txtSearchPengeluaran.getText().trim().toLowerCase(Locale.ROOT)
                 : "";
@@ -206,7 +205,7 @@ public class PengeluaranController implements Initializable {
 
         confirm.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
-                if (pengeluaranDAO.deletePengeluaran(p.getIdPengeluaran())) {
+                if (PengeluaranDAO.deletePengeluaran(p.getIdPengeluaran())) {
                     muatDataPengeluaran();
                 }
             }
@@ -215,11 +214,12 @@ public class PengeluaranController implements Initializable {
 
     private Button createActionButton(String text, String color, String iconPath) {
         Button btn = new Button(text);
-        try {
-            ImageView iv = new ImageView(new Image(getClass().getResourceAsStream(iconPath)));
+        InputStream iconStream = iconPath == null ? null : getClass().getResourceAsStream(iconPath);
+        if (iconStream != null) {
+            ImageView iv = new ImageView(new Image(iconStream));
             iv.setFitHeight(14); iv.setFitWidth(14);
             btn.setGraphic(iv);
-        } catch (Exception e) {}
+        }
         btn.setStyle("-fx-background-color: " + color + "; -fx-text-fill: white; -fx-background-radius: 6; -fx-cursor: hand; -fx-font-weight: bold; -fx-font-size: 11px; -fx-padding: 6 12 6 12;");
         return btn;
     }

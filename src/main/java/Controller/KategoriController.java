@@ -22,6 +22,7 @@ import javafx.stage.Modality; // Tambahkan ini
 import javafx.stage.Stage; // Tambahkan ini
 import DAO.KategoriDAO;
 import model.Kategori;
+import java.io.InputStream;
 
 public class KategoriController implements Initializable {
 
@@ -31,8 +32,6 @@ public class KategoriController implements Initializable {
     @FXML private TextField txtSearchKategori;
     @FXML private ScrollPane scrollKategori;
     @FXML private ImageView imgLightMode, imgDarkMode, imgLogout;
-
-    private KategoriDAO kategoriDAO = new KategoriDAO();
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -84,7 +83,7 @@ public class KategoriController implements Initializable {
         if (vboxKategoriList == null) return;
 
         vboxKategoriList.getChildren().clear();
-        List<Kategori> list = kategoriDAO.getAllKategori();
+        List<Kategori> list = KategoriDAO.getAllKategori();
         boolean isDark = MainController.isDarkMode;
         String textColor = isDark ? "white" : "#2C3E50";
         String rowBg = isDark ? "#1e1e1e" : "#FFFFFF";
@@ -113,10 +112,10 @@ public class KategoriController implements Initializable {
             actionBox.setMinWidth(180.0);
             actionBox.setAlignment(Pos.CENTER_LEFT);
 
-            Button btnEdit = createActionButton("Edit", "#4A90E2", "/Images/pencil_white.png");
+            Button btnEdit = createActionButton("Edit", "#4A90E2", null);
             btnEdit.setOnAction(e -> handleEdit(k)); // Listener klik Edit
 
-            Button btnHapus = createActionButton("Hapus", "#F87171", "/Images/trash_white.png");
+            Button btnHapus = createActionButton("Hapus", "#F87171", null);
             btnHapus.setOnAction(e -> handleHapus(k)); // Listener klik Hapus
 
             actionBox.getChildren().addAll(btnEdit, btnHapus);
@@ -134,7 +133,7 @@ public class KategoriController implements Initializable {
         confirm.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
                 // Pastikan method ini ada di DAO kamu
-                if (kategoriDAO.deleteKategori(k.getIdKategori())) {
+                if (KategoriDAO.deleteKategori(k.getIdKategori())) {
                     loadDataKategori(); // Refresh tampilan
                 } else {
                     System.err.println("Gagal menghapus data dari DB.");
@@ -146,11 +145,12 @@ public class KategoriController implements Initializable {
     private Button createActionButton(String text, String color, String iconPath) {
         Button btn = new Button(text);
         btn.setMinWidth(Region.USE_PREF_SIZE);
-        try {
-            ImageView iv = new ImageView(new Image(getClass().getResourceAsStream(iconPath)));
+        InputStream iconStream = iconPath == null ? null : getClass().getResourceAsStream(iconPath);
+        if (iconStream != null) {
+            ImageView iv = new ImageView(new Image(iconStream));
             iv.setFitHeight(14); iv.setFitWidth(14);
             btn.setGraphic(iv);
-        } catch (Exception e) {}
+        }
         btn.setStyle("-fx-background-color: " + color + "; -fx-text-fill: white; -fx-background-radius: 4; -fx-cursor: hand; -fx-font-weight: bold; -fx-font-size: 11px; -fx-padding: 5 12 5 12;");
         return btn;
     }

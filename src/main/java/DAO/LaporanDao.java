@@ -37,13 +37,7 @@ public class LaporanDao {
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(query)) {
             while (rs.next()) {
-                Laporan laporan = new Laporan(
-                    rs.getString("tanggal"),
-                    rs.getDouble("total_penjualan"),
-                    rs.getDouble("total_pengeluaran"),
-                    rs.getInt("jumlah_transaksi")
-                );
-                listLaporan.add(laporan);
+                listLaporan.add(mapLaporan(rs));
             }
         } catch (SQLException e) {
             System.err.println("Error getting all laporan: " + e.getMessage());
@@ -81,21 +75,25 @@ public class LaporanDao {
              PreparedStatement ps = conn.prepareStatement(query)) {
             ps.setString(1, startDate.toString());
             ps.setString(2, endDate.toString());
-            
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                Laporan laporan = new Laporan(
-                    rs.getString("tanggal"),
-                    rs.getDouble("total_penjualan"),
-                    rs.getDouble("total_pengeluaran"),
-                    rs.getInt("jumlah_transaksi")
-                );
-                listLaporan.add(laporan);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    listLaporan.add(mapLaporan(rs));
+                }
             }
         } catch (SQLException e) {
             System.err.println("Error getting laporan by date range: " + e.getMessage());
             e.printStackTrace();
         }
         return listLaporan;
+    }
+
+    private static Laporan mapLaporan(ResultSet rs) throws SQLException {
+        return new Laporan(
+                rs.getString("tanggal"),
+                rs.getDouble("total_penjualan"),
+                rs.getDouble("total_pengeluaran"),
+                rs.getInt("jumlah_transaksi")
+        );
     }
 }

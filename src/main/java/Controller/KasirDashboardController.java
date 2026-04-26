@@ -39,13 +39,14 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 import DAO.BarangDAO;
-import DAO.DetailTransaksiDAO;
 import DAO.TransaksiDAO;
 import model.Barang;
 import model.Detail_Transaksi;
 import model.Transaksi;
 import config.UserSession;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 
 public class KasirDashboardController {
     private enum SortField {
@@ -69,7 +70,7 @@ public class KasirDashboardController {
 
     // --- DATA STATE ---
     private List<Barang> allBarang;
-    private ObservableList<Detail_Transaksi> cartItems = FXCollections.observableArrayList();
+    private final ObservableList<Detail_Transaksi> cartItems = FXCollections.observableArrayList();
     private double totalBelanja = 0;
     private KasirDashboardController currentContentController;
     private boolean isThemeTransitionRunning = false;
@@ -116,7 +117,13 @@ public class KasirDashboardController {
         if (vboxMainContent == null) return;
         try {
             vboxMainContent.getChildren().clear();
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+            URL fxmlUrl = getClass().getResource(fxmlPath);
+            if (fxmlUrl == null) {
+                System.err.println("Halaman tidak ditemukan: " + fxmlPath);
+                return;
+            }
+
+            FXMLLoader loader = new FXMLLoader(fxmlUrl);
             Parent root = loader.load();
 
             // Agar konten mengisi seluruh area VBox
@@ -142,7 +149,13 @@ public class KasirDashboardController {
                 UserSession.getInstance().logout();
                 Stage stage = (Stage) btnLogout.getScene().getWindow();
 
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/FXML/LoginView.fxml"));
+                URL loginView = getClass().getResource("/FXML/LoginView.fxml");
+                if (loginView == null) {
+                    System.err.println("Halaman login tidak ditemukan.");
+                    return;
+                }
+
+                FXMLLoader loader = new FXMLLoader(loginView);
                 Parent root = loader.load();
                 stage.setResizable(true);
                 stage.setMaximized(false);
@@ -185,12 +198,10 @@ public class KasirDashboardController {
         if (btnDarkMode != null)     btnDarkMode.setStyle("-fx-background-color: " + (enabled ? "#444444" : "transparent") + "; -fx-background-radius: 18; -fx-cursor: hand;");
         if (btnTransaksi != null)    updateTransaksiButtonStyle(enabled, btnTransaksi.isHover());
 
-        try {
-            if (imgLogo != null)      imgLogo.setImage(new Image(getClass().getResourceAsStream(enabled ? "/Images/LOGO2.png" : "/Images/LOGO.png")));
-            if (imgLightMode != null) imgLightMode.setImage(new Image(getClass().getResourceAsStream(enabled ? "/Images/ICON3DARK.png" : "/Images/ICON3.png")));
-            if (imgDarkMode != null)  imgDarkMode.setImage(new Image(getClass().getResourceAsStream(enabled ? "/Images/ICON4DARK.png" : "/Images/ICON4.png")));
-            if (imgLogout != null)    imgLogout.setImage(new Image(getClass().getResourceAsStream(enabled ? "/Images/ICON33.png" : "/Images/ICON6.png")));
-        } catch (Exception e) { /* abaikan jika gambar tidak ditemukan */ }
+        setImageIfPresent(imgLogo, enabled ? "/Images/LOGO2.png" : "/Images/LOGO.png");
+        setImageIfPresent(imgLightMode, enabled ? "/Images/ICON3DARK.png" : "/Images/ICON3.png");
+        setImageIfPresent(imgDarkMode, enabled ? "/Images/ICON4DARK.png" : "/Images/ICON4.png");
+        setImageIfPresent(imgLogout, enabled ? "/Images/ICON33.png" : "/Images/ICON6.png");
 
         displayProducts(allBarang, enabled);
         updateCartUI();
@@ -423,13 +434,11 @@ public class KasirDashboardController {
     private void displayProducts(List<Barang> products, boolean isDarkMode) {
         if (vboxProdukList == null) return;
         vboxProdukList.getChildren().clear();
-        String textColor = isDarkMode ? "-fx-text-fill: white;" : "-fx-text-fill: #111111;";
-
         if (products == null) return;
         for (Barang barang : products) {
             int displayStok = getDisplayStock(barang);
 
-            vboxProdukList.getChildren().add(createProductRow(barang, displayStok, textColor));
+            vboxProdukList.getChildren().add(createProductRow(barang, displayStok));
 
             Region line = new Region();
             line.setMinHeight(1);
@@ -440,7 +449,7 @@ public class KasirDashboardController {
     }
 
     // --- DESAIN BARIS PRODUK ---
-    private HBox createProductRow(Barang barang, int displayStok, String textColor) {
+    private HBox createProductRow(Barang barang, int displayStok) {
         HBox row = new HBox(10);
         row.getStyleClass().add("kasir-product-row");
         row.setAlignment(Pos.CENTER_LEFT);
@@ -527,13 +536,11 @@ public class KasirDashboardController {
         vboxCartList.getChildren().clear();
         totalBelanja = 0;
         boolean isDark = MainController.isDarkMode;
-        String textColor = isDark ? "-fx-text-fill: white;" : "-fx-text-fill: #111111;";
-
         for (Detail_Transaksi item : cartItems) {
             Barang b = findBarangById(item.getIdBarang());
             if (b != null) {
                 totalBelanja += item.getSubtotal();
-                vboxCartList.getChildren().add(createCartRow(item, b, textColor));
+                vboxCartList.getChildren().add(createCartRow(item, b));
 
                 Region line = new Region();
                 line.setMinHeight(1);
@@ -548,7 +555,7 @@ public class KasirDashboardController {
     }
 
     // --- DESAIN BARIS KERANJANG ---
-    private HBox createCartRow(Detail_Transaksi item, Barang barang, String textColor) {
+    private HBox createCartRow(Detail_Transaksi item, Barang barang) {
         HBox row = new HBox(5);
         row.getStyleClass().add("kasir-cart-row");
         row.setAlignment(Pos.CENTER_LEFT);
@@ -587,8 +594,8 @@ public class KasirDashboardController {
         btnPlus.setMinWidth(17);
         btnPlus.setPrefHeight(22);
 
-        btnMinus.setOnAction(e -> handleMinus(item, barang));
-        btnPlus.setOnAction(e -> handlePlus(item, barang));
+        btnMinus.setOnAction(e -> handleMinus(item));
+        btnPlus.setOnAction(e -> handlePlus(item));
 
         qtyBox.getChildren().addAll(btnMinus, lblQty, btnPlus);
 
@@ -612,7 +619,7 @@ public class KasirDashboardController {
     }
 
     // --- KURANGI QTY DI KERANJANG ---
-    private void handleMinus(Detail_Transaksi item, Barang barang) {
+    private void handleMinus(Detail_Transaksi item) {
         if (item.getJumlah() > 1) {
             item.setJumlah(item.getJumlah() - 1);
             item.setSubtotal(item.getJumlah() * item.getHargaSatuan());
@@ -624,7 +631,7 @@ public class KasirDashboardController {
     }
 
     // --- TAMBAH QTY DI KERANJANG ---
-    private void handlePlus(Detail_Transaksi item, Barang barang) {
+    private void handlePlus(Detail_Transaksi item) {
         Barang latestBarang = BarangDAO.getBarangById(item.getIdBarang());
         if (latestBarang == null) return;
 
@@ -729,7 +736,13 @@ public class KasirDashboardController {
         }
 
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/FXML/Kasir/Pop Up Simpan & Cetak.fxml"));
+            URL popupView = getClass().getResource("/FXML/Kasir/Pop Up Simpan & Cetak.fxml");
+            if (popupView == null) {
+                showAlert("Error", "Popup simpan & cetak tidak ditemukan.");
+                return;
+            }
+
+            FXMLLoader loader = new FXMLLoader(popupView);
             Parent root = loader.load();
 
             PopUpSimpanCetakController controller = loader.getController();
@@ -811,5 +824,16 @@ public class KasirDashboardController {
         a.setHeaderText(null);
         a.setContentText(content);
         a.showAndWait();
+    }
+
+    private void setImageIfPresent(ImageView imageView, String resourcePath) {
+        if (imageView == null || resourcePath == null) {
+            return;
+        }
+
+        InputStream stream = getClass().getResourceAsStream(resourcePath);
+        if (stream != null) {
+            imageView.setImage(new Image(stream));
+        }
     }
 }

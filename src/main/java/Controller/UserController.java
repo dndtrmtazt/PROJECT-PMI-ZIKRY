@@ -23,6 +23,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import DAO.UserDAO;
 import model.User;
+import java.net.URL;
 
 public class UserController {
 
@@ -138,7 +139,7 @@ public class UserController {
     // LOGIKA EDIT USER
     private void handleEditUser(User user) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/FXML/Admin/TambahUserView.fxml"));
+            FXMLLoader loader = createTambahUserLoader();
             Parent root = loader.load();
 
             Stage stage = new Stage();
@@ -180,7 +181,7 @@ public class UserController {
     @FXML
     private void handleTambahUser() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/FXML/Admin/TambahUserView.fxml"));
+            FXMLLoader loader = createTambahUserLoader();
             Parent root = loader.load();
 
             Stage stage = new Stage();
@@ -197,6 +198,14 @@ public class UserController {
         } catch (Exception e) {
             alertError("Gagal membuka jendela: " + e.getMessage());
         }
+    }
+
+    private FXMLLoader createTambahUserLoader() throws IOException {
+        URL fxmlUrl = getClass().getResource("/FXML/Admin/TambahUserView.fxml");
+        if (fxmlUrl == null) {
+            throw new IOException("Resource /FXML/Admin/TambahUserView.fxml tidak ditemukan.");
+        }
+        return new FXMLLoader(fxmlUrl);
     }
 
     private void alertError(String message) {

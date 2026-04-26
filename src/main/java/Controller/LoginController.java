@@ -27,6 +27,8 @@ import model.User;
 import config.UserSession;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 
 public class LoginController {
 
@@ -81,7 +83,13 @@ public class LoginController {
                 fxmlPath = "/FXML/Admin/MainLayout.fxml";
             }
 
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+            URL fxmlUrl = getClass().getResource(fxmlPath);
+            if (fxmlUrl == null) {
+                showLoginError("Halaman tujuan tidak ditemukan.");
+                return;
+            }
+
+            FXMLLoader loader = new FXMLLoader(fxmlUrl);
             Parent root = loader.load();
 
             // Jika bukan kasir, set hak akses di MainController
@@ -161,13 +169,9 @@ public class LoginController {
         setStyleClass(sunIcon, "active", !darkMode);
         setStyleClass(moonIcon, "active", darkMode);
 
-        try {
-            sunIcon.setImage(new Image(getClass().getResourceAsStream(darkMode ? "/Images/ICON3DARK.png" : "/Images/ICON3.png")));
-            moonIcon.setImage(new Image(getClass().getResourceAsStream(darkMode ? "/Images/ICON4DARK.png" : "/Images/ICON4.png")));
-            logoImageView.setImage(new Image(getClass().getResourceAsStream(darkMode ? "/Images/LOGO2.png" : "/Images/LOGO.png")));
-        } catch (Exception e) {
-            // Abaikan jika asset tidak ditemukan agar halaman login tetap terbuka.
-        }
+        setImageIfPresent(sunIcon, darkMode ? "/Images/ICON3DARK.png" : "/Images/ICON3.png");
+        setImageIfPresent(moonIcon, darkMode ? "/Images/ICON4DARK.png" : "/Images/ICON4.png");
+        setImageIfPresent(logoImageView, darkMode ? "/Images/LOGO2.png" : "/Images/LOGO.png");
 
         if (darkMode) {
             ColorAdjust iconContrast = new ColorAdjust();
@@ -243,5 +247,16 @@ public class LoginController {
         }
 
         playEntranceAnimation();
+    }
+
+    private void setImageIfPresent(ImageView imageView, String resourcePath) {
+        if (imageView == null || resourcePath == null) {
+            return;
+        }
+
+        InputStream stream = getClass().getResourceAsStream(resourcePath);
+        if (stream != null) {
+            imageView.setImage(new Image(stream));
+        }
     }
 }
