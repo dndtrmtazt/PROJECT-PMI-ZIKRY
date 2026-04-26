@@ -38,6 +38,27 @@ public class TransaksiDAO {
         return "TRK001";
     }
 
+    public static List<Transaksi> getAllTransaksi() {
+        List<Transaksi> listTransaksi = new ArrayList<>();
+        String query = "SELECT id_transaksi, tgl_transaksi, id_user, total FROM transaksi";
+        try (Connection conn = koneksi.koneksiDB();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(query)) {
+            while (rs.next()) {
+                Transaksi transaksi = new Transaksi();
+                transaksi.setIdTransaksi(rs.getString("id_transaksi"));
+                transaksi.setTglTransaksi(readDateTime(rs, "tgl_transaksi"));
+                transaksi.setIdUser(rs.getString("id_user"));
+                transaksi.setTotal(rs.getDouble("total"));
+                listTransaksi.add(transaksi);
+            }
+        } catch (SQLException e) {
+            System.err.println("Error getting all transaksi: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return listTransaksi;
+    }
+
     /**
      * Method prosesCheckout: Alur penyimpanan transaksi paling penting (Atomic).
      * Alur: 1. Simpan Header -> 2. Simpan Detail -> 3. Kurangi Stok -> 4. Commit/Rollback.
