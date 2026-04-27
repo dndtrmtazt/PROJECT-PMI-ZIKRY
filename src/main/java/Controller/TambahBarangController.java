@@ -18,6 +18,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -342,53 +343,62 @@ public class TambahBarangController {
         if (btnTambah != null && btnTambah.getScene() != null) {
             dialog.initOwner(btnTambah.getScene().getWindow());
         }
-        dialog.initStyle(StageStyle.UNDECORATED);
+        dialog.initStyle(StageStyle.TRANSPARENT);
         dialog.setResizable(false);
 
-        BorderPane root = new BorderPane();
-        root.setPrefWidth(592);
-        root.setPrefHeight(307);
-        root.setStyle("-fx-background-color: white; -fx-background-radius: 14; -fx-border-radius: 14;");
+        StackPane dialogRoot = new StackPane();
+        dialogRoot.getStyleClass().add("admin-success-dialog-root");
+        setStyleClass(dialogRoot, "dark", MainController.isDarkMode);
 
-        VBox content = new VBox(22);
+        BorderPane root = new BorderPane();
+        root.getStyleClass().add("admin-success-dialog-card");
+        root.setPrefWidth(360);
+        root.setPrefHeight(270);
+
+        VBox content = new VBox(18);
         content.setAlignment(Pos.CENTER);
-        content.setPadding(new Insets(34, 30, 28, 30));
+        content.setPadding(new Insets(30, 32, 22, 32));
 
         try {
             ImageView iconView = new ImageView(new Image(getClass().getResourceAsStream("/Images/iconsukses.png")));
-            iconView.setFitWidth(74);
-            iconView.setFitHeight(74);
+            iconView.setFitWidth(66);
+            iconView.setFitHeight(66);
             iconView.setPreserveRatio(true);
+            iconView.getStyleClass().add("admin-success-dialog-icon");
             content.getChildren().add(iconView);
         } catch (Exception ignored) {
             StackPane fallback = new StackPane();
-            fallback.setPrefSize(74, 74);
-            fallback.setStyle("-fx-background-color: #4A90E2; -fx-background-radius: 999;");
+            fallback.getStyleClass().add("admin-success-dialog-icon-fallback");
+            fallback.setPrefSize(66, 66);
             Label check = new Label("✓");
-            check.setStyle("-fx-text-fill: white; -fx-font-size: 30px; -fx-font-weight: bold;");
+            check.getStyleClass().add("admin-success-dialog-check");
             fallback.getChildren().add(check);
             content.getChildren().add(fallback);
         }
 
         Label titleLabel = new Label(titleText);
-        titleLabel.setStyle("-fx-text-fill: #111111; -fx-font-size: 28px; -fx-font-weight: bold;");
+        titleLabel.getStyleClass().add("admin-success-dialog-title");
         content.getChildren().add(titleLabel);
         root.setCenter(content);
 
         HBox footer = new HBox();
+        footer.getStyleClass().add("admin-success-dialog-footer");
         footer.setAlignment(Pos.CENTER);
-        footer.setPadding(new Insets(22, 0, 22, 0));
-        footer.setStyle("-fx-border-color: #D9D9D9 transparent transparent transparent; -fx-border-width: 1 0 0 0;");
 
         Button btnOk = new Button("OK");
-        btnOk.setPrefSize(150, 50);
-        btnOk.setStyle("-fx-background-color: #4A90E2; -fx-text-fill: white; -fx-background-radius: 10; -fx-font-size: 17px; -fx-font-weight: bold; -fx-cursor: hand;");
+        btnOk.getStyleClass().add("admin-success-dialog-ok");
         btnOk.setOnAction(event -> dialog.close());
         footer.getChildren().add(btnOk);
         root.setBottom(footer);
 
-        Scene scene = new Scene(root);
-        scene.setFill(null);
+        dialogRoot.getChildren().add(root);
+
+        Scene scene = new Scene(dialogRoot);
+        scene.setFill(Color.TRANSPARENT);
+        java.net.URL css = getClass().getResource("/CSS/admin.css");
+        if (css != null) {
+            scene.getStylesheets().add(css.toExternalForm());
+        }
         dialog.setScene(scene);
         dialog.showAndWait();
     }

@@ -16,6 +16,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -352,62 +353,67 @@ public class EditBarangController {
     }
 
     private void showSuccessDialog(String titleText) {
-        boolean darkMode = MainController.isDarkMode;
         Stage dialog = new Stage();
         dialog.initModality(Modality.APPLICATION_MODAL);
         if (btnSimpan != null && btnSimpan.getScene() != null) {
             dialog.initOwner(btnSimpan.getScene().getWindow());
         }
-        dialog.initStyle(StageStyle.UNDECORATED);
+        dialog.initStyle(StageStyle.TRANSPARENT);
         dialog.setResizable(false);
 
+        StackPane dialogRoot = new StackPane();
+        dialogRoot.getStyleClass().add("admin-success-dialog-root");
+        setStyleClass(dialogRoot, "dark", MainController.isDarkMode);
+
         BorderPane root = new BorderPane();
-        root.setPrefWidth(520);
-        root.setPrefHeight(250);
-        String dialogBg = darkMode ? "#1F1F1F" : "white";
-        String titleColor = darkMode ? "white" : "#111111";
-        String separatorColor = darkMode ? "#3A3A3A" : "#D9D9D9";
-        root.setStyle("-fx-background-color: " + dialogBg + "; -fx-background-radius: 14; -fx-border-radius: 14; -fx-border-color: " + separatorColor + "; -fx-border-width: 1;");
+        root.getStyleClass().add("admin-success-dialog-card");
+        root.setPrefWidth(360);
+        root.setPrefHeight(270);
 
         VBox content = new VBox(18);
         content.setAlignment(Pos.CENTER);
-        content.setPadding(new Insets(28, 24, 22, 24));
+        content.setPadding(new Insets(30, 32, 22, 32));
 
         try {
             ImageView iconView = new ImageView(new Image(getClass().getResourceAsStream("/Images/iconsukses.png")));
-            iconView.setFitWidth(64);
-            iconView.setFitHeight(64);
+            iconView.setFitWidth(66);
+            iconView.setFitHeight(66);
             iconView.setPreserveRatio(true);
+            iconView.getStyleClass().add("admin-success-dialog-icon");
             content.getChildren().add(iconView);
         } catch (Exception ignored) {
             StackPane fallback = new StackPane();
-            fallback.setPrefSize(64, 64);
-            fallback.setStyle("-fx-background-color: #4A90E2; -fx-background-radius: 999;");
+            fallback.getStyleClass().add("admin-success-dialog-icon-fallback");
+            fallback.setPrefSize(66, 66);
             Label check = new Label("✓");
-            check.setStyle("-fx-text-fill: white; -fx-font-size: 26px; -fx-font-weight: bold;");
+            check.getStyleClass().add("admin-success-dialog-check");
             fallback.getChildren().add(check);
             content.getChildren().add(fallback);
         }
 
         Label titleLabel = new Label(titleText);
-        titleLabel.setStyle("-fx-text-fill: " + titleColor + "; -fx-font-size: 24px; -fx-font-weight: bold;");
+        titleLabel.getStyleClass().add("admin-success-dialog-title");
         content.getChildren().add(titleLabel);
         root.setCenter(content);
 
         HBox footer = new HBox();
+        footer.getStyleClass().add("admin-success-dialog-footer");
         footer.setAlignment(Pos.CENTER);
-        footer.setPadding(new Insets(18, 0, 18, 0));
-        footer.setStyle("-fx-border-color: " + separatorColor + " transparent transparent transparent; -fx-border-width: 1 0 0 0;");
 
         Button btnOk = new Button("OK");
-        btnOk.setPrefSize(138, 46);
-        btnOk.setStyle("-fx-background-color: #4A90E2; -fx-text-fill: white; -fx-background-radius: 10; -fx-font-size: 16px; -fx-font-weight: bold; -fx-cursor: hand;");
+        btnOk.getStyleClass().add("admin-success-dialog-ok");
         btnOk.setOnAction(event -> dialog.close());
         footer.getChildren().add(btnOk);
         root.setBottom(footer);
 
-        Scene scene = new Scene(root);
-        scene.setFill(null);
+        dialogRoot.getChildren().add(root);
+
+        Scene scene = new Scene(dialogRoot);
+        scene.setFill(Color.TRANSPARENT);
+        java.net.URL css = getClass().getResource("/CSS/admin.css");
+        if (css != null) {
+            scene.getStylesheets().add(css.toExternalForm());
+        }
         dialog.setScene(scene);
         dialog.showAndWait();
     }
