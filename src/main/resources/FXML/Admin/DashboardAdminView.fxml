@@ -24,82 +24,82 @@
             </children>
         </HBox>
 
-        <GridPane alignment="TOP_CENTER" hgap="35.0" styleClass="admin-dashboard-grid" vgap="35.0" VBox.vgrow="ALWAYS">
-            <padding><Insets bottom="30.0" left="60.0" right="60.0" top="50.0" /></padding>
+        <GridPane alignment="CENTER" hgap="46.0" styleClass="admin-dashboard-grid" vgap="52.0" VBox.vgrow="ALWAYS">
+            <padding><Insets bottom="34.0" left="36.0" right="36.0" top="34.0" /></padding>
             <columnConstraints>
-                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="360.0" />
-                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="360.0" />
+                <ColumnConstraints halignment="CENTER" hgrow="NEVER" minWidth="10.0" prefWidth="430.0" />
+                <ColumnConstraints halignment="CENTER" hgrow="NEVER" minWidth="10.0" prefWidth="430.0" />
             </columnConstraints>
             <rowConstraints>
-                <RowConstraints minHeight="10.0" prefHeight="240.0" valignment="CENTER" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="240.0" valignment="CENTER" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="270.0" valignment="CENTER" vgrow="NEVER" />
+                <RowConstraints minHeight="10.0" prefHeight="270.0" valignment="CENTER" vgrow="NEVER" />
             </rowConstraints>
             <children>
-                <VBox fx:id="card1" maxHeight="220.0" maxWidth="360.0" spacing="15.0" styleClass="admin-dashboard-card-sales">
-                    <padding><Insets bottom="20.0" left="25.0" right="25.0" top="20.0" /></padding>
+                <VBox fx:id="card1" maxHeight="270.0" maxWidth="430.0" prefHeight="270.0" prefWidth="430.0" spacing="20.0" styleClass="admin-dashboard-card-sales">
+                    <padding><Insets bottom="28.0" left="30.0" right="30.0" top="28.0" /></padding>
                     <children>
                         <HBox alignment="CENTER_LEFT" spacing="12.0">
                             <children>
-                                <ImageView fitHeight="40.0" fitWidth="38.0"><image><Image url="@../../Images/Component 13.png" /></image></ImageView>
-                                <Label fx:id="lblCard1Title" styleClass="admin-dashboard-card-title" text="TOTAL PENJUALAN HARI INI" textFill="#1976D2"><font><Font name="System Bold" size="13.0" /></font></Label>
+                                <ImageView fitHeight="50.0" fitWidth="48.0"><image><Image url="@../../Images/Component 13.png" /></image></ImageView>
+                                <Label fx:id="lblCard1Title" styleClass="admin-dashboard-card-title" text="TOTAL PENJUALAN HARI INI" textFill="#1976D2"><font><Font name="System Bold" size="15.0" /></font></Label>
                             </children>
                         </HBox>
-                        <Label fx:id="lblCard1Value" prefHeight="61.0" prefWidth="210.0" styleClass="admin-dashboard-card-value" text="Rp 2.500.000"><font><Font name="System Bold" size="34.0" /></font></Label>
-                        <Button fx:id="btnCard1" contentDisplay="RIGHT" maxWidth="1.7976931348623157E308" prefHeight="38.0" styleClass="admin-card-button" text="Lihat Laporan Harian">
+                        <Label fx:id="lblCard1Value" prefHeight="74.0" prefWidth="285.0" styleClass="admin-dashboard-card-value" text="Rp 2.500.000"><font><Font name="System Bold" size="42.0" /></font></Label>
+                        <Button fx:id="btnCard1" contentDisplay="RIGHT" maxWidth="1.7976931348623157E308" prefHeight="46.0" styleClass="admin-card-button" text="Lihat Laporan Harian">
                             <graphic><ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true"><image><Image url="@../../Images/PANAH.png" /></image></ImageView></graphic>
                         </Button>
                     </children>
                 </VBox>
 
-                <VBox fx:id="card2" maxHeight="220.0" maxWidth="360.0" spacing="15.0" styleClass="admin-dashboard-card-expense" GridPane.columnIndex="1">
-                    <padding><Insets bottom="20.0" left="25.0" right="25.0" top="20.0" /></padding>
+                <VBox fx:id="card2" maxHeight="270.0" maxWidth="430.0" prefHeight="270.0" prefWidth="430.0" spacing="20.0" styleClass="admin-dashboard-card-expense" GridPane.columnIndex="1">
+                    <padding><Insets bottom="28.0" left="30.0" right="30.0" top="28.0" /></padding>
                     <children>
                         <HBox alignment="CENTER_LEFT" spacing="12.0">
                             <children>
-                                <ImageView fitHeight="40.0" fitWidth="38.0"><image><Image url="@../../Images/Component 15.png" /></image></ImageView>
-                                <Label fx:id="lblCard2Title" styleClass="admin-dashboard-card-title" text="TOTAL PENGELUARAN HARI INI" textFill="#2C3E50"><font><Font name="System Bold" size="13.0" /></font></Label>
+                                <ImageView fitHeight="50.0" fitWidth="48.0"><image><Image url="@../../Images/Component 15.png" /></image></ImageView>
+                                <Label fx:id="lblCard2Title" styleClass="admin-dashboard-card-title" text="TOTAL PENGELUARAN HARI INI" textFill="#2C3E50"><font><Font name="System Bold" size="15.0" /></font></Label>
                             </children>
                         </HBox>
-                        <Label fx:id="lblCard2Value" prefHeight="62.0" prefWidth="210.0" styleClass="admin-dashboard-card-value" text="Rp 1.500.000"><font><Font name="System Bold" size="34.0" /></font></Label>
-                        <Button fx:id="btnCard2" contentDisplay="RIGHT" maxWidth="1.7976931348623157E308" prefHeight="38.0" styleClass="admin-card-button" text="Lihat Detail Pengeluaran">
+                        <Label fx:id="lblCard2Value" prefHeight="74.0" prefWidth="285.0" styleClass="admin-dashboard-card-value" text="Rp 1.500.000"><font><Font name="System Bold" size="42.0" /></font></Label>
+                        <Button fx:id="btnCard2" contentDisplay="RIGHT" maxWidth="1.7976931348623157E308" prefHeight="46.0" styleClass="admin-card-button" text="Lihat Detail Pengeluaran">
                             <graphic><ImageView fitHeight="15.0" fitWidth="15.0"><image><Image url="@../../Images/PANAH.png" /></image></ImageView></graphic>
                         </Button>
                     </children>
                 </VBox>
 
-                <VBox fx:id="card3" maxHeight="220.0" maxWidth="360.0" spacing="15.0" styleClass="admin-dashboard-card-transaction" GridPane.rowIndex="1">
-                    <padding><Insets bottom="20.0" left="25.0" right="25.0" top="20.0" /></padding>
+                <VBox fx:id="card3" maxHeight="270.0" maxWidth="430.0" prefHeight="270.0" prefWidth="430.0" spacing="20.0" styleClass="admin-dashboard-card-transaction" GridPane.rowIndex="1">
+                    <padding><Insets bottom="28.0" left="30.0" right="30.0" top="28.0" /></padding>
                     <children>
                         <HBox alignment="CENTER_LEFT" spacing="12.0">
                             <children>
-                                <ImageView fitHeight="40.0" fitWidth="38.0"><image><Image url="@../../Images/Component 14.png" /></image></ImageView>
-                                <Label fx:id="lblCard3Title" styleClass="admin-dashboard-card-title" text="JUMLAH TRANSAKSI HARI INI" textFill="#2C3E50"><font><Font name="System Bold" size="13.0" /></font></Label>
+                                <ImageView fitHeight="50.0" fitWidth="48.0"><image><Image url="@../../Images/Component 14.png" /></image></ImageView>
+                                <Label fx:id="lblCard3Title" styleClass="admin-dashboard-card-title" text="JUMLAH TRANSAKSI HARI INI" textFill="#2C3E50"><font><Font name="System Bold" size="15.0" /></font></Label>
                             </children>
                         </HBox>
-                        <Label fx:id="lblCard3Value" prefHeight="61.0" prefWidth="272.0" styleClass="admin-dashboard-card-value" text="125 Transaksi"><font><Font name="System Bold" size="34.0" /></font></Label>
+                        <Label fx:id="lblCard3Value" prefHeight="74.0" prefWidth="350.0" styleClass="admin-dashboard-card-value" text="125 Transaksi"><font><Font name="System Bold" size="42.0" /></font></Label>
                     </children>
                 </VBox>
 
-                <VBox fx:id="card4" maxHeight="220.0" maxWidth="360.0" spacing="10.0" styleClass="admin-dashboard-card-stock" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                    <padding><Insets bottom="15.0" left="20.0" right="20.0" top="15.0" /></padding>
+                <VBox fx:id="card4" maxHeight="270.0" maxWidth="430.0" prefHeight="270.0" prefWidth="430.0" spacing="14.0" styleClass="admin-dashboard-card-stock" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                    <padding><Insets bottom="24.0" left="28.0" right="28.0" top="24.0" /></padding>
                     <children>
                         <HBox alignment="CENTER_LEFT" spacing="12.0">
                             <children>
-                                <ImageView fitHeight="40.0" fitWidth="38.0"><image><Image url="@../../Images/Component 16.png" /></image></ImageView>
-                                <Label fx:id="lblCard4Title" styleClass="admin-dashboard-card-title" text="INFO STOK HAMPIR HABIS" textFill="#2E7D32"><font><Font name="System Bold" size="13.0" /></font></Label>
+                                <ImageView fitHeight="50.0" fitWidth="48.0"><image><Image url="@../../Images/Component 16.png" /></image></ImageView>
+                                <Label fx:id="lblCard4Title" styleClass="admin-dashboard-card-title" text="INFO STOK HAMPIR HABIS" textFill="#2E7D32"><font><Font name="System Bold" size="15.0" /></font></Label>
                             </children>
                         </HBox>
 
-                        <ScrollPane fx:id="scrollStok" fitToWidth="true" hbarPolicy="NEVER" prefHeight="100.0" style="-fx-background: transparent; -fx-background-color: transparent;" styleClass="stock-scroll-pane" vbarPolicy="AS_NEEDED" VBox.vgrow="ALWAYS">
+                        <ScrollPane fx:id="scrollStok" fitToWidth="true" hbarPolicy="NEVER" prefHeight="130.0" style="-fx-background: transparent; -fx-background-color: transparent;" styleClass="stock-scroll-pane" vbarPolicy="AS_NEEDED" VBox.vgrow="ALWAYS">
                             <content>
-                                <VBox fx:id="stokListContainer" spacing="8.0" style="-fx-background-color: transparent;" styleClass="stock-list-container">
+                                <VBox fx:id="stokListContainer" spacing="10.0" style="-fx-background-color: transparent;" styleClass="stock-list-container">
                                     <children>
                                     </children>
                                 </VBox>
                             </content>
                         </ScrollPane>
 
-                        <Button fx:id="btnCard4" contentDisplay="RIGHT" maxWidth="1.7976931348623157E308" prefHeight="38.0" styleClass="admin-card-button" text="Kelola Stok">
+                        <Button fx:id="btnCard4" contentDisplay="RIGHT" maxWidth="1.7976931348623157E308" prefHeight="46.0" styleClass="admin-card-button" text="Kelola Stok">
                             <graphic><ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true"><image><Image url="@../../Images/PANAH.png" /></image></ImageView></graphic>
                         </Button>
                     </children>

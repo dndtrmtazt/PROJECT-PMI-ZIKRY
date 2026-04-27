@@ -189,7 +189,7 @@ public class DashboardController implements Initializable {
 
     private HBox buatBarisKosong(boolean isDark) {
         HBox hBox = new HBox();
-        hBox.setPadding(new Insets(12));
+        hBox.setPadding(new Insets(14));
         hBox.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
         hBox.setStyle("-fx-background-color: " + (isDark ? "#2c2c2c" : "white") + "; " +
                 "-fx-background-radius: 10; " +
@@ -199,15 +199,15 @@ public class DashboardController implements Initializable {
 
         Label lblKosong = new Label("Belum ada barang dengan stok hampir habis.");
         lblKosong.setWrapText(true);
-        lblKosong.setStyle("-fx-text-fill: " + (isDark ? "#d0d0d0" : "#4B5563") + "; -fx-font-weight: bold;");
+        lblKosong.setStyle("-fx-text-fill: " + (isDark ? "#d0d0d0" : "#4B5563") + "; -fx-font-size: 14px; -fx-font-weight: bold;");
         hBox.getChildren().add(lblKosong);
         return hBox;
     }
 
     private HBox buatBarisStok(String nama, int sisa, boolean isDark) {
         HBox hBox = new HBox();
-        hBox.setSpacing(20);
-        hBox.setPadding(new Insets(10));
+        hBox.setSpacing(18);
+        hBox.setPadding(new Insets(12, 14, 12, 14));
         hBox.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
 
         String bg = isDark ? "#2c2c2c" : "white";
@@ -222,13 +222,13 @@ public class DashboardController implements Initializable {
         Label lblNama = new Label(nama);
         lblNama.setMaxWidth(Double.MAX_VALUE);
         HBox.setHgrow(lblNama, Priority.ALWAYS);
-        lblNama.setStyle("-fx-font-weight: bold; -fx-text-fill: " + text + ";");
+        lblNama.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: " + text + ";");
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
         Label lblSisa = new Label("Sisa: " + sisa);
-        lblSisa.setStyle("-fx-text-fill: #E74C3C; -fx-font-weight: bold;");
+        lblSisa.setStyle("-fx-text-fill: #E74C3C; -fx-font-size: 14px; -fx-font-weight: bold;");
 
         hBox.getChildren().addAll(lblNama, spacer, lblSisa);
         return hBox;
@@ -241,7 +241,7 @@ public class DashboardController implements Initializable {
 
         Label arrowLabel = new Label("→");
         arrowLabel.setAlignment(Pos.CENTER);
-        arrowLabel.setStyle("-fx-text-fill: " + (darkMode ? "white" : "#111111") + "; -fx-font-size: 22px; -fx-font-weight: bold;");
+        arrowLabel.setStyle("-fx-text-fill: " + (darkMode ? "white" : "#111111") + "; -fx-font-size: 24px; -fx-font-weight: bold;");
         button.setGraphic(arrowLabel);
     }
 

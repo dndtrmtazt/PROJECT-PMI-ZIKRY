@@ -418,13 +418,13 @@
 }
 
 .admin-dashboard-card-title {
-    -fx-font-size: 13px;
+    -fx-font-size: 15px;
     -fx-font-weight: bold;
 }
 
 .admin-dashboard-card-value {
     -fx-text-fill: #2C3E50;
-    -fx-font-size: 34px;
+    -fx-font-size: 42px;
     -fx-font-weight: bold;
 }
 
@@ -439,6 +439,7 @@
     -fx-border-radius: 9;
     -fx-border-width: 1;
     -fx-text-fill: #111827;
+    -fx-font-size: 14px;
     -fx-cursor: hand;
 }
 
