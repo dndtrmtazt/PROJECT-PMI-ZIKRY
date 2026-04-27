@@ -51,7 +51,12 @@ public class MainController {
     private ImageView activeIconView;
     private String activeIconName;
     private static final Color ACTIVE_MENU_BLUE = Color.web("#4072A5");
+    private static final Color LIGHT_INACTIVE_ICON = Color.BLACK;
     private static final Color DARK_INACTIVE_ICON = Color.WHITE;
+    private static final double MENU_WRAPPER_HEIGHT = 45;
+    private static final double MENU_INDICATOR_WIDTH = 3;
+    private static final double MENU_INDICATOR_HEIGHT = 25;
+    private static final double MENU_BUTTON_HEIGHT = 45;
     private static final Duration THEME_FADE_OUT_DURATION = Duration.millis(130);
     private static final Duration THEME_FADE_IN_DURATION = Duration.millis(190);
     private boolean themeTransitionRunning = false;
@@ -222,12 +227,10 @@ public class MainController {
     }
 
     private void applyActiveMenuStyle(HBox wrapper, Region indicator, ImageView iconView, String iconName) {
-        wrapper.setMaxWidth(200);
-        wrapper.setPrefHeight(42);
+        stabilizeMenuLayout(wrapper, indicator);
         wrapper.setStyle("");
         setStyleClass(wrapper, "active", true);
 
-        indicator.setPrefWidth(4); indicator.setPrefHeight(24);
         indicator.setStyle("");
         setStyleClass(indicator, "active", true);
 
@@ -237,8 +240,6 @@ public class MainController {
             setStyleClass(btn, "active", true);
         }
         
-        iconView.setFitWidth(18);
-        iconView.setFitHeight(18);
         setSidebarIconBlue(iconView, iconName);
     }
 
@@ -258,6 +259,7 @@ public class MainController {
 
         for (int i = 0; i < wrappers.length; i++) {
             if (wrappers[i] != null && wrappers[i].isVisible()) {
+                stabilizeMenuLayout(wrappers[i], indicators[i]);
                 wrappers[i].setStyle("");
                 setStyleClass(wrappers[i], "active", false);
                 if (indicators[i] != null) {
@@ -272,17 +274,41 @@ public class MainController {
                 }
                 
                 if (icons[i] != null) {
-                    icons[i].setFitWidth(18); icons[i].setFitHeight(18);
                     String iconName = originalIcons[i];
                     if (isDarkMode) {
                         setSidebarIconColor(icons[i], iconName, DARK_INACTIVE_ICON);
-                    } else if (icons[i] == imgDashboard) {
-                        setSidebarIconBlue(icons[i], iconName);
                     } else {
-                        setImageIfPresent(icons[i], "/Images/" + iconName);
+                        setSidebarIconColor(icons[i], iconName, LIGHT_INACTIVE_ICON);
                     }
                 }
             }
+        }
+    }
+
+    private void stabilizeMenuLayout(HBox wrapper, Region indicator) {
+        if (wrapper != null) {
+            wrapper.setMinHeight(MENU_WRAPPER_HEIGHT);
+            wrapper.setPrefHeight(MENU_WRAPPER_HEIGHT);
+            wrapper.setMaxHeight(MENU_WRAPPER_HEIGHT);
+            wrapper.setTranslateY(0);
+
+            if (wrapper.getChildren().size() >= 2 && wrapper.getChildren().get(1) instanceof Button) {
+                Button btn = (Button) wrapper.getChildren().get(1);
+                btn.setMinHeight(MENU_BUTTON_HEIGHT);
+                btn.setPrefHeight(MENU_BUTTON_HEIGHT);
+                btn.setMaxHeight(MENU_BUTTON_HEIGHT);
+                btn.setTranslateY(0);
+            }
+        }
+
+        if (indicator != null) {
+            indicator.setMinWidth(MENU_INDICATOR_WIDTH);
+            indicator.setPrefWidth(MENU_INDICATOR_WIDTH);
+            indicator.setMaxWidth(MENU_INDICATOR_WIDTH);
+            indicator.setMinHeight(MENU_INDICATOR_HEIGHT);
+            indicator.setPrefHeight(MENU_INDICATOR_HEIGHT);
+            indicator.setMaxHeight(MENU_INDICATOR_HEIGHT);
+            indicator.setTranslateY(0);
         }
     }
 

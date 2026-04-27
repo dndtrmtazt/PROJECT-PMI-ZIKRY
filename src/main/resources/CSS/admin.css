@@ -50,7 +50,7 @@
 }
 
 .admin-root.dark .admin-menu-wrapper.active {
-    -fx-background-color: #2C3E50;
+    -fx-background-color: #2D2D2D;
 }
 
 .admin-menu-indicator {
@@ -64,7 +64,7 @@
 
 .admin-menu-button {
     -fx-background-color: transparent;
-    -fx-text-fill: #475569;
+    -fx-text-fill: #000000;
     -fx-font-size: 13px;
     -fx-font-weight: normal;
     -fx-padding: 0 0 0 10;
