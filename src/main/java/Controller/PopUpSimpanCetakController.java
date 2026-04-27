@@ -4,7 +4,9 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import java.text.NumberFormat;
 import java.util.Locale;
@@ -16,7 +18,7 @@ public class PopUpSimpanCetakController {
     @FXML private Label lblBayar;
     @FXML private Label lblKembalian;
     @FXML private Button btnTutup;
-    @FXML private Button btnCetak;
+    @FXML private StackPane btnCetak;
 
     private boolean confirmed = false;
     private final NumberFormat nfIndo = NumberFormat.getInstance(new Locale("id", "ID"));
@@ -28,9 +30,12 @@ public class PopUpSimpanCetakController {
             closeStage();
         });
 
-        btnCetak.setOnAction(e -> {
-            confirmed = true;
-            closeStage();
+        btnCetak.setOnMouseClicked(e -> confirmAndClose());
+        btnCetak.setOnKeyPressed(e -> {
+            if (e.getCode() == KeyCode.ENTER || e.getCode() == KeyCode.SPACE) {
+                confirmAndClose();
+                e.consume();
+            }
         });
     }
 
@@ -53,6 +58,11 @@ public class PopUpSimpanCetakController {
     private void closeStage() {
         Stage stage = (Stage) btnTutup.getScene().getWindow();
         stage.close();
+    }
+
+    private void confirmAndClose() {
+        confirmed = true;
+        closeStage();
     }
 
     private void applyChangeState(Label label, double value) {

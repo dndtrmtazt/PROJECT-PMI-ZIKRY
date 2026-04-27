@@ -92,11 +92,15 @@
                         <Font size="17.0" />
                      </font>
                   </Button>
-                  <Button fx:id="btnCetak" mnemonicParsing="false" prefHeight="42.0" prefWidth="140.0" styleClass="kasir-popup-confirm" text="Konfirmasi">
-                     <font>
-                        <Font name="System Bold" size="17.0" />
-                     </font>
-                  </Button>
+                  <StackPane fx:id="btnCetak" focusTraversable="true" prefHeight="42.0" prefWidth="140.0" styleClass="kasir-popup-confirm">
+                     <children>
+                        <Label mouseTransparent="true" styleClass="kasir-popup-confirm-label" text="Konfirmasi">
+                           <font>
+                              <Font name="System Bold" size="17.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </StackPane>
                </children>
                <VBox.margin>
                   <Insets top="4.0" />
