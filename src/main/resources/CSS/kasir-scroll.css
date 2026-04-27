@@ -231,6 +231,19 @@
     -fx-background-color: #252525;
 }
 
+.kasir-cart-separator {
+    -fx-padding: 0;
+}
+
+.kasir-cart-separator .line {
+    -fx-border-color: #EEEEEE transparent transparent transparent;
+    -fx-border-width: 1 0 0 0;
+}
+
+.kasir-root.dark .kasir-cart-separator .line {
+    -fx-border-color: #333333 transparent transparent transparent;
+}
+
 .kasir-product-name,
 .kasir-product-price,
 .kasir-cart-subtotal {
@@ -244,12 +257,12 @@
 }
 
 .kasir-cart-name {
-    -fx-font-size: 11px;
+    -fx-font-size: 11.2px;
 }
 
 .kasir-cart-price,
 .kasir-cart-subtotal {
-    -fx-font-size: 10.5px;
+    -fx-font-size: 10.8px;
 }
 
 .kasir-product-name,
@@ -302,9 +315,9 @@
 
 .kasir-qty-box {
     -fx-background-color: #FFFFFF;
-    -fx-background-radius: 6;
+    -fx-background-radius: 5;
     -fx-border-color: #D1D5DB;
-    -fx-border-radius: 6;
+    -fx-border-radius: 5;
 }
 
 .kasir-root.dark .kasir-qty-box {
@@ -315,9 +328,20 @@
 .kasir-qty-button {
     -fx-background-color: transparent;
     -fx-text-fill: #111827;
-    -fx-font-size: 11px;
+    -fx-font-size: 12px;
     -fx-padding: 0;
     -fx-cursor: hand;
+}
+
+.kasir-qty-label {
+    -fx-border-color: transparent #D1D5DB transparent #D1D5DB;
+    -fx-border-width: 0 1 0 1;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+
+.kasir-root.dark .kasir-qty-label {
+    -fx-border-color: transparent #454545 transparent #454545;
 }
 
 .kasir-qty-button:hover {
@@ -386,10 +410,14 @@
     -fx-background-color: transparent;
 }
 
-.product-list-content,
-.cart-list-content {
+.product-list-content {
     -fx-background-color: transparent;
     -fx-padding: 0 16 0 0;
+}
+
+.cart-list-content {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
 }
 
 .product-scroll-pane .scroll-bar:vertical,
@@ -544,14 +572,250 @@
 
 .kasir-popup-confirm {
     -fx-background-color: #2D7A32;
+    -fx-background-insets: 0;
     -fx-background-radius: 8;
-    -fx-text-fill: #FFFFFF;
-    -fx-font-weight: bold;
+    -fx-border-color: transparent;
+    -fx-border-insets: 0;
+    -fx-border-width: 0;
+    -fx-border-radius: 8;
+    -fx-padding: 0;
+    -fx-alignment: center;
+    -fx-min-height: 42;
+    -fx-pref-height: 42;
+    -fx-max-height: 42;
+    -fx-min-width: 140;
+    -fx-pref-width: 140;
+    -fx-max-width: 140;
+    -fx-translate-x: 0;
+    -fx-translate-y: 0;
+    -fx-scale-x: 1;
+    -fx-scale-y: 1;
+    -fx-effect: none;
     -fx-cursor: hand;
 }
 
-.kasir-popup-confirm:hover {
+.kasir-popup-confirm:hover,
+.kasir-popup-confirm:focused,
+.kasir-popup-confirm:armed,
+.kasir-popup-confirm:default {
     -fx-background-color: #256B2A;
+    -fx-background-insets: 0;
+    -fx-background-radius: 8;
+    -fx-border-color: transparent;
+    -fx-border-insets: 0;
+    -fx-border-width: 0;
+    -fx-border-radius: 8;
+    -fx-padding: 0;
+    -fx-alignment: center;
+    -fx-min-height: 42;
+    -fx-pref-height: 42;
+    -fx-max-height: 42;
+    -fx-min-width: 140;
+    -fx-pref-width: 140;
+    -fx-max-width: 140;
+    -fx-translate-x: 0;
+    -fx-translate-y: 0;
+    -fx-scale-x: 1;
+    -fx-scale-y: 1;
+    -fx-effect: none;
+}
+
+.kasir-popup-confirm:pressed {
+    -fx-background-color: #1F5D24;
+    -fx-background-insets: 0;
+    -fx-background-radius: 8;
+    -fx-border-color: transparent;
+    -fx-border-insets: 0;
+    -fx-border-width: 0;
+    -fx-border-radius: 8;
+    -fx-padding: 0;
+    -fx-alignment: center;
+    -fx-min-height: 42;
+    -fx-pref-height: 42;
+    -fx-max-height: 42;
+    -fx-min-width: 140;
+    -fx-pref-width: 140;
+    -fx-max-width: 140;
+    -fx-translate-x: 0;
+    -fx-translate-y: 0;
+    -fx-scale-x: 1;
+    -fx-scale-y: 1;
+    -fx-effect: none;
+}
+
+.kasir-popup-confirm:disabled {
+    -fx-background-color: #8AB88D;
+    -fx-background-insets: 0;
+    -fx-background-radius: 8;
+    -fx-border-color: transparent;
+    -fx-border-insets: 0;
+    -fx-border-width: 0;
+    -fx-border-radius: 8;
+    -fx-padding: 0;
+    -fx-alignment: center;
+    -fx-opacity: 1;
+    -fx-min-height: 42;
+    -fx-pref-height: 42;
+    -fx-max-height: 42;
+    -fx-min-width: 140;
+    -fx-pref-width: 140;
+    -fx-max-width: 140;
+    -fx-translate-x: 0;
+    -fx-translate-y: 0;
+    -fx-scale-x: 1;
+    -fx-scale-y: 1;
+    -fx-effect: none;
+}
+
+.kasir-popup-confirm-label {
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 17px;
+    -fx-font-weight: bold;
+    -fx-padding: 0;
+    -fx-alignment: center;
+    -fx-translate-x: 0;
+    -fx-translate-y: 0;
+    -fx-scale-x: 1;
+    -fx-scale-y: 1;
+    -fx-effect: none;
+}
+
+.kasir-logout-dialog-root {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+.kasir-logout-dialog-card {
+    -fx-min-width: 460;
+    -fx-pref-width: 460;
+    -fx-max-width: 460;
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 10;
+    -fx-border-color: #E2E8F0;
+    -fx-border-radius: 10;
+    -fx-effect: dropshadow(gaussian, rgba(15, 23, 42, 0.18), 18, 0, 0, 6);
+}
+
+.kasir-logout-dialog-root.dark .kasir-logout-dialog-card {
+    -fx-background-color: #1F1F1F;
+    -fx-border-color: #3A3A3A;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.35), 18, 0, 0, 6);
+}
+
+.kasir-logout-dialog-body {
+    -fx-padding: 22 20 24 28;
+}
+
+.kasir-logout-dialog-icon {
+    -fx-min-width: 54;
+    -fx-min-height: 54;
+    -fx-pref-width: 54;
+    -fx-pref-height: 54;
+    -fx-max-width: 54;
+    -fx-max-height: 54;
+    -fx-background-color: #B8B8B8;
+    -fx-background-radius: 999;
+}
+
+.kasir-logout-dialog-icon-text {
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 29px;
+    -fx-font-weight: bold;
+}
+
+.kasir-logout-dialog-title {
+    -fx-text-fill: #111827;
+    -fx-font-size: 23px;
+    -fx-font-weight: bold;
+}
+
+.kasir-logout-dialog-message {
+    -fx-text-fill: #4B5563;
+    -fx-font-size: 15px;
+}
+
+.kasir-logout-dialog-root.dark .kasir-logout-dialog-title {
+    -fx-text-fill: #F8FAFC;
+}
+
+.kasir-logout-dialog-root.dark .kasir-logout-dialog-message {
+    -fx-text-fill: #D1D5DB;
+}
+
+.kasir-logout-dialog-close {
+    -fx-background-color: transparent;
+    -fx-text-fill: #8C8C8C;
+    -fx-font-size: 21px;
+    -fx-font-weight: bold;
+    -fx-padding: 0;
+    -fx-translate-y: 0;
+    -fx-min-width: 28;
+    -fx-pref-width: 28;
+    -fx-min-height: 28;
+    -fx-pref-height: 28;
+    -fx-cursor: hand;
+}
+
+.kasir-logout-dialog-close:hover {
+    -fx-text-fill: #EF4444;
+}
+
+.kasir-logout-dialog-footer {
+    -fx-padding: 14 22 14 22;
+    -fx-background-color: #F8F8F8;
+    -fx-border-color: #D7D7D7 transparent transparent transparent;
+    -fx-border-width: 1 0 0 0;
+    -fx-background-radius: 0 0 10 10;
+}
+
+.kasir-logout-dialog-root.dark .kasir-logout-dialog-footer {
+    -fx-background-color: #252525;
+    -fx-border-color: #3A3A3A transparent transparent transparent;
+}
+
+.kasir-logout-dialog-cancel,
+.kasir-logout-dialog-confirm {
+    -fx-min-width: 112;
+    -fx-pref-width: 112;
+    -fx-min-height: 36;
+    -fx-pref-height: 36;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-font-size: 14px;
+    -fx-cursor: hand;
+}
+
+.kasir-logout-dialog-cancel {
+    -fx-background-color: #F3F4F6;
+    -fx-border-color: #BDBDBD;
+    -fx-text-fill: #111827;
+}
+
+.kasir-logout-dialog-cancel:hover {
+    -fx-background-color: #E9ECEF;
+}
+
+.kasir-logout-dialog-root.dark .kasir-logout-dialog-cancel {
+    -fx-background-color: #2C2C2C;
+    -fx-border-color: #555555;
+    -fx-text-fill: #F8FAFC;
+}
+
+.kasir-logout-dialog-confirm {
+    -fx-min-width: 158;
+    -fx-pref-width: 158;
+    -fx-background-color: #3BA05C;
+    -fx-border-color: transparent;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-weight: bold;
+}
+
+.kasir-logout-dialog-confirm:hover {
+    -fx-background-color: #338C50;
+}
+
+.kasir-logout-dialog-confirm:pressed {
+    -fx-background-color: #2B7844;
 }
 
 .kasir-change-positive {

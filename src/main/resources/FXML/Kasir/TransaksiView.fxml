@@ -24,7 +24,7 @@
                             <children>
                                 <VBox spacing="12.0" HBox.hgrow="ALWAYS">
                                     <children>
-                                        <HBox fx:id="hboxSearch" alignment="CENTER_LEFT" prefHeight="38.0" spacing="9.0" style="-fx-background-color: #ffffff; -fx-background-radius: 8; -fx-border-color: #d3d3d3; -fx-border-radius: 8;" styleClass="kasir-search-box">
+                                        <HBox fx:id="hboxSearch" alignment="CENTER_LEFT" maxHeight="40.0" minHeight="40.0" spacing="9.0" style="-fx-background-color: #ffffff; -fx-background-radius: 8; -fx-border-color: #d3d3d3; -fx-border-radius: 8;" styleClass="kasir-search-box">
                                             <padding><Insets left="12.0" right="12.0" /></padding>
                                             <children>
                                                 <Label fx:id="lblSearchIcon" style="-fx-text-fill: #9a9a9a;" text="🔍"><font><Font size="12.0" /></font></Label>
@@ -38,21 +38,27 @@
                                                     <font><Font size="17.0" /></font>
                                                     <padding><Insets bottom="10.0" left="14.0" right="0.0" top="12.0" /></padding>
                                                 </Label>
-                                                <HBox fx:id="hboxProductHeader" alignment="CENTER_LEFT" prefHeight="36.0" spacing="10.0" style="-fx-background-color: #dcdcdc;" styleClass="kasir-table-header">
-                                                    <padding><Insets left="20.0" right="20.0" /></padding>
+                                                <GridPane fx:id="hboxProductHeader" alignment="CENTER_LEFT" hgap="10.0" minHeight="44.0" prefHeight="44.0" style="-fx-background-color: #dcdcdc;" styleClass="kasir-table-header">
+                                                    <columnConstraints>
+                                                        <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" />
+                                                        <ColumnConstraints halignment="CENTER" maxWidth="80.0" minWidth="80.0" prefWidth="80.0" />
+                                                        <ColumnConstraints halignment="CENTER" maxWidth="120.0" minWidth="120.0" prefWidth="120.0" />
+                                                        <ColumnConstraints halignment="CENTER" maxWidth="90.0" minWidth="90.0" prefWidth="90.0" />
+                                                    </columnConstraints>
+                                                    <padding><Insets bottom="8.0" left="20.0" right="50.0" top="8.0" /></padding>
                                                     <children>
-                                                        <Label fx:id="lblHeaderNama" maxWidth="1.7976931348623157E308" prefHeight="17.0" style="-fx-font-weight: bold;" styleClass="kasir-table-label" text="Nama Produk" HBox.hgrow="ALWAYS">
-                                                            <font><Font size="11.5" /></font>
+                                                        <Label fx:id="lblHeaderNama" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" prefHeight="16.0" style="-fx-font-weight: bold;" styleClass="kasir-table-label" text="Nama Produk">
+                                                            <font><Font size="11.0" /></font>
                                                         </Label>
-                                                        <Label fx:id="lblHeaderStok" alignment="CENTER" maxWidth="80.0" minWidth="80.0" prefHeight="18.0" prefWidth="80.0" style="-fx-font-weight: bold;" styleClass="kasir-table-label" text="Stok">
-                                                            <font><Font size="11.5" /></font>
+                                                        <Label fx:id="lblHeaderStok" alignment="CENTER" maxWidth="80.0" minWidth="80.0" prefHeight="16.0" prefWidth="80.0" style="-fx-font-weight: bold;" styleClass="kasir-table-label" text="Stok" GridPane.columnIndex="1">
+                                                            <font><Font size="11.0" /></font>
                                                         </Label>
-                                                        <Label fx:id="lblHeaderHarga" alignment="CENTER" maxWidth="120.0" minWidth="120.0" prefHeight="18.0" prefWidth="120.0" style="-fx-font-weight: bold;" styleClass="kasir-table-label" text="Harga">
-                                                            <font><Font size="11.5" /></font>
+                                                        <Label fx:id="lblHeaderHarga" alignment="CENTER" maxWidth="120.0" minWidth="120.0" prefHeight="16.0" prefWidth="120.0" style="-fx-font-weight: bold;" styleClass="kasir-table-label" text="Harga" GridPane.columnIndex="2">
+                                                            <font><Font size="11.0" /></font>
                                                         </Label>
-                                                        <Region maxWidth="105.0" minWidth="105.0" prefWidth="105.0" />
+                                                        <Region maxWidth="90.0" minWidth="90.0" prefWidth="90.0" GridPane.columnIndex="3" />
                                                     </children>
-                                                </HBox>
+                                                </GridPane>
                                                 <ScrollPane fx:id="scrollProduct" fitToWidth="true" hbarPolicy="NEVER" style="-fx-background: white; -fx-background-color: white;" styleClass="product-scroll-pane" VBox.vgrow="ALWAYS">
                                                     <content><VBox fx:id="vboxProdukList" style="-fx-background-color: #ffffff;" styleClass="product-list-content" /></content>
                                                 </ScrollPane>
@@ -67,19 +73,25 @@
                                             <font><Font size="16.0" /></font>
                                             <padding><Insets bottom="10.0" left="12.0" top="15.0" /></padding>
                                         </Label>
-                                        <HBox fx:id="hboxCartHeader" alignment="CENTER_LEFT" minHeight="36.0" spacing="10.0" style="-fx-background-color: #dcdcdc;" styleClass="kasir-table-header">
-                                            <padding><Insets bottom="8.0" left="12.0" right="12.0" top="8.0" /></padding>
+                                        <GridPane fx:id="hboxCartHeader" alignment="CENTER_LEFT" hgap="8.0" minHeight="44.0" prefHeight="44.0" style="-fx-background-color: #dcdcdc;" styleClass="kasir-table-header">
+                                            <columnConstraints>
+                                                <ColumnConstraints hgrow="ALWAYS" minWidth="100.0" />
+                                                <ColumnConstraints halignment="CENTER" maxWidth="62.0" minWidth="62.0" prefWidth="62.0" />
+                                                <ColumnConstraints halignment="RIGHT" maxWidth="84.0" minWidth="84.0" prefWidth="84.0" />
+                                                <ColumnConstraints halignment="RIGHT" maxWidth="88.0" minWidth="88.0" prefWidth="88.0" />
+                                            </columnConstraints>
+                                            <padding><Insets bottom="9.0" left="18.0" right="16.0" top="9.0" /></padding>
                                             <children>
-                                                <Label fx:id="lblCartHeaderItem" maxWidth="1.7976931348623157E308" minWidth="80.0" prefHeight="16.0" style="-fx-font-weight: bold;" styleClass="kasir-table-label" text="Item" HBox.hgrow="ALWAYS"><font><Font size="11.0" /></font></Label>
-                                                <Label fx:id="lblCartHeaderQty" alignment="CENTER" maxWidth="70.0" minWidth="70.0" prefHeight="16.0" prefWidth="70.0" style="-fx-font-weight: bold;" styleClass="kasir-table-label" text="Qty"><font><Font size="11.0" /></font></Label>
-                                                <Label fx:id="lblCartHeaderHarga" alignment="CENTER" maxWidth="100.0" minWidth="100.0" prefHeight="16.0" prefWidth="100.0" style="-fx-font-weight: bold;" styleClass="kasir-table-label" text="Harga"><font><Font size="11.0" /></font></Label>
-                                                <Label fx:id="lblCartHeaderSubtotal" alignment="CENTER_RIGHT" maxWidth="90.0" minWidth="90.0" prefHeight="16.0" prefWidth="90.0" style="-fx-font-weight: bold;" styleClass="kasir-table-label" text="Subtotal"><font><Font size="11.0" /></font></Label>
+                                                <Label fx:id="lblCartHeaderItem" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" minWidth="100.0" prefHeight="18.0" style="-fx-font-weight: bold;" styleClass="kasir-table-label" text="Item"><font><Font size="11.0" /></font></Label>
+                                                <Label fx:id="lblCartHeaderQty" alignment="CENTER" maxWidth="62.0" minWidth="62.0" prefHeight="18.0" prefWidth="62.0" style="-fx-font-weight: bold;" styleClass="kasir-table-label" text="Qty" GridPane.columnIndex="1"><font><Font size="11.0" /></font></Label>
+                                                <Label fx:id="lblCartHeaderHarga" alignment="CENTER_RIGHT" maxWidth="84.0" minWidth="84.0" prefHeight="18.0" prefWidth="84.0" style="-fx-font-weight: bold;" styleClass="kasir-table-label" text="Harga" GridPane.columnIndex="2"><font><Font size="11.0" /></font></Label>
+                                                <Label fx:id="lblCartHeaderSubtotal" alignment="CENTER_RIGHT" maxWidth="88.0" minWidth="88.0" prefHeight="18.0" prefWidth="88.0" style="-fx-font-weight: bold;" styleClass="kasir-table-label" text="Subtotal" GridPane.columnIndex="3"><font><Font size="11.0" /></font></Label>
                                             </children>
-                                        </HBox>
+                                        </GridPane>
                                         <ScrollPane fx:id="scrollCart" fitToWidth="true" hbarPolicy="NEVER" prefHeight="339.0" prefWidth="351.0" style="-fx-background: white; -fx-background-color: white;" styleClass="cart-scroll-pane" VBox.vgrow="ALWAYS">
                                             <content><VBox fx:id="vboxCartList" style="-fx-background-color: #ffffff;" styleClass="cart-list-content" /></content>
                                         </ScrollPane>
-                                        <Separator fx:id="sepCart" />
+                                        <Separator fx:id="sepCart" styleClass="kasir-cart-separator" />
                                         <VBox fx:id="vboxSummary" spacing="13.0" styleClass="kasir-summary">
                                             <padding><Insets bottom="12.0" left="12.0" right="12.0" top="12.0" /></padding>
                                             <children>

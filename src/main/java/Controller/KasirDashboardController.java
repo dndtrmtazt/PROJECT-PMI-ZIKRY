@@ -21,8 +21,10 @@ import javafx.animation.Timeline;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -32,11 +34,16 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import DAO.BarangDAO;
 import DAO.TransaksiDAO;
@@ -59,7 +66,8 @@ public class KasirDashboardController {
     // --- KOMPONEN UI (Sesuai ID di FXML) ---
     @FXML private AnchorPane paneRoot;
     @FXML private VBox vboxSidebar, vboxMainContent, vboxProductCard, vboxCart, vboxProdukList, vboxCartList;
-    @FXML private HBox hboxThemeToggle, hboxSearch, hboxProductHeader, hboxCartHeader;
+    @FXML private HBox hboxThemeToggle, hboxSearch;
+    @FXML private GridPane hboxProductHeader, hboxCartHeader;
     @FXML private ScrollPane scrollProduct, scrollCart;
     @FXML private Label lblLogo, lblTanggal, lblListProduk, lblHeaderNama, lblHeaderStok, lblHeaderHarga, lblKeranjangBelanja;
     @FXML private Label lblCartHeaderItem, lblCartHeaderQty, lblCartHeaderHarga, lblCartHeaderSubtotal;
@@ -144,29 +152,118 @@ public class KasirDashboardController {
 
     // --- LOGOUT ---
     private void setupLogout() {
-        btnLogout.setOnAction(e -> {
-            try {
-                UserSession.getInstance().logout();
-                Stage stage = (Stage) btnLogout.getScene().getWindow();
+        btnLogout.setOnAction(e -> showLogoutConfirmationPopup());
+    }
 
-                URL loginView = getClass().getResource("/FXML/LoginView.fxml");
-                if (loginView == null) {
-                    System.err.println("Halaman login tidak ditemukan.");
-                    return;
-                }
+    private void showLogoutConfirmationPopup() {
+        Stage owner = (Stage) btnLogout.getScene().getWindow();
+        Stage dialog = new Stage();
+        dialog.initOwner(owner);
+        dialog.initModality(Modality.WINDOW_MODAL);
+        dialog.initStyle(StageStyle.TRANSPARENT);
+        dialog.setResizable(false);
 
-                FXMLLoader loader = new FXMLLoader(loginView);
-                Parent root = loader.load();
-                stage.setResizable(true);
-                stage.setMaximized(false);
-                stage.setScene(new Scene(root));
-                stage.setTitle("PMI Toko Zikry - Login");
-                stage.show();
-                stage.setMaximized(true);
-            } catch (IOException ex) {
-                ex.printStackTrace();
+        StackPane root = new StackPane();
+        root.getStyleClass().add("kasir-logout-dialog-root");
+        setStyleClass(root, "dark", MainController.isDarkMode);
+
+        VBox card = new VBox();
+        card.getStyleClass().add("kasir-logout-dialog-card");
+        card.setMinWidth(460);
+        card.setPrefWidth(460);
+        card.setMaxWidth(460);
+
+        HBox body = new HBox(12);
+        body.getStyleClass().add("kasir-logout-dialog-body");
+        body.setAlignment(Pos.TOP_LEFT);
+
+        StackPane iconCircle = new StackPane();
+        iconCircle.getStyleClass().add("kasir-logout-dialog-icon");
+        Label iconText = new Label("?");
+        iconText.getStyleClass().add("kasir-logout-dialog-icon-text");
+        iconCircle.getChildren().add(iconText);
+
+        VBox textBox = new VBox(8);
+        textBox.setAlignment(Pos.TOP_LEFT);
+        Label title = new Label("Konfirmasi Logout");
+        title.getStyleClass().add("kasir-logout-dialog-title");
+        Label message = new Label("Anda yakin ingin keluar dari halaman kasir?");
+        message.getStyleClass().add("kasir-logout-dialog-message");
+        message.setWrapText(true);
+        message.setMaxWidth(340);
+        textBox.getChildren().addAll(title, message);
+
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+
+        Button closeButton = new Button("X");
+        closeButton.getStyleClass().add("kasir-logout-dialog-close");
+        HBox.setMargin(closeButton, new Insets(-12, -2, 0, 0));
+        closeButton.setOnAction(e -> dialog.close());
+
+        body.getChildren().addAll(iconCircle, textBox, spacer, closeButton);
+
+        HBox footer = new HBox(18);
+        footer.getStyleClass().add("kasir-logout-dialog-footer");
+        footer.setAlignment(Pos.CENTER_RIGHT);
+
+        Button cancelButton = new Button("Batal");
+        cancelButton.getStyleClass().add("kasir-logout-dialog-cancel");
+        cancelButton.setOnAction(e -> dialog.close());
+
+        Button confirmButton = new Button("Ya, Keluar");
+        confirmButton.getStyleClass().add("kasir-logout-dialog-confirm");
+        confirmButton.setOnAction(e -> {
+            dialog.close();
+            performLogout();
+        });
+
+        footer.getChildren().addAll(cancelButton, confirmButton);
+        card.getChildren().addAll(body, footer);
+        root.getChildren().add(card);
+
+        Scene scene = new Scene(root);
+        scene.setFill(Color.TRANSPARENT);
+        URL css = getClass().getResource("/CSS/kasir-scroll.css");
+        if (css != null) {
+            scene.getStylesheets().add(css.toExternalForm());
+        }
+        scene.setOnKeyPressed(e -> {
+            if (e.getCode() == KeyCode.ESCAPE) {
+                dialog.close();
             }
         });
+
+        dialog.setScene(scene);
+        dialog.setOnShown(e -> {
+            dialog.setX(owner.getX() + (owner.getWidth() - dialog.getWidth()) / 2);
+            dialog.setY(owner.getY() + (owner.getHeight() - dialog.getHeight()) / 2);
+        });
+        dialog.showAndWait();
+    }
+
+    private void performLogout() {
+        try {
+            UserSession.getInstance().logout();
+            Stage stage = (Stage) btnLogout.getScene().getWindow();
+
+            URL loginView = getClass().getResource("/FXML/LoginView.fxml");
+            if (loginView == null) {
+                System.err.println("Halaman login tidak ditemukan.");
+                return;
+            }
+
+            FXMLLoader loader = new FXMLLoader(loginView);
+            Parent root = loader.load();
+            stage.setResizable(true);
+            stage.setMaximized(false);
+            stage.setScene(new Scene(root));
+            stage.setTitle("PMI Toko Zikry - Login");
+            stage.show();
+            stage.setMaximized(true);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
     }
 
     // --- DARK MODE ---
@@ -449,17 +546,24 @@ public class KasirDashboardController {
     }
 
     // --- DESAIN BARIS PRODUK ---
-    private HBox createProductRow(Barang barang, int displayStok) {
-        HBox row = new HBox(10);
+    private GridPane createProductRow(Barang barang, int displayStok) {
+        GridPane row = new GridPane();
         row.getStyleClass().add("kasir-product-row");
+        row.setHgap(10);
         row.setAlignment(Pos.CENTER_LEFT);
         row.setPrefHeight(55);
         row.setPadding(new Insets(5, 20, 5, 20));
+        row.getColumnConstraints().addAll(
+                createProductColumnConstraint(-1, Priority.ALWAYS),
+                createProductColumnConstraint(80, Priority.NEVER),
+                createProductColumnConstraint(120, Priority.NEVER),
+                createProductColumnConstraint(90, Priority.NEVER)
+        );
 
         Label name = new Label(barang.getNamaBarang());
         name.getStyleClass().add("kasir-product-name");
         name.setMaxWidth(Double.MAX_VALUE);
-        HBox.setHgrow(name, Priority.ALWAYS);
+        GridPane.setHgrow(name, Priority.ALWAYS);
 
         // Tampilkan stok yang sudah dikurangi qty keranjang
         Label stok = new Label(String.valueOf(displayStok));
@@ -482,12 +586,28 @@ public class KasirDashboardController {
         btnAdd.setMinWidth(90);
         btnAdd.setPrefWidth(90);
         btnAdd.setMaxWidth(90);
+        btnAdd.setMinHeight(30);
+        btnAdd.setMaxHeight(30);
         // Disable tombol jika stok sudah habis
         btnAdd.setDisable(displayStok <= 0);
         btnAdd.setOnAction(e -> addToCart(barang));
 
-        row.getChildren().addAll(name, stok, harga, btnAdd);
+        row.add(name, 0, 0);
+        row.add(stok, 1, 0);
+        row.add(harga, 2, 0);
+        row.add(btnAdd, 3, 0);
         return row;
+    }
+
+    private ColumnConstraints createProductColumnConstraint(double width, Priority hgrow) {
+        ColumnConstraints column = new ColumnConstraints();
+        column.setHgrow(hgrow);
+        if (width > 0) {
+            column.setMinWidth(width);
+            column.setPrefWidth(width);
+            column.setMaxWidth(width);
+        }
+        return column;
     }
 
     // --- TAMBAH KE KERANJANG ---
@@ -555,44 +675,62 @@ public class KasirDashboardController {
     }
 
     // --- DESAIN BARIS KERANJANG ---
-    private HBox createCartRow(Detail_Transaksi item, Barang barang) {
-        HBox row = new HBox(5);
+    private GridPane createCartRow(Detail_Transaksi item, Barang barang) {
+        GridPane row = new GridPane();
         row.getStyleClass().add("kasir-cart-row");
+        row.setHgap(8);
         row.setAlignment(Pos.CENTER_LEFT);
-        row.setPadding(new Insets(8, 10, 8, 10));
-        row.setMinHeight(50);
+        row.setPadding(new Insets(9, 16, 9, 18));
+        row.setMinHeight(56);
+        row.setPrefHeight(56);
+        row.setMaxWidth(Double.MAX_VALUE);
+        row.getColumnConstraints().addAll(
+                createCartColumnConstraint(-1, Priority.ALWAYS),
+                createCartColumnConstraint(62, Priority.NEVER),
+                createCartColumnConstraint(84, Priority.NEVER),
+                createCartColumnConstraint(88, Priority.NEVER)
+        );
 
         // Nama Barang
         Label name = new Label(barang.getNamaBarang());
         name.getStyleClass().add("kasir-cart-name");
-        name.setMinWidth(40);
+        name.setMinWidth(100);
         name.setMaxWidth(Double.MAX_VALUE);
-        HBox.setHgrow(name, Priority.ALWAYS);
+        name.setAlignment(Pos.CENTER_LEFT);
+        GridPane.setHgrow(name, Priority.ALWAYS);
+        GridPane.setValignment(name, VPos.CENTER);
         name.setWrapText(true);
 
         // Kontrol Qty (tombol - angka +)
         HBox qtyBox = new HBox(0);
         qtyBox.getStyleClass().add("kasir-qty-box");
         qtyBox.setAlignment(Pos.CENTER);
-        qtyBox.setMinWidth(55);
-        qtyBox.setMaxWidth(55);
-        qtyBox.setPrefWidth(55);
-        qtyBox.setPrefHeight(22);
+        qtyBox.setMinWidth(58);
+        qtyBox.setMaxWidth(58);
+        qtyBox.setPrefWidth(58);
+        qtyBox.setPrefHeight(24);
+        qtyBox.setMinHeight(24);
+        qtyBox.setMaxHeight(24);
+        GridPane.setHalignment(qtyBox, HPos.CENTER);
+        GridPane.setValignment(qtyBox, VPos.CENTER);
 
         Button btnMinus = new Button("-");
         btnMinus.getStyleClass().add("kasir-qty-button");
-        btnMinus.setMinWidth(17);
-        btnMinus.setPrefHeight(22);
+        btnMinus.setMinWidth(18);
+        btnMinus.setPrefWidth(18);
+        btnMinus.setPrefHeight(24);
 
         Label lblQty = new Label(String.valueOf(item.getJumlah()));
         lblQty.getStyleClass().add("kasir-qty-label");
-        lblQty.setMinWidth(20);
+        lblQty.setMinWidth(22);
+        lblQty.setPrefWidth(22);
         lblQty.setAlignment(Pos.CENTER);
 
         Button btnPlus = new Button("+");
         btnPlus.getStyleClass().add("kasir-qty-button");
-        btnPlus.setMinWidth(17);
-        btnPlus.setPrefHeight(22);
+        btnPlus.setMinWidth(18);
+        btnPlus.setPrefWidth(18);
+        btnPlus.setPrefHeight(24);
 
         btnMinus.setOnAction(e -> handleMinus(item));
         btnPlus.setOnAction(e -> handlePlus(item));
@@ -602,20 +740,38 @@ public class KasirDashboardController {
         // Harga satuan
         Label harga = new Label("Rp " + nfIndo.format(item.getHargaSatuan()));
         harga.getStyleClass().add("kasir-cart-price");
-        harga.setMinWidth(80);
-        harga.setPrefWidth(80);
-        harga.setMaxWidth(80);
-        harga.setAlignment(Pos.CENTER);
+        harga.setMinWidth(84);
+        harga.setPrefWidth(84);
+        harga.setMaxWidth(84);
+        harga.setAlignment(Pos.CENTER_RIGHT);
+        GridPane.setHalignment(harga, HPos.RIGHT);
+        GridPane.setValignment(harga, VPos.CENTER);
 
         Label sub = new Label("Rp " + nfIndo.format(item.getSubtotal()));
         sub.getStyleClass().add("kasir-cart-subtotal");
-        sub.setMinWidth(90);
-        sub.setPrefWidth(90);
-        sub.setMaxWidth(Double.MAX_VALUE);
+        sub.setMinWidth(88);
+        sub.setPrefWidth(88);
+        sub.setMaxWidth(88);
         sub.setAlignment(Pos.CENTER_RIGHT);
+        GridPane.setHalignment(sub, HPos.RIGHT);
+        GridPane.setValignment(sub, VPos.CENTER);
 
-        row.getChildren().addAll(name, qtyBox, harga, sub);
+        row.add(name, 0, 0);
+        row.add(qtyBox, 1, 0);
+        row.add(harga, 2, 0);
+        row.add(sub, 3, 0);
         return row;
+    }
+
+    private ColumnConstraints createCartColumnConstraint(double width, Priority hgrow) {
+        ColumnConstraints column = new ColumnConstraints();
+        column.setHgrow(hgrow);
+        if (width > 0) {
+            column.setMinWidth(width);
+            column.setPrefWidth(width);
+            column.setMaxWidth(width);
+        }
+        return column;
     }
 
     // --- KURANGI QTY DI KERANJANG ---
