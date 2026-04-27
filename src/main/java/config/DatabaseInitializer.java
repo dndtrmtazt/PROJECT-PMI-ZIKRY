@@ -9,10 +9,15 @@ import java.util.List;
 
 public final class DatabaseInitializer {
 
+    // Konstruktor privat agar class ini tidak bisa diinstansiasi (Utility Class)
     private DatabaseInitializer() {
     }
 
+    /**
+     * ALUR UTAMA INISIALISASI DATABASE:
+     */
     public static void initialize(Connection connection) throws SQLException {
+        // 1. Cek apakah semua tabel utama sudah ada
         if (tableExists(connection, "user")
                 && tableExists(connection, "kategori")
                 && tableExists(connection, "barang")
@@ -20,44 +25,59 @@ public final class DatabaseInitializer {
                 && tableExists(connection, "detail_transaksi")
                 && tableExists(connection, "pengeluaran")
                 && tableExists(connection, "pengaturan_toko")) {
+            
+            // 2. Jika sudah ada, jalankan migrasi/update struktur (jika ada perubahan)
             applyCompatibilityMigrations(connection);
             return;
         }
 
+        // 3. Jika tabel belum lengkap, mulai proses pembuatan database baru
         boolean originalAutoCommit = connection.getAutoCommit();
-        connection.setAutoCommit(false);
+        connection.setAutoCommit(false); // Mematikan auto-commit untuk transaksi aman
 
         try (Statement statement = connection.createStatement()) {
+            // 4. Eksekusi semua perintah SQL pembuat tabel (Schema)
             for (String sql : getSchemaStatements()) {
                 statement.execute(sql);
             }
+            // 5. Simpan perubahan secara permanen (Commit)
             connection.commit();
         } catch (SQLException e) {
+            // 6. Jika gagal, batalkan semua perubahan (Rollback)
             connection.rollback();
             throw e;
         } finally {
+            // 7. Kembalikan pengaturan AutoCommit ke awal
             connection.setAutoCommit(originalAutoCommit);
         }
     }
 
+    /**
+     * ALUR MATA RANTAI MIGRASI (Update Struktur):
+     */
     private static void applyCompatibilityMigrations(Connection connection) throws SQLException {
         try (Statement statement = connection.createStatement()) {
+            // 1. Pastikan tabel inti sudah dibuat (IF NOT EXISTS)
             for (String sql : getCoreSchemaStatements()) {
                 statement.execute(sql);
             }
 
+            // 2. Pastikan kolom-kolom baru tersedia (Update versi aplikasi)
             ensureColumnExists(connection, "user", "nama_lengkap", "TEXT NOT NULL DEFAULT 'Pengguna'");
             ensureColumnExists(connection, "barang", "satuan", "TEXT NOT NULL DEFAULT 'Pcs'");
 
+            // 3. Buat Index untuk mempercepat proses pencarian data
             for (String sql : getIndexStatements()) {
                 statement.execute(sql);
             }
 
+            // 4. Masukkan data default toko jika masih kosong
             statement.executeUpdate(
                     "INSERT OR IGNORE INTO pengaturan_toko (id, nama_toko, nomor_telepon, alamat, email) " +
                             "VALUES (1, 'Toko Zikry', '-', '-', '-')"
             );
 
+            // 5. Perbaiki data nama_lengkap user yang mungkin kosong
             statement.executeUpdate(
                     "UPDATE user " +
                             "SET nama_lengkap = CASE " +
@@ -67,6 +87,7 @@ public final class DatabaseInitializer {
                             "WHERE nama_lengkap IS NULL OR trim(nama_lengkap) = ''"
             );
 
+            // 6. Perbaiki data satuan barang yang mungkin kosong
             statement.executeUpdate(
                     "UPDATE barang SET satuan = 'Pcs' " +
                             "WHERE satuan IS NULL OR trim(satuan) = ''"
@@ -79,30 +100,43 @@ public final class DatabaseInitializer {
         }
     }
 
+    /**
+     * ALUR PENGECEKAN TABEL:
+     * 1. Mencari nama tabel di sistem internal SQLite (sqlite_master)
+     */
     private static boolean tableExists(Connection connection, String tableName) throws SQLException {
         String sql = "SELECT name FROM sqlite_master WHERE type = 'table' AND name = '" + tableName + "'";
         try (Statement statement = connection.createStatement();
              ResultSet resultSet = statement.executeQuery(sql)) {
-            return resultSet.next();
+            return resultSet.next(); // True jika tabel ditemukan
         }
     }
 
+    /**
+     * ALUR PENAMBAHAN KOLOM OTOMATIS:
+     */
     private static void ensureColumnExists(Connection connection, String tableName, String columnName, String definition) throws SQLException {
+        // 1. Ambil informasi kolom yang ada di tabel saat ini
         String sql = "PRAGMA table_info(" + tableName + ")";
         try (Statement statement = connection.createStatement();
              ResultSet resultSet = statement.executeQuery(sql)) {
             while (resultSet.next()) {
+                // 2. Jika kolom sudah ada, batalkan proses (Return)
                 if (columnName.equalsIgnoreCase(resultSet.getString("name"))) {
                     return;
                 }
             }
         }
 
+        // 3. Jika kolom tidak ditemukan, jalankan perintah ALTER TABLE untuk menambahkannya
         try (Statement alterStatement = connection.createStatement()) {
             alterStatement.execute("ALTER TABLE " + tableName + " ADD COLUMN " + columnName + " " + definition);
         }
     }
 
+    /**
+     * MENGGABUNGKAN SEMUA SQL (Schema + Index + Seed Data)
+     */
     private static List<String> getSchemaStatements() {
         List<String> schemaStatements = new ArrayList<>(getCoreSchemaStatements());
         schemaStatements.addAll(getIndexStatements());
@@ -110,6 +144,9 @@ public final class DatabaseInitializer {
         return schemaStatements;
     }
 
+    /**
+     * DAFTAR PERINTAH PEMBUATAN TABEL (CORE SCHEMA)
+     */
     private static List<String> getCoreSchemaStatements() {
         return List.of(
                 "CREATE TABLE IF NOT EXISTS user (" +
@@ -167,6 +204,9 @@ public final class DatabaseInitializer {
         );
     }
 
+    /**
+     * DAFTAR PERINTAH PEMBUATAN INDEX (OPTIMASI KECEPATAN)
+     */
     private static List<String> getIndexStatements() {
         return List.of(
                 "CREATE INDEX IF NOT EXISTS idx_barang_kategori ON barang(id_kategori)",
@@ -177,6 +217,9 @@ public final class DatabaseInitializer {
         );
     }
 
+    /**
+     * DAFTAR DATA AWAL (SEED DATA) SAAT DATABASE PERTAMA KALI DIBUAT
+     */
     private static List<String> getSeedStatements() {
         return List.of(
                 "INSERT OR IGNORE INTO user (id_user, nama_lengkap, user_password, role) VALUES ('KSR001', 'Kasir Utama', 'EZAK123', 'kasir')",
