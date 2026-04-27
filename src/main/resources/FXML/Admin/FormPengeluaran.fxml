@@ -9,11 +9,11 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox fx:id="rootPane" prefWidth="400.0" spacing="20.0" style="-fx-background-color: white; -fx-background-radius: 10;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.FormPengeluaranController">
+<VBox fx:id="rootPane" prefWidth="400.0" spacing="20.0" styleClass="admin-page-root" stylesheets="@../../CSS/admin.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.FormPengeluaranController">
     <children>
-        <HBox alignment="CENTER" prefHeight="50.0" style="-fx-background-color: #4A76A8; -fx-background-radius: 10 10 0 0;">
+        <HBox alignment="CENTER" prefHeight="50.0" styleClass="admin-header">
             <children>
-                <Label fx:id="lblHeader" text="Form Data Pengeluaran" textFill="WHITE">
+                <Label fx:id="lblHeader" styleClass="admin-title" text="Form Data Pengeluaran">
                     <font>
                         <Font name="System Bold" size="18.0" />
                     </font>
@@ -28,36 +28,36 @@
             <children>
                 <VBox spacing="5.0">
                     <children>
-                        <Label text="ID Pengeluaran" />
-                        <TextField fx:id="txtId" editable="true" promptText="Contoh: PGN001" style="-fx-background-color: white; -fx-border-color: #DCDCDC; -fx-border-radius: 5; -fx-background-radius: 5;" />
+                        <Label styleClass="admin-label" text="ID Pengeluaran" />
+                        <TextField fx:id="txtId" editable="true" promptText="Contoh: PGN001" styleClass="admin-input" />
                     </children>
                 </VBox>
 
                 <VBox spacing="5.0">
                     <children>
-                        <Label text="Tanggal" />
-                        <DatePicker fx:id="dpTanggal" prefWidth="350.0" style="-fx-background-radius: 5; -fx-border-radius: 5;" />
+                        <Label styleClass="admin-label" text="Tanggal" />
+                        <DatePicker fx:id="dpTanggal" prefWidth="350.0" styleClass="admin-date-picker" />
                     </children>
                 </VBox>
 
                 <VBox spacing="5.0">
                     <children>
-                        <Label text="Nominal (Rp)" />
-                        <TextField fx:id="txtNominal" promptText="Contoh: 50000" style="-fx-background-color: white; -fx-border-color: #DCDCDC; -fx-border-radius: 5; -fx-background-radius: 5;" />
+                        <Label styleClass="admin-label" text="Nominal (Rp)" />
+                        <TextField fx:id="txtNominal" promptText="Contoh: 50000" styleClass="admin-input" />
                     </children>
                 </VBox>
 
                 <VBox spacing="5.0">
                     <children>
-                        <Label text="Jenis Pengeluaran" />
-                        <TextField fx:id="txtJenis" promptText="Contoh: Listrik / Bahan Baku" style="-fx-background-color: white; -fx-border-color: #DCDCDC; -fx-border-radius: 5; -fx-background-radius: 5;" />
+                        <Label styleClass="admin-label" text="Jenis Pengeluaran" />
+                        <TextField fx:id="txtJenis" promptText="Contoh: Listrik / Bahan Baku" styleClass="admin-input" />
                     </children>
                 </VBox>
 
                 <HBox alignment="CENTER_RIGHT" spacing="10.0">
                     <children>
-                        <Button fx:id="btnBatal" onAction="#handleBatal" prefHeight="30.0" prefWidth="80.0" style="-fx-background-color: #BDC3C7; -fx-text-fill: #000000 ; -fx-cursor: hand;" text="Batal" />
-                        <Button fx:id="btnSimpan" onAction="#handleSimpan" prefHeight="30.0" prefWidth="100.0" style="-fx-background-color: #2ECC71; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;" text="Simpan" />
+                        <Button fx:id="btnBatal" onAction="#handleBatal" prefHeight="30.0" prefWidth="80.0" styleClass="admin-button-neutral" text="Batal" />
+                        <Button fx:id="btnSimpan" onAction="#handleSimpan" prefHeight="30.0" prefWidth="100.0" styleClass="admin-button-success" text="Simpan" />
                     </children>
                     <padding>
                         <Insets top="10.0" />

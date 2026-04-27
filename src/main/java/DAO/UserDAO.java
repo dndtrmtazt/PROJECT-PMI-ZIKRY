@@ -6,28 +6,18 @@ import java.util.ArrayList;
 import java.util.List;
 import model.User;
 
-/**
- * Data Access Object (DAO) untuk tabel user (Akun Pengguna).
- * Alur: Menangani autentikasi login dan manajemen data pengguna sistem.
- */
 public class UserDAO {
 
-    /**
-     * Method getAllUsers: Mengambil daftar seluruh pengguna (Tanpa Password).
-     */
     public static List<User> getAllUsers() {
         List<User> listUser = new ArrayList<>();
         String query = "SELECT id_user, nama_lengkap, role FROM user";
+
         try (Connection conn = koneksi.koneksiDB();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(query)) {
-            // [1] Iterasi baris user dan masukkan ke list
+
             while (rs.next()) {
-                User user = new User();
-                user.setIdUser(rs.getString("id_user"));
-                user.setNamaLengkap(rs.getString("nama_lengkap"));
-                user.setRole(rs.getString("role"));
-                listUser.add(user);
+                listUser.add(mapUser(rs));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -35,24 +25,17 @@ public class UserDAO {
         return listUser;
     }
 
-    /**
-     * Method validateUser: Alur pengecekan login (Username & Password).
-     */
     public static User validateUser(String idUser, String password) {
         String query = "SELECT * FROM user WHERE id_user = ? AND user_password = ?";
         try (Connection conn = koneksi.koneksiDB();
              PreparedStatement ps = conn.prepareStatement(query)) {
-            // [1] Set kredensial login
             ps.setString(1, idUser);
             ps.setString(2, password);
-            ResultSet rs = ps.executeQuery();
-            // [2] Jika cocok, kembalikan objek User untuk disimpan di session
-            if (rs.next()) {
-                User user = new User();
-                user.setIdUser(rs.getString("id_user"));
-                user.setRole(rs.getString("role"));
-                user.setNamaLengkap(rs.getString("nama_lengkap"));
-                return user;
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return mapUser(rs);
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -60,18 +43,17 @@ public class UserDAO {
         return null;
     }
 
-    /**
-     * Method insertUser: Menambahkan akun pengguna baru.
-     */
     public static boolean insertUser(String idUser, String nama, String role, String password) {
         String query = "INSERT INTO user (id_user, nama_lengkap, role, user_password) VALUES (?, ?, ?, ?)";
+
         try (Connection conn = koneksi.koneksiDB();
              PreparedStatement ps = conn.prepareStatement(query)) {
-            // [1] Simpan profil dan password
+
             ps.setString(1, idUser);
             ps.setString(2, nama);
             ps.setString(3, role.toLowerCase());
             ps.setString(4, password);
+
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -79,19 +61,18 @@ public class UserDAO {
         }
     }
 
-    /**
-     * Method updateUser: Memperbarui data profil dan akses user.
-     */
     public static boolean updateUser(String idLama, String idBaru, String nama, String role, String pass) {
         String query = "UPDATE user SET id_user = ?, nama_lengkap = ?, role = ?, user_password = ? WHERE id_user = ?";
+
         try (Connection conn = koneksi.koneksiDB();
              PreparedStatement ps = conn.prepareStatement(query)) {
-            // [1] Update data user berdasarkan identitas lama (idLama)
+
             ps.setString(1, idBaru);
             ps.setString(2, nama);
             ps.setString(3, role.toLowerCase());
             ps.setString(4, pass);
             ps.setString(5, idLama);
+
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -99,18 +80,25 @@ public class UserDAO {
         }
     }
 
-    /**
-     * Method deleteUser: Menghapus akun pengguna dari sistem.
-     */
     public static boolean deleteUser(String idUser) {
         String query = "DELETE FROM user WHERE id_user = ?";
+
         try (Connection conn = koneksi.koneksiDB();
              PreparedStatement ps = conn.prepareStatement(query)) {
+
             ps.setString(1, idUser);
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
+    }
+
+    private static User mapUser(ResultSet rs) throws SQLException {
+        User user = new User();
+        user.setIdUser(rs.getString("id_user"));
+        user.setNamaLengkap(rs.getString("nama_lengkap"));
+        user.setRole(rs.getString("role"));
+        return user;
     }
 }

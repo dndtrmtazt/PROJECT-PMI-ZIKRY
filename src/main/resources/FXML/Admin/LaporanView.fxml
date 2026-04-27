@@ -12,11 +12,11 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox fx:id="paneRoot" prefHeight="600.0" style="-fx-background-color: #F4F4F4;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.LaporanController">
+<VBox fx:id="paneRoot" prefHeight="600.0" style="-fx-background-color: #F4F4F4;" styleClass="admin-page-root" stylesheets="@../../CSS/admin.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.LaporanController">
     <children>
-        <HBox fx:id="hboxHeader" alignment="CENTER_LEFT" maxHeight="60.0" minHeight="60.0" prefHeight="60.0" style="-fx-background-color: #4A76A8;">
+        <HBox fx:id="hboxHeader" alignment="CENTER_LEFT" prefHeight="60.0" styleClass="admin-header">
             <children>
-                <Label fx:id="lblTitle" text="Laporan Penjualan" textFill="WHITE">
+                <Label fx:id="lblTitle" styleClass="admin-title" text="Laporan Penjualan">
                     <font><Font name="System Bold" size="24.0" /></font>
                     <padding><Insets left="20.0" /></padding>
                 </Label>
@@ -67,20 +67,20 @@
                     </children>
                 </HBox>
 
-                <HBox fx:id="hboxSearch" alignment="CENTER_LEFT" prefHeight="58.0" spacing="10.0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 10, 0, 0, 5);">
+                <HBox fx:id="hboxSearch" alignment="CENTER_LEFT" prefHeight="58.0" spacing="10.0" styleClass="admin-search-card">
                     <padding><Insets left="20.0" right="20.0" /></padding>
                     <children>
-                        <Label fx:id="lblPilihTanggal" text="Pilih Tanggal:" />
-                        <DatePicker fx:id="datePicker" maxWidth="1.7976931348623157E308" prefHeight="35.0" promptText="Pilih Rentang Tanggal..." style="-fx-background-color: white; -fx-border-color: #E0E0E0; -fx-border-radius: 8; -fx-background-radius: 8;" HBox.hgrow="ALWAYS" />
-                        <Button onAction="#handleFilter" prefHeight="35.0" prefWidth="120.0" style="-fx-background-color: #4A76A8; -fx-text-fill: white; -fx-background-radius: 8;" text="Tampilkan" />
+                        <Label fx:id="lblPilihTanggal" styleClass="admin-label" text="Pilih Tanggal:" />
+                        <DatePicker fx:id="datePicker" maxWidth="1.7976931348623157E308" prefHeight="35.0" promptText="Pilih Tanggal..." styleClass="admin-date-picker" HBox.hgrow="ALWAYS" />
+                        <Button onAction="#handleFilter" prefHeight="35.0" prefWidth="120.0" styleClass="admin-button-primary" text="Tampilkan" />
                     </children>
                 </HBox>
 
-                <VBox fx:id="vboxTableContainer" spacing="10.0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 10, 0, 0, 5);" VBox.vgrow="ALWAYS">
+                <VBox fx:id="vboxTableContainer" spacing="10.0" styleClass="admin-table-card" VBox.vgrow="ALWAYS">
                     <padding><Insets bottom="15.0" left="20.0" right="20.0" top="20.0" /></padding>
                     <children>
-                        <Label fx:id="lblRiwayat" style="-fx-font-weight: bold;" text="Riwayat Laporan Penjualan" />
-                        <TableView fx:id="tableLaporan" VBox.vgrow="ALWAYS">
+                        <Label fx:id="lblRiwayat" styleClass="admin-section-title" text="Riwayat Laporan Penjualan" />
+                        <TableView fx:id="tableLaporan" styleClass="barang-table" VBox.vgrow="ALWAYS">
                             <columns>
                                 <TableColumn fx:id="colTanggal" prefWidth="150.0" text="Tanggal" />
                                 <TableColumn fx:id="colPenjualan" prefWidth="200.0" text="Total Penjualan" />
@@ -94,10 +94,10 @@
             </children>
         </VBox>
 
-        <HBox fx:id="hboxFooter" alignment="CENTER_RIGHT" prefHeight="85.0" style="-fx-background-color: white; -fx-border-color: #E0E0E0; -fx-border-width: 1 0 0 0;">
+        <HBox fx:id="hboxFooter" alignment="CENTER_RIGHT" prefHeight="85.0" styleClass="admin-card">
             <padding><Insets right="25.0" /></padding>
             <children>
-                <Button onAction="#handleCetak" prefHeight="40.0" prefWidth="160.0" style="-fx-background-color: #5BC0DE; -fx-text-fill: white; -fx-background-radius: 8; -fx-font-weight: bold;" text="  Cetak Laporan">
+                <Button onAction="#handleCetak" prefHeight="40.0" prefWidth="160.0" styleClass="admin-button-info" text="  Cetak Laporan">
                     <graphic>
                         <ImageView fitHeight="25.0" fitWidth="25.0">
                             <image><Image url="@../../Images/ICON26.png" /></image>

@@ -1,29 +1,36 @@
 package Controller;
 
+import config.UserSession;
+import javafx.animation.FadeTransition;
+import javafx.animation.Interpolator;
+import javafx.animation.SequentialTransition;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.PixelReader;
+import javafx.scene.image.PixelWriter;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 
-/**
- * Controller utama untuk mengelola Layout Admin (Shell).
- * Alur: Mengatur navigasi antar halaman, manajemen tema (Dark/Light), dan kontrol sidebar.
- */
 public class MainController {
 
-    // [1] Singleton Instance agar bisa dipanggil dari controller lain
     private static MainController instance;
     public static boolean isDarkMode = false;
 
@@ -31,7 +38,6 @@ public class MainController {
         return instance;
     }
 
-    // [2] Deklarasi komponen UI Layout Utama
     @FXML private BorderPane mainPane;
     @FXML private AnchorPane contentArea;
     @FXML private VBox sidebarVBox;
@@ -43,288 +49,422 @@ public class MainController {
     private HBox activeWrapper;
     private Region activeIndicator;
     private ImageView activeIconView;
-    private String activeMenuName;
+    private String activeIconName;
+    private static final Color ACTIVE_MENU_BLUE = Color.web("#4072A5");
+    private static final Color DARK_INACTIVE_ICON = Color.WHITE;
+    private static final Duration THEME_FADE_OUT_DURATION = Duration.millis(130);
+    private static final Duration THEME_FADE_IN_DURATION = Duration.millis(190);
+    private boolean themeTransitionRunning = false;
 
-    // [3] Deklarasi Button, Wrapper, Indicator, dan Ikon Sidebar
-    @FXML private Button btnDashboard, btnTransaksi, btnDataBarang, btnLaporan, btnUser, btnDataKategori, btnKelolaPengeluaran, btnPengaturan, btnLogout, btnLightMode, btnDarkMode;
-    @FXML private HBox wrapperDashboard, wrapperTransaksi, wrapperDataBarang, wrapperLaporan, wrapperKategori, wrapperPengeluaran, wrapperUser, wrapperPengaturan;
-    @FXML private Region indDashboard, indTransaksi, indDataBarang, indLaporan, indKategori, indPengeluaran, indUser, indPengaturan;
-    @FXML private ImageView imgDashboard, imgTransaksi, imgDataBarang, imgLaporan, imgKategori, imgPengeluaran, imgUser, imgPengaturan;
+    // --- BUTTONS ---
+    @FXML private Button btnDashboard, btnTransaksi, btnDataBarang, btnLaporan,
+            btnUser, btnDataKategori, btnKelolaPengeluaran, btnPengaturan, btnLogout, btnLightMode, btnDarkMode;
 
-    /**
-     * Method initialize: Pengaturan awal saat Layout Admin dimuat.
-     */
+    // --- WRAPPERS ---
+    @FXML private HBox wrapperDashboard, wrapperTransaksi, wrapperDataBarang, wrapperLaporan,
+            wrapperKategori, wrapperPengeluaran, wrapperUser, wrapperPengaturan;
+
+    // --- INDICATORS ---
+    @FXML private Region indDashboard, indTransaksi, indDataBarang, indLaporan,
+            indKategori, indPengeluaran, indUser, indPengaturan;
+
+    // --- IMAGE VIEWS ---
+    @FXML private ImageView imgDashboard, imgTransaksi, imgDataBarang, imgLaporan,
+            imgKategori, imgPengeluaran, imgUser, imgPengaturan;
+
     @FXML
     public void initialize() {
         instance = this;
-        // [1] Terapkan tema yang sedang aktif (Global State)
         if (isDarkMode) applyDarkMode();
         else applyLightMode();
     }
 
-    /**
-     * Method setHakAkses: Membatasi menu sidebar berdasarkan role user.
-     * Alur: 1. Sembunyikan semua menu -> 2. Tampilkan menu yang diizinkan -> 3. Buka halaman default.
-     */
     public void setHakAkses(String role) {
-        aturVisibility(false, wrapperDashboard, wrapperTransaksi, wrapperDataBarang, wrapperLaporan, wrapperKategori, wrapperPengeluaran, wrapperUser, wrapperPengaturan);
+        aturVisibility(false, wrapperDashboard, wrapperTransaksi, wrapperDataBarang,
+                wrapperLaporan, wrapperKategori, wrapperPengeluaran,
+                wrapperUser, wrapperPengaturan);
 
         if ("kasir".equalsIgnoreCase(role)) {
             aturVisibility(true, wrapperTransaksi);
-            setActiveState(wrapperTransaksi, indTransaksi, imgTransaksi, "TRANSAKSI");
+            setActiveState(wrapperTransaksi, indTransaksi, imgTransaksi, "ICON5.png");
             panggilHalaman("TransaksiView");
         } else if ("pemilik".equalsIgnoreCase(role)) {
-            aturVisibility(true, wrapperDashboard, wrapperDataBarang, wrapperLaporan, wrapperKategori, wrapperPengeluaran, wrapperUser, wrapperPengaturan);
-            setActiveState(wrapperDashboard, indDashboard, imgDashboard, "DASHBOARD");
+            aturVisibility(true, wrapperDashboard, wrapperDataBarang, wrapperLaporan,
+                    wrapperKategori, wrapperPengeluaran, wrapperUser, wrapperPengaturan);
+            setActiveState(wrapperDashboard, indDashboard, imgDashboard, "icon39.png");
             panggilHalaman("DashboardAdminView");
         }
     }
 
-    /**
-     * Method handleMenuAction: Menangani aksi klik pada setiap menu di sidebar.
-     */
     @FXML
     private void handleMenuAction(ActionEvent event) {
         Object source = event.getSource();
 
-        // [1] Navigasi berdasarkan tombol yang diklik
-        if (source == btnDashboard) bukaDashboard();
+        if (source == btnDashboard) {
+            bukaDashboard();
+        }
         else if (source == btnTransaksi) {
-            setActiveState(wrapperTransaksi, indTransaksi, imgTransaksi, "TRANSAKSI");
+            setActiveState(wrapperTransaksi, indTransaksi, imgTransaksi, "ICON5.png");
             panggilHalaman("TransaksiView");
         }
-        else if (source == btnDataBarang) bukaDataBarang();
-        else if (source == btnLaporan) bukaLaporan();
+        else if (source == btnDataBarang) {
+            bukaDataBarang();
+        }
+        else if (source == btnLaporan) {
+            bukaLaporan();
+        }
         else if (source == btnDataKategori) {
-            setActiveState(wrapperKategori, indKategori, imgKategori, "KATEGORI");
+            setActiveState(wrapperKategori, indKategori, imgKategori, "icon43.png");
             panggilHalaman("KategoriView");
         }
-        else if (source == btnKelolaPengeluaran) bukaPengeluaran();
+        else if (source == btnKelolaPengeluaran) {
+            bukaPengeluaran();
+        }
         else if (source == btnUser) {
-            setActiveState(wrapperUser, indUser, imgUser, "USER");
+            setActiveState(wrapperUser, indUser, imgUser, "icon 37.png");
             panggilHalaman("KelolaUserView");
         }
         else if (source == btnPengaturan) {
-            setActiveState(wrapperPengaturan, indPengaturan, imgPengaturan, "PENGATURAN");
+            setActiveState(wrapperPengaturan, indPengaturan, imgPengaturan, "icon38.png");
             panggilHalaman("PengaturanView");
         }
-        else if (source == btnLogout) handleLogout();
+        else if (source == btnLogout) {
+            handleLogout();
+        }
     }
 
-    /**
-     * Method panggilHalaman: Menampilkan file FXML ke dalam area konten utama.
-     * Alur: 1. Cari file -> 2. Load Parent -> 3. Kosongkan ContentArea -> 4. Masukkan halaman baru.
-     */
     public FXMLLoader panggilHalaman(String fxmlFile) {
         try {
-            // [1] Mencari file di berbagai sub-folder (Root, Admin, Kasir)
+            // Cek di folder Admin atau Kasir jika tidak ditemukan di root FXML
             String path = "/FXML/" + fxmlFile + ".fxml";
             java.net.URL url = getClass().getResource(path);
-            if (url == null) url = getClass().getResource("/FXML/Admin/" + fxmlFile + ".fxml");
-            if (url == null) url = getClass().getResource("/FXML/Kasir/" + fxmlFile + ".fxml");
+            
+            if (url == null) {
+                path = "/FXML/Admin/" + fxmlFile + ".fxml";
+                url = getClass().getResource(path);
+            }
+            
+            if (url == null) {
+                path = "/FXML/Kasir/" + fxmlFile + ".fxml";
+                url = getClass().getResource(path);
+            }
 
-            if (url == null) return null;
+            if (url == null) {
+                System.err.println("✗ File FXML tidak ditemukan: " + fxmlFile);
+                return null;
+            }
 
-            // [2] Load dan tampilkan halaman ke contentArea
             FXMLLoader loader = new FXMLLoader(url);
             Parent root = loader.load();
             currentController = loader.getController();
 
             contentArea.getChildren().clear();
-            AnchorPane.setTopAnchor(root, 0.0); AnchorPane.setBottomAnchor(root, 0.0);
-            AnchorPane.setLeftAnchor(root, 0.0); AnchorPane.setRightAnchor(root, 0.0);
+            AnchorPane.setTopAnchor(root, 0.0);
+            AnchorPane.setBottomAnchor(root, 0.0);
+            AnchorPane.setLeftAnchor(root, 0.0);
+            AnchorPane.setRightAnchor(root, 0.0);
             contentArea.getChildren().add(root);
-
-            // [3] Beritahu controller halaman baru untuk menyesuaikan tema
+            
+            // Notify controller about theme
             notifyControllerTheme();
             return loader;
         } catch (IOException e) {
+            System.err.println("✗ Gagal memuat: " + fxmlFile);
             e.printStackTrace();
             return null;
         }
     }
 
-    /**
-     * Method: Mengirim status isDarkMode ke controller halaman yang sedang aktif.
-     */
     private void notifyControllerTheme() {
         if (currentController == null) return;
+        
+        // Gunakan reflection untuk memanggil setDarkMode agar lebih fleksibel dan menghindari error 'cannot find symbol'
         try {
             java.lang.reflect.Method method = currentController.getClass().getMethod("setDarkMode", boolean.class);
             method.invoke(currentController, isDarkMode);
-        } catch (Exception e) {}
+        } catch (NoSuchMethodException e) {
+            // Abaikan jika controller tidak punya fitur Dark Mode
+            System.out.println("ℹ Info: Controller " + currentController.getClass().getSimpleName() + " tidak mendukung setDarkMode.");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-    /**
-     * Method: Mengatur status menu sidebar menjadi 'Aktif' secara visual.
-     */
-    private void setActiveState(HBox wrapper, Region indicator, ImageView iconView, String menuName) {
+    private void setActiveState(HBox wrapper, Region indicator, ImageView iconView, String iconName) {
         if (wrapper == null || indicator == null || iconView == null) return;
         resetAllMenus();
-        activeWrapper = wrapper; activeIndicator = indicator;
-        activeIconView = iconView; activeMenuName = menuName;
-        applyActiveMenuStyle(wrapper, indicator, iconView, menuName);
+
+        activeWrapper = wrapper;
+        activeIndicator = indicator;
+        activeIconView = iconView;
+        activeIconName = iconName;
+        applyActiveMenuStyle(wrapper, indicator, iconView, iconName);
     }
 
-    // --- Shortcuts untuk Navigasi Cepat ---
-    public void bukaDashboard() { setActiveState(wrapperDashboard, indDashboard, imgDashboard, "DASHBOARD"); panggilHalaman("DashboardAdminView"); }
-    public void bukaLaporan() { setActiveState(wrapperLaporan, indLaporan, imgLaporan, "LAPORAN"); panggilHalaman("LaporanView"); }
-    public void bukaPengeluaran() { setActiveState(wrapperPengeluaran, indPengeluaran, imgPengeluaran, "PENGELUARAN"); panggilHalaman("PengeluaranView"); }
-    public void bukaDataBarang() { setActiveState(wrapperDataBarang, indDataBarang, imgDataBarang, "BARANG"); panggilHalaman("BarangView"); }
+    public void bukaDashboard() {
+        setActiveState(wrapperDashboard, indDashboard, imgDashboard, "icon39.png");
+        panggilHalaman("DashboardAdminView");
+    }
 
-    /**
-     * Method applyActiveMenuStyle: Memberikan gaya visual (Warna/Ikon) pada menu yang terpilih.
-     */
-    private void applyActiveMenuStyle(HBox wrapper, Region indicator, ImageView iconView, String menuName) {
-        // [1] Set background highlight dan warna indikator samping
-        wrapper.setStyle("-fx-background-color: " + (isDarkMode ? "rgba(255,255,255,0.06)" : "rgba(64,114,165,0.12)") + "; -fx-background-radius: 0 12 12 0;");
-        indicator.setStyle("-fx-background-color: " + (isDarkMode ? "#64B5F6" : "#4072A5") + "; -fx-background-radius: 5;");
+    public void bukaLaporan() {
+        setActiveState(wrapperLaporan, indLaporan, imgLaporan, "icon42.png");
+        panggilHalaman("LaporanView");
+    }
 
-        // [2] Set warna teks tombol menjadi kontras/tebal
+    public void bukaPengeluaran() {
+        setActiveState(wrapperPengeluaran, indPengeluaran, imgPengeluaran, "icon41.png");
+        panggilHalaman("PengeluaranView");
+    }
+
+    public void bukaDataBarang() {
+        setActiveState(wrapperDataBarang, indDataBarang, imgDataBarang, "icon40.png");
+        panggilHalaman("BarangView");
+    }
+
+    private void applyActiveMenuStyle(HBox wrapper, Region indicator, ImageView iconView, String iconName) {
+        wrapper.setMaxWidth(200);
+        wrapper.setPrefHeight(42);
+        wrapper.setStyle("");
+        setStyleClass(wrapper, "active", true);
+
+        indicator.setPrefWidth(4); indicator.setPrefHeight(24);
+        indicator.setStyle("");
+        setStyleClass(indicator, "active", true);
+
         if (wrapper.getChildren().size() >= 2 && wrapper.getChildren().get(1) instanceof Button) {
             Button btn = (Button) wrapper.getChildren().get(1);
-            btn.setStyle("-fx-background-color: transparent; -fx-text-fill: " + (isDarkMode ? "#64B5F6" : "#4072A5") + "; -fx-font-weight: bold; -fx-cursor: hand;");
+            btn.setStyle("");
+            setStyleClass(btn, "active", true);
         }
-
-        // [3] Ganti ikon ke versi berwarna/aktif
-        try {
-            String themeIcon = getActiveIcon(menuName);
-            iconView.setImage(new Image(getClass().getResourceAsStream("/Images/" + themeIcon)));
-            applyIconOpticalScale(iconView, themeIcon);
-        } catch (Exception e) {}
+        
+        iconView.setFitWidth(18);
+        iconView.setFitHeight(18);
+        setSidebarIconBlue(iconView, iconName);
     }
 
-    /**
-     * Method resetAllMenus: Mengembalikan semua gaya menu sidebar ke kondisi normal (tidak terpilih).
-     */
+    private void restoreActiveMenu() {
+        if (activeWrapper == null || activeIndicator == null || activeIconView == null || activeIconName == null) {
+            return;
+        }
+
+        applyActiveMenuStyle(activeWrapper, activeIndicator, activeIconView, activeIconName);
+    }
+
     private void resetAllMenus() {
         HBox[] wrappers = {wrapperDashboard, wrapperTransaksi, wrapperDataBarang, wrapperLaporan, wrapperKategori, wrapperPengeluaran, wrapperUser, wrapperPengaturan};
         Region[] indicators = {indDashboard, indTransaksi, indDataBarang, indLaporan, indKategori, indPengeluaran, indUser, indPengaturan};
         ImageView[] icons = {imgDashboard, imgTransaksi, imgDataBarang, imgLaporan, imgKategori, imgPengeluaran, imgUser, imgPengaturan};
-        String[] menuNames = {"DASHBOARD", "TRANSAKSI", "BARANG", "LAPORAN", "KATEGORI", "PENGELUARAN", "USER", "PENGATURAN"};
+        String[] originalIcons = {"icon39.png", "ICON5.png", "icon40.png", "icon42.png", "icon43.png", "icon41.png", "icon 37.png", "icon38.png"};
 
         for (int i = 0; i < wrappers.length; i++) {
             if (wrappers[i] != null && wrappers[i].isVisible()) {
-                wrappers[i].setStyle("-fx-background-color: transparent;");
-                if (indicators[i] != null) indicators[i].setStyle("-fx-background-color: transparent;");
-
+                wrappers[i].setStyle("");
+                setStyleClass(wrappers[i], "active", false);
+                if (indicators[i] != null) {
+                    indicators[i].setStyle("");
+                    setStyleClass(indicators[i], "active", false);
+                }
+                
                 if (wrappers[i].getChildren().size() >= 2 && wrappers[i].getChildren().get(1) instanceof Button) {
                     Button btn = (Button) wrappers[i].getChildren().get(1);
-                    btn.setStyle("-fx-background-color: transparent; -fx-text-fill: " + (isDarkMode ? "#E0E0E0" : "#555555") + "; -fx-font-weight: normal;");
+                    btn.setStyle("");
+                    setStyleClass(btn, "active", false);
                 }
-
+                
                 if (icons[i] != null) {
-                    try {
-                        String normalIcon = getNormalIcon(menuNames[i]);
-                        icons[i].setImage(new Image(getClass().getResourceAsStream("/Images/" + normalIcon)));
-                        applyIconOpticalScale(icons[i], normalIcon);
-                    } catch (Exception e) {}
+                    icons[i].setFitWidth(18); icons[i].setFitHeight(18);
+                    String iconName = originalIcons[i];
+                    if (isDarkMode) {
+                        setSidebarIconColor(icons[i], iconName, DARK_INACTIVE_ICON);
+                    } else if (icons[i] == imgDashboard) {
+                        setSidebarIconBlue(icons[i], iconName);
+                    } else {
+                        setImageIfPresent(icons[i], "/Images/" + iconName);
+                    }
                 }
             }
         }
     }
 
-    /**
-     * Method applyDarkMode: Menerapkan skema warna tema gelap ke seluruh layout utama.
-     */
+    private void setSidebarIconBlue(ImageView iconView, String iconName) {
+        setSidebarIconColor(iconView, iconName, ACTIVE_MENU_BLUE);
+    }
+
+    private void setSidebarIconColor(ImageView iconView, String iconName, Color color) {
+        if (iconView == null || iconName == null || color == null) return;
+
+        Image source = loadImageResource("/Images/" + iconName);
+        if (source != null) {
+            iconView.setImage(recolorIcon(source, color));
+        }
+    }
+
+    private Image recolorIcon(Image source, Color color) {
+        int width = (int) source.getWidth();
+        int height = (int) source.getHeight();
+        WritableImage tinted = new WritableImage(width, height);
+        PixelReader reader = source.getPixelReader();
+        PixelWriter writer = tinted.getPixelWriter();
+
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                Color pixel = reader.getColor(x, y);
+                writer.setColor(x, y, new Color(color.getRed(), color.getGreen(), color.getBlue(), pixel.getOpacity()));
+            }
+        }
+
+        return tinted;
+    }
+
+    private void aturVisibility(boolean tampil, HBox... wrappers) {
+        for (HBox w : wrappers) {
+            if (w != null) {
+                w.setVisible(tampil);
+                w.setManaged(tampil);
+            }
+        }
+    }
+
     private void applyDarkMode() {
         isDarkMode = true;
-        // [1] Update warna latar belakang utama dan sidebar
-        if (mainPane != null) mainPane.setStyle("-fx-background-color: #121212;");
-        if (sidebarVBox != null) sidebarVBox.setStyle("-fx-background-color: #1e1e1e; -fx-border-color: #333333; -fx-border-width: 0 1 0 0;");
-        if (lblLogo != null) lblLogo.setStyle("-fx-font-weight: bold; -fx-text-fill: white;");
+        setStyleClass(mainPane, "dark", true);
+        clearInlineStyles(mainPane, sidebarVBox, lblLogo, hboxThemeToggle, btnLogout);
         
-        // [2] Ganti Ikon Navigasi (Logo, Logout, dsb)
-        try {
-            if (imgLogo != null) imgLogo.setImage(new Image(getClass().getResourceAsStream("/Images/LOGO2.png")));
-            if (imgLightMode != null) imgLightMode.setImage(new Image(getClass().getResourceAsStream("/Images/ICON3DARK.png")));
-            if (imgDarkMode != null) imgDarkMode.setImage(new Image(getClass().getResourceAsStream("/Images/ICON4DARK.png")));
-            if (imgLogout != null) imgLogout.setImage(new Image(getClass().getResourceAsStream("/Images/ICON33.png")));
-        } catch (Exception e) {}
+        setImageIfPresent(imgLogo, "/Images/LOGO2.png");
+        setImageIfPresent(imgLightMode, "/Images/ICON3DARK.png");
+        setImageIfPresent(imgDarkMode, "/Images/ICON4DARK.png");
+        setImageIfPresent(imgLogout, "/Images/ICON33.png");
 
-        // [3] Refresh status menu dan beritahu controller aktif
-        resetAllMenus(); restoreActiveMenu(); notifyControllerTheme();
+        setStyleClass(btnDarkMode, "active", true);
+        setStyleClass(btnLightMode, "active", false);
+        
+        resetAllMenus();
+        restoreActiveMenu();
+        notifyControllerTheme();
     }
 
-    /**
-     * Method applyLightMode: Menerapkan skema warna tema terang ke seluruh layout utama.
-     */
     private void applyLightMode() {
         isDarkMode = false;
-        if (mainPane != null) mainPane.setStyle("-fx-background-color: #F4F4F4;");
-        if (sidebarVBox != null) sidebarVBox.setStyle("-fx-background-color: white; -fx-border-color: #E0E0E0; -fx-border-width: 0 1 0 0;");
-        if (lblLogo != null) lblLogo.setStyle("-fx-font-weight: bold; -fx-text-fill: black;");
+        setStyleClass(mainPane, "dark", false);
+        clearInlineStyles(mainPane, sidebarVBox, lblLogo, hboxThemeToggle, btnLogout);
+        
+        setImageIfPresent(imgLogo, "/Images/LOGO.png");
+        setImageIfPresent(imgLightMode, "/Images/ICON3.png");
+        setImageIfPresent(imgDarkMode, "/Images/ICON4.png");
+        setImageIfPresent(imgLogout, "/Images/ICON6.png");
 
-        try {
-            if (imgLogo != null) imgLogo.setImage(new Image(getClass().getResourceAsStream("/Images/LOGO.png")));
-            if (imgLightMode != null) imgLightMode.setImage(new Image(getClass().getResourceAsStream("/Images/ICON3.png")));
-            if (imgDarkMode != null) imgDarkMode.setImage(new Image(getClass().getResourceAsStream("/Images/ICON4.png")));
-            if (imgLogout != null) imgLogout.setImage(new Image(getClass().getResourceAsStream("/Images/ICON6.png")));
-        } catch (Exception e) {}
-
-        resetAllMenus(); restoreActiveMenu(); notifyControllerTheme();
+        setStyleClass(btnLightMode, "active", true);
+        setStyleClass(btnDarkMode, "active", false);
+        
+        resetAllMenus();
+        restoreActiveMenu();
+        notifyControllerTheme();
     }
 
-    /**
-     * Method handleThemeChange: Menangani klik pada toggle switch tema.
-     */
     @FXML
     private void handleThemeChange(ActionEvent event) {
-        if (event.getSource() == btnDarkMode) applyDarkMode();
+        switchThemeWithAnimation(event.getSource() == btnDarkMode);
+    }
+
+    private void switchThemeWithAnimation(boolean darkModeTarget) {
+        if (themeTransitionRunning || isDarkMode == darkModeTarget) {
+            return;
+        }
+
+        if (mainPane == null) {
+            applyThemeInstantly(darkModeTarget);
+            return;
+        }
+
+        themeTransitionRunning = true;
+        setThemeButtonsBlocked(true);
+
+        FadeTransition fadeOut = new FadeTransition(THEME_FADE_OUT_DURATION, mainPane);
+        fadeOut.setFromValue(1.0);
+        fadeOut.setToValue(0.82);
+        fadeOut.setInterpolator(Interpolator.EASE_BOTH);
+        fadeOut.setOnFinished(event -> applyThemeInstantly(darkModeTarget));
+
+        FadeTransition fadeIn = new FadeTransition(THEME_FADE_IN_DURATION, mainPane);
+        fadeIn.setFromValue(0.82);
+        fadeIn.setToValue(1.0);
+        fadeIn.setInterpolator(Interpolator.EASE_BOTH);
+
+        SequentialTransition transition = new SequentialTransition(fadeOut, fadeIn);
+        transition.setOnFinished(event -> {
+            mainPane.setOpacity(1.0);
+            setThemeButtonsBlocked(false);
+            themeTransitionRunning = false;
+        });
+        transition.play();
+    }
+
+    private void applyThemeInstantly(boolean darkModeTarget) {
+        if (darkModeTarget) applyDarkMode();
         else applyLightMode();
     }
 
-    /**
-     * Method handleLogout: Menutup aplikasi dan kembali ke layar login.
-     */
+    private void setThemeButtonsBlocked(boolean blocked) {
+        if (btnLightMode != null) btnLightMode.setMouseTransparent(blocked);
+        if (btnDarkMode != null) btnDarkMode.setMouseTransparent(blocked);
+    }
+
+    private void setStyleClass(Node node, String styleClass, boolean enabled) {
+        if (node == null || styleClass == null) return;
+
+        if (enabled) {
+            if (!node.getStyleClass().contains(styleClass)) {
+                node.getStyleClass().add(styleClass);
+            }
+        } else {
+            node.getStyleClass().remove(styleClass);
+        }
+    }
+
+    private void clearInlineStyles(Node... nodes) {
+        if (nodes == null) return;
+        for (Node node : nodes) {
+            if (node != null) {
+                node.setStyle("");
+            }
+        }
+    }
+
     private void handleLogout() {
         try {
+            UserSession.getInstance().logout();
             Stage stage = (Stage) btnLogout.getScene().getWindow();
-            stage.close();
-            Parent root = FXMLLoader.load(getClass().getResource("/FXML/LoginView.fxml"));
-            Stage loginStage = new Stage();
-            loginStage.setScene(new Scene(root));
-            loginStage.show();
+            URL loginView = getClass().getResource("/FXML/LoginView.fxml");
+            if (loginView == null) {
+                return;
+            }
+            Parent root = FXMLLoader.load(loginView);
+            stage.setResizable(true);
+            stage.setMaximized(false);
+            stage.setScene(new Scene(root));
+            stage.setTitle("PMI Toko Zikry - Login");
+            stage.show();
+            stage.setMaximized(true);
         } catch (IOException e) { e.printStackTrace(); }
     }
 
-    // --- Helper Methods: Mapping Ikon ---
-    private String getNormalIcon(String name) {
-        switch (name) {
-            case "DASHBOARD": return isDarkMode ? "icon44.png" : "icon39.png";
-            case "TRANSAKSI": return "ICON5.png";
-            case "BARANG": return isDarkMode ? "icon45.png" : "ICON8.png";
-            case "LAPORAN": return isDarkMode ? "icon46.png" : "ICON9.png";
-            case "KATEGORI": return isDarkMode ? "icon50.png" : "ICON10.png";
-            case "PENGELUARAN": return isDarkMode ? "icon47.png" : "ICON11.png";
-            case "USER": return isDarkMode ? "icon48.png" : "ICON12.png";
-            case "PENGATURAN": return isDarkMode ? "icon49.png" : "ICON13.png";
-            default: return "icon39.png";
+    private Image loadImageResource(String resourcePath) {
+        if (resourcePath == null) {
+            return null;
+        }
+
+        InputStream stream = getClass().getResourceAsStream(resourcePath);
+        return stream != null ? new Image(stream) : null;
+    }
+
+    private void setImageIfPresent(ImageView imageView, String resourcePath) {
+        if (imageView == null) {
+            return;
+        }
+
+        Image image = loadImageResource(resourcePath);
+        if (image != null) {
+            imageView.setImage(image);
         }
     }
-
-    private String getActiveIcon(String name) {
-        switch (name) {
-            case "DASHBOARD": return "ICON7.png";
-            case "TRANSAKSI": return "ICON5.png";
-            case "BARANG": return "icon40.png";
-            case "LAPORAN": return "icon42.png";
-            case "KATEGORI": return "icon43.png";
-            case "PENGELUARAN": return "icon41.png";
-            case "USER": return "icon 37.png";
-            case "PENGATURAN": return "icon38.png";
-            default: return "icon39.png";
-        }
-    }
-
-    private void applyIconOpticalScale(ImageView iv, String icon) {
-        iv.setFitWidth(20.0); iv.setFitHeight(20.0);
-        iv.setScaleX(1.0); iv.setScaleY(1.0);
-        if (icon.equals("icon44.png")) { iv.setScaleX(0.8); iv.setScaleY(0.8); }
-        else if (icon.equals("icon48.png")) { iv.setScaleX(1.2); iv.setScaleY(1.2); }
-    }
-
-    private void restoreActiveMenu() { if (activeWrapper != null) applyActiveMenuStyle(activeWrapper, activeIndicator, activeIconView, activeMenuName); }
-
-    private void aturVisibility(boolean t, HBox... ws) { for (HBox w : ws) if (w != null) { w.setVisible(t); w.setManaged(t); } }
 }

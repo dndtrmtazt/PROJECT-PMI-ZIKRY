@@ -4,9 +4,9 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox fx:id="rootPane" spacing="15.0" style="-fx-background-color: white; -fx-background-radius: 10;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.TambahUserController">
+<VBox fx:id="rootPane" spacing="15.0" styleClass="admin-page-root" stylesheets="@../../CSS/admin.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.TambahUserController">
     <children>
-        <Label fx:id="lblFormTitle" style="-fx-font-weight: bold; -fx-font-size: 18;" text="Tambah User" />
+        <Label fx:id="lblFormTitle" styleClass="admin-form-title" text="Tambah User" />
         <GridPane hgap="10.0" vgap="10.0">
             <columnConstraints>
                 <ColumnConstraints minWidth="100.0" />
@@ -19,20 +19,20 @@
                 <RowConstraints minHeight="30.0" />
             </rowConstraints>
             <children>
-                <Label text="Nama" />
-                <TextField fx:id="txtNama" promptText="Masukkan nama" GridPane.columnIndex="1" />
-                <Label text="ID User" GridPane.rowIndex="1" />
-                <TextField fx:id="txtID" promptText="Masukkan id user" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                <Label text="Password" GridPane.rowIndex="2" />
-                <PasswordField fx:id="txtPass" promptText="Masukkan password" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                <Label text="Role" GridPane.rowIndex="3" />
-                <ComboBox fx:id="cbRole" prefWidth="200.0" promptText="Select" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                <Label styleClass="admin-label" text="Nama" />
+                <TextField fx:id="txtNama" promptText="Masukkan nama" styleClass="admin-input" GridPane.columnIndex="1" />
+                <Label styleClass="admin-label" text="ID User" GridPane.rowIndex="1" />
+                <TextField fx:id="txtID" promptText="Masukkan id user" styleClass="admin-input" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                <Label styleClass="admin-label" text="Password" GridPane.rowIndex="2" />
+                <PasswordField fx:id="txtPass" promptText="Masukkan password" styleClass="admin-input" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                <Label styleClass="admin-label" text="Role" GridPane.rowIndex="3" />
+                <ComboBox fx:id="cbRole" prefWidth="200.0" promptText="Select" styleClass="admin-combo-box" GridPane.columnIndex="1" GridPane.rowIndex="3" />
             </children>
         </GridPane>
         <HBox alignment="CENTER_RIGHT" spacing="10.0">
             <children>
-                <Button fx:id="btnBatal" onAction="#handleBatal" style="-fx-background-color: #E0E0E0;" text="Batal" />
-                <Button fx:id="btnSimpan" onAction="#handleSimpan" style="-fx-background-color: #4A90E2; -fx-text-fill: white;" text="Simpan" />
+                <Button fx:id="btnBatal" onAction="#handleBatal" styleClass="admin-button-neutral" text="Batal" />
+                <Button fx:id="btnSimpan" onAction="#handleSimpan" styleClass="admin-button-primary" text="Simpan" />
             </children>
         </HBox>
     </children>

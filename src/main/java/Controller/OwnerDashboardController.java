@@ -17,6 +17,7 @@ import DAO.TransaksiDAO;
 import model.*;
 
 import java.io.IOException;
+import java.net.URL;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -327,17 +328,22 @@ public class OwnerDashboardController {
             UserSession.getInstance().logout();
             System.out.println("[OwnerDashboard] User logged out");
             
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/FXML/LoginView.fxml"));
+            URL loginView = getClass().getResource("/FXML/LoginView.fxml");
+            if (loginView == null) {
+                throw new IOException("Resource /FXML/LoginView.fxml tidak ditemukan.");
+            }
+
+            FXMLLoader fxmlLoader = new FXMLLoader(loginView);
             javafx.scene.Parent root = fxmlLoader.load();
             
             Stage stage = (Stage) logoutButton.getScene().getWindow();
             Scene scene = new javafx.scene.Scene(root);
+            stage.setResizable(true);
+            stage.setMaximized(false);
             stage.setScene(scene);
             stage.setTitle("PMITokoZikry - Login");
-            stage.setWidth(900);
-            stage.setHeight(600);
-            stage.centerOnScreen();
             stage.show();
+            stage.setMaximized(true);
         } catch (IOException e) {
             System.err.println("[OwnerDashboard] Logout error: " + e.getMessage());
             e.printStackTrace();
