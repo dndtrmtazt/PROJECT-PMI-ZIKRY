@@ -3,6 +3,7 @@ package Controller;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader; // Tambahkan ini
 import javafx.fxml.Initializable;
@@ -17,6 +18,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality; // Tambahkan ini
 import javafx.stage.Stage; // Tambahkan ini
@@ -25,19 +27,53 @@ import model.Kategori;
 import java.io.InputStream;
 
 public class KategoriController implements Initializable {
+    private static final String EDIT_ICON_PATH = "/Images/icon_edit.png";
+    private static final String DELETE_ICON_PATH = "/Images/icon_hapus.png";
 
     @FXML private VBox paneRoot, vboxKategoriList, vboxContent;
     @FXML private HBox vboxHeader, hboxSearch, hboxTableHead;
     @FXML private Label lblTitle, lblDaftarKategori;
     @FXML private TextField txtSearchKategori;
+    @FXML private Button btnSearchKategori;
     @FXML private ScrollPane scrollKategori;
     @FXML private ImageView imgLightMode, imgDarkMode, imgLogout;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         loadDataKategori();
+        setupSearchKategori();
         // Pastikan MainController.isDarkMode sudah terdefinisi
         setDarkMode(MainController.isDarkMode);
+    }
+
+    private void setupSearchKategori() {
+        if (txtSearchKategori != null) {
+            txtSearchKategori.textProperty().addListener((obs, oldValue, newValue) -> applyKategoriFilter(newValue));
+        }
+    }
+
+    @FXML
+    private void handleSearchKategori() {
+        applyKategoriFilter(txtSearchKategori == null ? "" : txtSearchKategori.getText());
+    }
+
+    private void applyKategoriFilter(String keywordText) {
+        String keyword = keywordText == null ? "" : keywordText.trim().toLowerCase();
+        List<Kategori> list = KategoriDAO.getAllKategori();
+
+        if (!keyword.isEmpty()) {
+            list = list.stream()
+                    .filter(k -> matchesSearch(k, keyword))
+                    .collect(Collectors.toList());
+        }
+
+        tampilkanDataKategori(list);
+    }
+
+    private boolean matchesSearch(Kategori kategori, String keyword) {
+        String idKategori = kategori.getIdKategori() == null ? "" : kategori.getIdKategori().toLowerCase();
+        String namaKategori = kategori.getNamaKategori() == null ? "" : kategori.getNamaKategori().toLowerCase();
+        return idKategori.contains(keyword) || namaKategori.contains(keyword);
     }
 
     // --- 1. PERBAIKAN TOMBOL TAMBAH ---
@@ -80,14 +116,22 @@ public class KategoriController implements Initializable {
     }
 
     private void loadDataKategori() {
+        applyKategoriFilter(txtSearchKategori == null ? "" : txtSearchKategori.getText());
+    }
+
+    private void tampilkanDataKategori(List<Kategori> list) {
         if (vboxKategoriList == null) return;
 
         vboxKategoriList.getChildren().clear();
-        List<Kategori> list = KategoriDAO.getAllKategori();
         boolean isDark = MainController.isDarkMode;
         String textColor = isDark ? "white" : "#2C3E50";
         String rowBg = isDark ? "#1e1e1e" : "#FFFFFF";
         String borderColor = isDark ? "#333333" : "#E0E0E0";
+
+        if (list.isEmpty()) {
+            vboxKategoriList.getChildren().add(createKategoriPlaceholder(isDark));
+            return;
+        }
 
         int no = 1;
         for (Kategori k : list) {
@@ -110,18 +154,37 @@ public class KategoriController implements Initializable {
 
             HBox actionBox = new HBox(10);
             actionBox.setMinWidth(180.0);
-            actionBox.setAlignment(Pos.CENTER_LEFT);
+            actionBox.setAlignment(Pos.CENTER);
 
-            Button btnEdit = createActionButton("Edit", "#4A90E2", null);
+            Button btnEdit = createActionButton("Edit", "#3498DB", EDIT_ICON_PATH);
             btnEdit.setOnAction(e -> handleEdit(k)); // Listener klik Edit
 
-            Button btnHapus = createActionButton("Hapus", "#F87171", null);
+            Button btnHapus = createActionButton("Hapus", "#E74C3C", DELETE_ICON_PATH);
             btnHapus.setOnAction(e -> handleHapus(k)); // Listener klik Hapus
 
             actionBox.getChildren().addAll(btnEdit, btnHapus);
             baris.getChildren().addAll(lblNo, lblId, lblNama, spacer, actionBox);
             vboxKategoriList.getChildren().add(baris);
         }
+    }
+
+    private StackPane createKategoriPlaceholder(boolean isDark) {
+        Label placeholder = new Label("Kategori tidak ditemukan");
+        placeholder.setStyle("-fx-text-fill: " + (isDark ? "white" : "black") + ";");
+
+        StackPane placeholderPane = new StackPane(placeholder);
+        placeholderPane.setAlignment(Pos.CENTER);
+        placeholderPane.setMinHeight(getKategoriPlaceholderHeight());
+        placeholderPane.setPrefHeight(getKategoriPlaceholderHeight());
+        placeholderPane.setMaxWidth(Double.MAX_VALUE);
+        return placeholderPane;
+    }
+
+    private double getKategoriPlaceholderHeight() {
+        if (scrollKategori != null && scrollKategori.getViewportBounds().getHeight() > 0) {
+            return scrollKategori.getViewportBounds().getHeight();
+        }
+        return 520.0;
     }
 
     private void handleHapus(Kategori k) {
@@ -148,8 +211,9 @@ public class KategoriController implements Initializable {
         InputStream iconStream = iconPath == null ? null : getClass().getResourceAsStream(iconPath);
         if (iconStream != null) {
             ImageView iv = new ImageView(new Image(iconStream));
-            iv.setFitHeight(14); iv.setFitWidth(14);
+            iv.setFitHeight(14); iv.setFitWidth(14); iv.setPreserveRatio(true);
             btn.setGraphic(iv);
+            btn.setGraphicTextGap(5);
         }
         btn.setStyle("-fx-background-color: " + color + "; -fx-text-fill: white; -fx-background-radius: 4; -fx-cursor: hand; -fx-font-weight: bold; -fx-font-size: 11px; -fx-padding: 5 12 5 12;");
         return btn;

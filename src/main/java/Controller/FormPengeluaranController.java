@@ -53,6 +53,7 @@ public class FormPengeluaranController implements Initializable {
             btnSimpan.setText("Update");
 
             txtId.setText(p.getIdPengeluaran());
+            txtId.setEditable(false);
             dpTanggal.setValue(p.getTglPengeluaran());
             txtNominal.setText(numberFormat.format((long) p.getNominal()));
             txtJenis.setText(p.getJenis());
@@ -61,7 +62,8 @@ public class FormPengeluaranController implements Initializable {
             lblHeader.setText("Tambah Data Pengeluaran");
             btnSimpan.setText("Simpan");
 
-            txtId.clear();
+            txtId.setText(PengeluaranDAO.getNextIdPengeluaran());
+            txtId.setEditable(false);
             txtNominal.clear();
             txtJenis.clear();
             dpTanggal.setValue(LocalDate.now());

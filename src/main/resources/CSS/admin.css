@@ -132,6 +132,7 @@
     -fx-background-color: transparent;
     -fx-text-fill: #111827;
     -fx-font-size: 13px;
+    -fx-font-weight: bold;
     -fx-padding: 0 0 0 20;
     -fx-cursor: hand;
 }
@@ -224,8 +225,8 @@
     -fx-background-radius: 9;
     -fx-border-color: #D1D5DB;
     -fx-border-radius: 9;
-    -fx-text-fill: #111827;
-    -fx-prompt-text-fill: #8A94A6;
+    -fx-text-fill: #000000;
+    -fx-prompt-text-fill: #808080;
 }
 
 .admin-input:focused,
@@ -241,17 +242,29 @@
     -fx-background-color: #2C2C2C;
     -fx-border-color: #444444;
     -fx-text-fill: #F8FAFC;
-    -fx-prompt-text-fill: #A1A1AA;
+    -fx-prompt-text-fill: #808080;
+}
+
+.admin-page-root.dark .admin-combo-box .list-cell {
+    -fx-text-fill: #F8FAFC;
+}
+
+.admin-page-root.dark .admin-combo-box .arrow {
+    -fx-background-color: #F8FAFC;
 }
 
 .admin-readonly-field {
-    -fx-background-color: transparent;
-    -fx-border-color: transparent;
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 9;
+    -fx-border-color: #D1D5DB;
+    -fx-border-radius: 9;
     -fx-font-weight: bold;
     -fx-text-fill: #1F2937;
 }
 
 .admin-page-root.dark .admin-readonly-field {
+    -fx-background-color: #2C2C2C;
+    -fx-border-color: #444444;
     -fx-text-fill: #F8FAFC;
 }
 
@@ -272,6 +285,7 @@
 
 .admin-button,
 .admin-button-primary,
+.admin-button-cancel,
 .admin-button-success,
 .admin-button-danger,
 .admin-button-neutral,
@@ -293,6 +307,26 @@
 
 .admin-button-primary:pressed {
     -fx-background-color: #355A82;
+}
+
+.admin-button-cancel {
+    -fx-background-color: #E5E7EB;
+    -fx-text-fill: #10233F;
+    -fx-background-radius: 9;
+    -fx-border-radius: 9;
+}
+
+.admin-page-root.dark .admin-button-cancel {
+    -fx-background-color: #333333;
+    -fx-text-fill: #FFFFFF;
+}
+
+.admin-button-cancel:hover {
+    -fx-background-color: #DDE1E7;
+}
+
+.admin-page-root.dark .admin-button-cancel:hover {
+    -fx-background-color: #3A3A3A;
 }
 
 .admin-button-success {

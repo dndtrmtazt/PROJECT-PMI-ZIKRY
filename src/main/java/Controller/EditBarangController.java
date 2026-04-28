@@ -431,7 +431,7 @@ public class EditBarangController {
         if (lblTitle != null) lblTitle.setStyle("-fx-text-fill: white;");
 
         if (vboxFormCard != null) vboxFormCard.setStyle("-fx-background-color: " + bgCard + "; -fx-background-radius: 15; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 15, 0, 0, 8);");
-        if (hboxFooter != null) hboxFooter.setStyle("-fx-background-color: " + (enabled ? "#2c2c2c" : "white") + "; -fx-background-radius: 0 0 15 15;");
+        if (hboxFooter != null) hboxFooter.setStyle("-fx-background-color: " + (enabled ? "#1E1E1E" : "white") + "; -fx-background-radius: 0 0 15 15;");
 
         // Loop Label (Bold Semua)
         Label[] formLabels = {lblIdBarang, lblNamaBarang, lblIdKategori, lblStok, lblSatuan, lblHargaBeli, lblHargaJual};
@@ -451,8 +451,57 @@ public class EditBarangController {
 
         if (txtIdBarang != null) txtIdBarang.setStyle(lockedStyle);
 
-        if (cmbKategori != null) cmbKategori.setStyle(lockedStyle);
-        if (cbSatuan != null) cbSatuan.setStyle(txtStyle);
+        if (cmbKategori != null) {
+            cmbKategori.setStyle(lockedStyle);
+            setComboBoxTextColor(cmbKategori, enabled);
+        }
+        if (cbSatuan != null) {
+            cbSatuan.setStyle(txtStyle);
+            setComboBoxTextColor(cbSatuan, enabled);
+        }
+    }
+
+    private void setComboBoxTextColor(ComboBox<String> comboBox, boolean darkMode) {
+        if (!darkMode) {
+            comboBox.setButtonCell(null);
+            comboBox.setCellFactory(null);
+            return;
+        }
+
+        comboBox.setButtonCell(createComboBoxButtonCell());
+        comboBox.setCellFactory(listView -> createDarkComboBoxPopupCell());
+    }
+
+    private ListCell<String> createComboBoxButtonCell() {
+        return new ListCell<>() {
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || item == null ? null : item);
+                setStyle("-fx-text-fill: #F8FAFC; -fx-background-color: transparent; -fx-opacity: 1;");
+            }
+        };
+    }
+
+    private ListCell<String> createDarkComboBoxPopupCell() {
+        return new ListCell<>() {
+            {
+                hoverProperty().addListener((observable, oldValue, newValue) -> updateDarkPopupCellStyle());
+                selectedProperty().addListener((observable, oldValue, newValue) -> updateDarkPopupCellStyle());
+            }
+
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || item == null ? null : item);
+                updateDarkPopupCellStyle();
+            }
+
+            private void updateDarkPopupCellStyle() {
+                String background = isSelected() ? "#0EA5C6" : isHover() ? "#3A3A3A" : "#2C2C2C";
+                setStyle("-fx-background-color: " + background + "; -fx-text-fill: #F8FAFC; -fx-opacity: 1;");
+            }
+        };
     }
 
     private void setStyleClass(Node node, String styleClass, boolean enabled) {

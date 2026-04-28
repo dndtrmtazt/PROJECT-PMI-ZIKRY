@@ -17,9 +17,13 @@ public class PengaturanController {
     @FXML private HBox hboxHeader;
     @FXML private Label lblTitle, lblSubTitle;
     @FXML private TextField txtNamaToko, txtTelp, txtAlamat, txtEmail;
-    @FXML private Button btnEdit;
+    @FXML private Button btnEdit, btnBatal;
 
     private boolean isEditMode = false;
+    private String namaAwal;
+    private String telpAwal;
+    private String alamatAwal;
+    private String emailAwal;
 
     @FXML
     public void initialize() {
@@ -42,11 +46,13 @@ public class PengaturanController {
     private void handleEdit() {
         if (!isEditMode) {
             // AKTIFKAN MODE EDIT
+            simpanDataAwalEdit();
+            isEditMode = true;
+            updateModeEditView();
             setFieldsEditable(true);
             btnEdit.setText("Simpan");
             // Menggunakan warna hijau untuk memberi kesan 'Save'
-            btnEdit.setStyle("-fx-background-color: #2ECC71; -fx-text-fill: white; -fx-font-weight: bold;");
-            isEditMode = true;
+            btnEdit.setStyle("-fx-background-color: #2ECC71; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8; -fx-cursor: hand;");
         } else {
             // PROSES SIMPAN
             String nama = txtNamaToko.getText();
@@ -58,15 +64,57 @@ public class PengaturanController {
             boolean sukses = TokoDAO.updateToko(nama, telp, alamat, email);
 
             if (sukses) {
+                isEditMode = false;
+                updateModeEditView();
                 setFieldsEditable(false);
                 btnEdit.setText("Edit");
-                btnEdit.setStyle("-fx-background-color: #3498DB; -fx-text-fill: white; -fx-font-weight: bold;");
-                isEditMode = false;
 
                 tampilkanAlert(Alert.AlertType.INFORMATION, "Update Berhasil", "Data Toko Zikry telah diperbarui!");
             } else {
                 // Jika gagal, tampilkan pesan error yang sesuai screenshot
                 tampilkanAlert(Alert.AlertType.ERROR, "Error", "Gagal memperbarui data. Pastikan database aktif dan ID=1 tersedia!");
+            }
+        }
+    }
+
+    @FXML
+    private void handleBatal() {
+        kembalikanDataAwalEdit();
+        isEditMode = false;
+        updateModeEditView();
+        setFieldsEditable(false);
+        btnEdit.setText("Edit");
+    }
+
+    private void simpanDataAwalEdit() {
+        namaAwal = txtNamaToko.getText();
+        telpAwal = txtTelp.getText();
+        alamatAwal = txtAlamat.getText();
+        emailAwal = txtEmail.getText();
+    }
+
+    private void kembalikanDataAwalEdit() {
+        txtNamaToko.setText(namaAwal);
+        txtTelp.setText(telpAwal);
+        txtAlamat.setText(alamatAwal);
+        txtEmail.setText(emailAwal);
+    }
+
+    private void updateModeEditView() {
+        if (lblTitle != null) {
+            lblTitle.setText(isEditMode ? "Edit Pengaturan Toko" : "Pengaturan Toko");
+        }
+        if (btnBatal != null) {
+            btnBatal.setVisible(isEditMode);
+            btnBatal.setManaged(isEditMode);
+        }
+        if (btnEdit != null) {
+            if (isEditMode) {
+                btnEdit.setText("Simpan");
+                btnEdit.setStyle("-fx-background-color: #2ECC71; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8; -fx-cursor: hand;");
+            } else {
+                btnEdit.setText("Edit");
+                btnEdit.setStyle("-fx-background-color: #3498DB; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8; -fx-cursor: hand;");
             }
         }
     }
@@ -79,10 +127,10 @@ public class PengaturanController {
 
         boolean enabled = MainController.isDarkMode;
 
-        // Visual feedback agar user tahu field mana yang bisa diisi
+        // Field tetap terlihat seperti input normal, tapi hanya bisa diketik saat mode edit aktif.
         String style = value
                 ? "-fx-background-color: " + (enabled ? "#2C2C2C" : "#FFFFFF") + "; -fx-text-fill: " + (enabled ? "white" : "#1F2937") + "; -fx-border-color: #3498DB; -fx-border-radius: 5; -fx-background-radius: 5;"
-                : "-fx-background-color: transparent; -fx-border-color: transparent; -fx-font-weight: bold; -fx-text-fill: " + (enabled ? "white" : "#1F2937") + ";";
+                : "-fx-background-color: " + (enabled ? "#2C2C2C" : "#FFFFFF") + "; -fx-border-color: " + (enabled ? "#444444" : "#D1D5DB") + "; -fx-border-radius: 5; -fx-background-radius: 5; -fx-font-weight: bold; -fx-text-fill: " + (enabled ? "white" : "#1F2937") + ";";
 
         txtNamaToko.setStyle(style);
         txtTelp.setStyle(style);
@@ -127,7 +175,7 @@ public class PengaturanController {
                             TextField field = (TextField) child;
                             field.setStyle((field.isEditable()
                                     ? "-fx-background-color: " + (enabled ? "#2C2C2C" : "#FFFFFF") + "; -fx-border-color: #3498DB; -fx-border-radius: 5; -fx-background-radius: 5;"
-                                    : "-fx-background-color: transparent; -fx-border-color: transparent;")
+                                    : "-fx-background-color: " + (enabled ? "#2C2C2C" : "#FFFFFF") + "; -fx-border-color: " + (enabled ? "#444444" : "#D1D5DB") + "; -fx-border-radius: 5; -fx-background-radius: 5;")
                                     + " -fx-font-weight: bold; -fx-text-fill: " + textColor + ";");
                         }
                     });
@@ -135,13 +183,7 @@ public class PengaturanController {
             });
         }
 
-        if (btnEdit != null) {
-            if (isEditMode) {
-                btnEdit.setStyle("-fx-background-color: #2ECC71; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8; -fx-cursor: hand;");
-            } else {
-                btnEdit.setStyle("-fx-background-color: #3498DB; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8; -fx-cursor: hand;");
-            }
-        }
+        updateModeEditView();
 
         setFieldsEditable(isEditMode);
     }

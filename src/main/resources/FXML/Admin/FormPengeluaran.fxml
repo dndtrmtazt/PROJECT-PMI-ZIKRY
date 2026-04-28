@@ -29,7 +29,7 @@
                 <VBox spacing="5.0">
                     <children>
                         <Label styleClass="admin-label" text="ID Pengeluaran" />
-                        <TextField fx:id="txtId" editable="true" promptText="Contoh: PGN001" styleClass="admin-input" />
+                        <TextField fx:id="txtId" editable="false" promptText="Contoh: PGN001" styleClass="admin-input" />
                     </children>
                 </VBox>
 

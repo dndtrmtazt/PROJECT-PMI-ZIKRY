@@ -44,6 +44,7 @@ public class LaporanController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        setupCurrencyFormatter();
         setupTable();
         loadData();
         updateSummary();
@@ -55,6 +56,11 @@ public class LaporanController implements Initializable {
         }
 
         setDarkMode(MainController.isDarkMode);
+    }
+
+    private void setupCurrencyFormatter() {
+        nf.setMinimumFractionDigits(0);
+        nf.setMaximumFractionDigits(0);
     }
 
     private void setupTable() {
@@ -96,10 +102,8 @@ public class LaporanController implements Initializable {
     }
 
     private void updateSummary() {
-        // For summary cards, let's show data for "today" or total if no data today
-        String today = LocalDate.now().toString();
-        Laporan summary = masterData.stream()
-                .filter(l -> l.getTanggal().equals(today))
+        LocalDate today = LocalDate.now();
+        Laporan summary = LaporanDao.getLaporanByDateRange(today, today).stream()
                 .findFirst()
                 .orElse(null);
 
@@ -175,7 +179,6 @@ public class LaporanController implements Initializable {
     public void handleFilter(ActionEvent event) {
         if (datePicker.getValue() == null) {
             loadData();
-            updateSummary();
             return;
         }
 
@@ -188,15 +191,6 @@ public class LaporanController implements Initializable {
         List<Laporan> filteredData = LaporanDao.getLaporanByDateRange(selectedDate, selectedDate);
         masterData.setAll(filteredData);
         tableLaporan.setItems(masterData);
-
-        // Update summary based on filtered data
-        double totalPenjualan = filteredData.stream().mapToDouble(Laporan::getTotalPenjualan).sum();
-        double totalPengeluaran = filteredData.stream().mapToDouble(Laporan::getTotalPengeluaran).sum();
-        int totalTransaksi = filteredData.stream().mapToInt(Laporan::getJumlahTransaksi).sum();
-
-        lblTotalPenjualan.setText(nf.format(totalPenjualan));
-        lblTotalPengeluaran.setText(nf.format(totalPengeluaran));
-        lblTotalTransaksi.setText(totalTransaksi + " Transaksi");
     }
 
     @FXML

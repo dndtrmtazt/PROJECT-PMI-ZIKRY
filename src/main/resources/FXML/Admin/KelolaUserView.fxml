@@ -7,7 +7,7 @@
 
 <VBox fx:id="vboxMainContent" prefHeight="600.0" prefWidth="817.0" style="-fx-background-color: #F4F4F4;" styleClass="admin-page-root" stylesheets="@../../CSS/admin.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.UserController">
     <children>
-        <HBox alignment="CENTER_LEFT" prefHeight="60.0" styleClass="admin-header">
+        <HBox alignment="CENTER_LEFT" maxHeight="60.0" minHeight="60.0" prefHeight="60.0" styleClass="admin-header">
             <children>
                 <Label fx:id="lblTitle" styleClass="admin-title" text="Manajemen User">
                     <font><Font name="System Bold" size="24.0" /></font>
@@ -16,21 +16,21 @@
             </children>
         </HBox>
 
-        <VBox spacing="20.0" VBox.vgrow="ALWAYS">
+        <VBox minHeight="0.0" spacing="20.0" VBox.vgrow="ALWAYS">
             <padding><Insets bottom="20.0" left="25.0" right="25.0" top="30.0" /></padding>
             <children>
-                <VBox fx:id="LyrUsr" spacing="15.0" styleClass="admin-table-card" VBox.vgrow="ALWAYS">
+                <VBox fx:id="LyrUsr" minHeight="0.0" spacing="15.0" styleClass="admin-table-card" VBox.vgrow="ALWAYS">
                     <padding><Insets bottom="20.0" left="20.0" right="20.0" top="20.0" /></padding>
                     <children>
-                        <HBox alignment="CENTER_LEFT">
+                        <HBox alignment="CENTER_LEFT" maxHeight="35.0" minHeight="35.0" prefHeight="35.0">
                             <children>
                                 <Label fx:id="lblSubTitle" styleClass="admin-section-title" text="Daftar Pengguna Sistem" />
                                 <Region HBox.hgrow="ALWAYS" />
-                                <Button fx:id="btnTambahUser" mnemonicParsing="false" onAction="#handleTambahUser" prefHeight="35.0" prefWidth="180.0" styleClass="admin-button-primary" text="+ Tambah User Baru" />
+                                <Button fx:id="btnTambahUser" maxHeight="35.0" maxWidth="180.0" minHeight="35.0" minWidth="180.0" mnemonicParsing="false" onAction="#handleTambahUser" prefHeight="35.0" prefWidth="180.0" styleClass="admin-button-primary" text="+ Tambah User Baru" />
                             </children>
                         </HBox>
 
-                        <HBox fx:id="hboxTableHead" alignment="CENTER_LEFT" prefHeight="40.0" spacing="10.0" styleClass="admin-table-head">
+                        <HBox fx:id="hboxTableHead" alignment="CENTER_LEFT" maxHeight="40.0" minHeight="40.0" prefHeight="40.0" spacing="10.0" styleClass="admin-table-head">
                             <padding><Insets left="15.0" right="15.0" /></padding>
                             <children>
                                 <Label prefWidth="40.0" style="-fx-font-weight: bold;" text="No" />
@@ -38,11 +38,11 @@
                                 <Label prefWidth="180.0" style="-fx-font-weight: bold;" text="Nama Lengkap" />
                                 <Label prefWidth="120.0" style="-fx-font-weight: bold;" text="Role / Jabatan" />
                                 <Region HBox.hgrow="ALWAYS" />
-                                <Label alignment="CENTER" prefWidth="120.0" style="-fx-font-weight: bold;" text="Aksi" />
+                                <Label alignment="CENTER" prefWidth="160.0" style="-fx-font-weight: bold;" text="Aksi" />
                             </children>
                         </HBox>
 
-                        <ScrollPane fx:id="scrollUser" fitToWidth="true" hbarPolicy="NEVER" styleClass="admin-list-scroll" VBox.vgrow="ALWAYS">
+                        <ScrollPane fx:id="scrollUser" fitToWidth="true" hbarPolicy="NEVER" minHeight="0.0" styleClass="admin-list-scroll" VBox.vgrow="ALWAYS">
                             <content>
                                 <VBox fx:id="vboxUserList" spacing="10.0" style="-fx-background-color: transparent;" />
                             </content>

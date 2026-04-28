@@ -45,6 +45,7 @@ public class BarangController {
         colId.setSortable(true);
         colNama.setSortable(true);
         colStok.setSortable(true);
+        tableBarang.setPlaceholder(new Label("Barang tidak ditemukan"));
         tableBarang.setItems(listBarang);
 
         // 2. FITUR DOUBLE CLICK PADA BARIS TABEL

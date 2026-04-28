@@ -45,6 +45,24 @@ public class PengeluaranDAO {
         }
     }
 
+    public static String getNextIdPengeluaran() {
+        String query = "SELECT MAX(CAST(SUBSTR(id_pengeluaran, 4) AS INTEGER)) FROM pengeluaran WHERE id_pengeluaran LIKE 'PGN%'";
+
+        try (Connection conn = koneksi.koneksiDB();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(query)) {
+
+            int nextNumber = 1;
+            if (rs.next()) {
+                nextNumber = rs.getInt(1) + 1;
+            }
+            return String.format("PGN%03d", nextNumber);
+        } catch (SQLException e) {
+            System.err.println("Gagal Membuat ID Pengeluaran: " + e.getMessage());
+            return "PGN001";
+        }
+    }
+
     public static boolean updatePengeluaran(Pengeluaran p, String oldId) {
         String query = "UPDATE pengeluaran SET id_pengeluaran = ?, tgl_pengeluaran = ?, nominal = ?, jenis = ?, id_user = ? WHERE id_pengeluaran = ?";
         try (Connection conn = koneksi.koneksiDB();

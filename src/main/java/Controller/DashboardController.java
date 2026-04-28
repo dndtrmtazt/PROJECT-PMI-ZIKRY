@@ -37,7 +37,7 @@ public class DashboardController implements Initializable {
     @FXML private Label lblDashboard, lblCard1Title, lblCard1Value, lblCard2Title, lblCard2Value, lblCard3Title, lblCard3Value, lblCard4Title;
     @FXML private VBox card1, card2, card3, card4;
     @FXML private Button btnCard1, btnCard2, btnCard4, btnLogout;
-    @FXML private ImageView imgLightMode, imgDarkMode, imgLogout;
+    @FXML private ImageView imgLightMode, imgDarkMode, imgLogout, imgCardSales, imgCardExpense, imgCardTransaction, imgCardStock;
     @FXML private ScrollPane scrollStok;
     private final NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
 
@@ -159,6 +159,10 @@ public class DashboardController implements Initializable {
         setImageIfPresent(imgLightMode, enabled ? "/Images/ICON3DARK.png" : "/Images/ICON3.png");
         setImageIfPresent(imgDarkMode, enabled ? "/Images/ICON4DARK.png" : "/Images/ICON4.png");
         setImageIfPresent(imgLogout, enabled ? "/Images/ICON33.png" : "/Images/ICON6.png");
+        setImageIfPresent(imgCardSales, enabled ? "/Images/Component 17.png" : "/Images/Component 13.png");
+        setImageIfPresent(imgCardExpense, enabled ? "/Images/Component 19.png" : "/Images/Component 15.png");
+        setImageIfPresent(imgCardTransaction, enabled ? "/Images/Component 18.png" : "/Images/Component 14.png");
+        setImageIfPresent(imgCardStock, enabled ? "/Images/Component 20.png" : "/Images/Component 16.png");
 
         if (scrollStok != null) {
             scrollStok.setStyle("-fx-background: transparent; -fx-background-color: transparent;");

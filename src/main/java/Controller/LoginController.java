@@ -78,7 +78,7 @@ public class LoginController {
         try {
             String fxmlPath;
             if ("kasir".equalsIgnoreCase(user.getRole())) {
-                fxmlPath = "/FXML/Kasir/KasirDashboardView.fxml";
+                fxmlPath = "/FXML/Kasir/SidebarKasir.fxml";
             } else {
                 fxmlPath = "/FXML/Admin/MainLayout.fxml";
             }

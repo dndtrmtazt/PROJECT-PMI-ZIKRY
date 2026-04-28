@@ -72,10 +72,126 @@
 /* Scrollbar modern khusus tabel Daftar Barang */
 .barang-table {
     -fx-padding: 0 4 0 0;
+    -fx-background-color: transparent;
+}
+
+.barang-table .column-header-background,
+.barang-table .column-header,
+.barang-table .column-header .filler {
+    -fx-background-color: #F8FAFC;
+    -fx-border-color: #E2E8F0;
+    -fx-border-width: 0 0 1 0;
+    -fx-padding: 0;
+    -fx-pref-height: 40;
+    -fx-min-height: 40;
+}
+
+.barang-table .column-header .label {
+    -fx-alignment: CENTER-LEFT;
+    -fx-padding: 0 0 0 12;
+}
+
+.barang-table .table-row-cell,
+.barang-table .table-row-cell:odd,
+.barang-table .table-row-cell:even {
+    -fx-background-color: #FFFFFF;
+    -fx-background-insets: 0;
+    -fx-border-color: transparent transparent #DADDE3 transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+.barang-table .table-row-cell:selected {
+    -fx-background-color: #EAF1FB;
+}
+
+.barang-table .table-cell {
+    -fx-border-color: transparent #DADDE3 transparent transparent;
+    -fx-border-width: 0 1 0 0;
+    -fx-text-fill: #2C3E50;
 }
 
 .barang-table .virtual-flow {
     -fx-padding: 0 4 0 0;
+}
+
+.barang-table.dark .column-header-background,
+.barang-table.dark .column-header,
+.barang-table.dark .column-header .filler {
+    -fx-background-color: #2C2C2C;
+    -fx-border-color: #333333;
+}
+
+.barang-table.dark .table-row-cell,
+.barang-table.dark .table-row-cell:odd,
+.barang-table.dark .table-row-cell:even {
+    -fx-background-color: #1E1E1E;
+    -fx-border-color: transparent transparent #333333 transparent;
+}
+
+.barang-table.dark .table-row-cell:selected {
+    -fx-background-color: #4072A5;
+}
+
+.barang-table.dark .table-cell {
+    -fx-border-color: transparent #333333 transparent transparent;
+    -fx-text-fill: #E0E0E0;
+}
+
+.data-barang-table .table-row-cell:empty,
+.laporan-penjualan-table .table-row-cell:empty {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+}
+
+.data-barang-table .table-row-cell:empty .table-cell,
+.laporan-penjualan-table .table-row-cell:empty .table-cell {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+}
+
+.data-barang-table .table-row-cell:filled,
+.data-barang-table .table-row-cell:filled:odd,
+.data-barang-table .table-row-cell:filled:even,
+.laporan-penjualan-table .table-row-cell:filled,
+.laporan-penjualan-table .table-row-cell:filled:odd,
+.laporan-penjualan-table .table-row-cell:filled:even {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: transparent transparent #DADDE3 transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+.data-barang-table .table-row-cell:filled .table-cell,
+.laporan-penjualan-table .table-row-cell:filled .table-cell {
+    -fx-border-color: transparent #DADDE3 transparent transparent;
+    -fx-border-width: 0 1 0 0;
+}
+
+.data-barang-table.dark .table-row-cell:empty,
+.laporan-penjualan-table.dark .table-row-cell:empty,
+.data-barang-table.dark .table-row-cell:empty .table-cell,
+.laporan-penjualan-table.dark .table-row-cell:empty .table-cell {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+}
+
+.data-barang-table.dark .table-row-cell:filled,
+.data-barang-table.dark .table-row-cell:filled:odd,
+.data-barang-table.dark .table-row-cell:filled:even,
+.laporan-penjualan-table.dark .table-row-cell:filled,
+.laporan-penjualan-table.dark .table-row-cell:filled:odd,
+.laporan-penjualan-table.dark .table-row-cell:filled:even {
+    -fx-background-color: #1E1E1E;
+    -fx-border-color: transparent transparent #333333 transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+.data-barang-table.dark .table-row-cell:filled .table-cell,
+.laporan-penjualan-table.dark .table-row-cell:filled .table-cell {
+    -fx-border-color: transparent #333333 transparent transparent;
+    -fx-border-width: 0 1 0 0;
 }
 
 .barang-table .scroll-bar:vertical,

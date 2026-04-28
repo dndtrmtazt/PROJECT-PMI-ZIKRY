@@ -1,5 +1,6 @@
 package Controller;
 
+import java.io.InputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional; // Tambahkan ini untuk konfirmasi hapus
@@ -15,6 +16,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType; // Tambahkan ini
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
@@ -26,6 +29,8 @@ import model.User;
 import java.net.URL;
 
 public class UserController {
+    private static final String EDIT_ICON_PATH = "/Images/icon_edit.png";
+    private static final String DELETE_ICON_PATH = "/Images/icon_hapus.png";
 
     @FXML private VBox vboxMainContent, vboxUserList, LyrUsr;
     @FXML private HBox hboxTableHead;
@@ -122,12 +127,16 @@ public class UserController {
 
             // TOMBOL EDIT
             Button btnEdit = new Button("Edit");
-            btnEdit.setStyle("-fx-background-color: #3498DB; -fx-text-fill: white; -fx-cursor: hand; -fx-font-weight: bold; -fx-background-radius: 5;");
+            btnEdit.setGraphic(createActionIcon(EDIT_ICON_PATH));
+            btnEdit.setGraphicTextGap(5);
+            btnEdit.setStyle("-fx-background-color: #3498DB; -fx-text-fill: white; -fx-background-radius: 6; -fx-cursor: hand; -fx-font-weight: bold; -fx-font-size: 11px; -fx-padding: 6 12 6 12;");
             btnEdit.setOnAction(e -> handleEditUser(u)); // Panggil fungsi edit
 
             // TOMBOL HAPUS
             Button btnHapus = new Button("Hapus");
-            btnHapus.setStyle("-fx-background-color: #E74C3C; -fx-text-fill: white; -fx-cursor: hand; -fx-font-weight: bold; -fx-background-radius: 5;");
+            btnHapus.setGraphic(createActionIcon(DELETE_ICON_PATH));
+            btnHapus.setGraphicTextGap(5);
+            btnHapus.setStyle("-fx-background-color: #E74C3C; -fx-text-fill: white; -fx-background-radius: 6; -fx-cursor: hand; -fx-font-weight: bold; -fx-font-size: 11px; -fx-padding: 6 12 6 12;");
             btnHapus.setOnAction(e -> handleHapusUser(u)); // Panggil fungsi hapus
 
             actionBox.getChildren().addAll(btnEdit, btnHapus);
@@ -214,5 +223,18 @@ public class UserController {
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
+    }
+
+    private ImageView createActionIcon(String iconPath) {
+        InputStream iconStream = getClass().getResourceAsStream(iconPath);
+        if (iconStream == null) {
+            return null;
+        }
+
+        ImageView icon = new ImageView(new Image(iconStream));
+        icon.setFitHeight(14);
+        icon.setFitWidth(14);
+        icon.setPreserveRatio(true);
+        return icon;
     }
 }

@@ -40,7 +40,7 @@
                     <children>
                         <HBox alignment="CENTER_LEFT" spacing="12.0">
                             <children>
-                                <ImageView fitHeight="50.0" fitWidth="48.0"><image><Image url="@../../Images/Component 13.png" /></image></ImageView>
+                                <ImageView fx:id="imgCardSales" fitHeight="50.0" fitWidth="48.0"><image><Image url="@../../Images/Component 13.png" /></image></ImageView>
                                 <Label fx:id="lblCard1Title" styleClass="admin-dashboard-card-title" text="TOTAL PENJUALAN HARI INI" textFill="#1976D2"><font><Font name="System Bold" size="15.0" /></font></Label>
                             </children>
                         </HBox>
@@ -56,7 +56,7 @@
                     <children>
                         <HBox alignment="CENTER_LEFT" spacing="12.0">
                             <children>
-                                <ImageView fitHeight="50.0" fitWidth="48.0"><image><Image url="@../../Images/Component 15.png" /></image></ImageView>
+                                <ImageView fx:id="imgCardExpense" fitHeight="50.0" fitWidth="48.0"><image><Image url="@../../Images/Component 15.png" /></image></ImageView>
                                 <Label fx:id="lblCard2Title" styleClass="admin-dashboard-card-title" text="TOTAL PENGELUARAN HARI INI" textFill="#2C3E50"><font><Font name="System Bold" size="15.0" /></font></Label>
                             </children>
                         </HBox>
@@ -72,7 +72,7 @@
                     <children>
                         <HBox alignment="CENTER_LEFT" spacing="12.0">
                             <children>
-                                <ImageView fitHeight="50.0" fitWidth="48.0"><image><Image url="@../../Images/Component 14.png" /></image></ImageView>
+                                <ImageView fx:id="imgCardTransaction" fitHeight="50.0" fitWidth="48.0"><image><Image url="@../../Images/Component 14.png" /></image></ImageView>
                                 <Label fx:id="lblCard3Title" styleClass="admin-dashboard-card-title" text="JUMLAH TRANSAKSI HARI INI" textFill="#2C3E50"><font><Font name="System Bold" size="15.0" /></font></Label>
                             </children>
                         </HBox>
@@ -85,7 +85,7 @@
                     <children>
                         <HBox alignment="CENTER_LEFT" spacing="12.0">
                             <children>
-                                <ImageView fitHeight="50.0" fitWidth="48.0"><image><Image url="@../../Images/Component 16.png" /></image></ImageView>
+                                <ImageView fx:id="imgCardStock" fitHeight="50.0" fitWidth="48.0"><image><Image url="@../../Images/Component 16.png" /></image></ImageView>
                                 <Label fx:id="lblCard4Title" styleClass="admin-dashboard-card-title" text="INFO STOK HAMPIR HABIS" textFill="#2E7D32"><font><Font name="System Bold" size="15.0" /></font></Label>
                             </children>
                         </HBox>

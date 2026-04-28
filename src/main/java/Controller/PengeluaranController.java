@@ -30,18 +30,27 @@ import java.util.Locale;
 import java.util.stream.Collectors;
 
 public class PengeluaranController implements Initializable {
+    private static final String EDIT_ICON_PATH = "/Images/icon_edit.png";
+    private static final String DELETE_ICON_PATH = "/Images/icon_hapus.png";
 
     @FXML private VBox vboxMainContent, vboxPengeluaranList;
     @FXML private HBox hboxSearch, hboxTableHead;
-    @FXML private Label lblTitle, lblSubTitle;
+    @FXML private Label lblTitle, lblSubTitle, lblSortIdPengeluaran, lblSortTanggal, lblSortNominal, lblSortJenis, lblSortPic;
     @FXML private TextField txtSearchPengeluaran;
     @FXML private DatePicker dpFilterTanggal;
     @FXML private Button btnSearch, btnTambahPengeluaran;
     @FXML private ScrollPane scrollPengeluaran;
     @FXML private VBox LyrPengeluaran;
+    private SortColumn activeSortColumn;
+    private boolean sortAscending = true;
+
+    private enum SortColumn {
+        ID, TANGGAL, NOMINAL, JENIS, PIC
+    }
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        setupSortHeaders();
         muatDataPengeluaran();
         if (txtSearchPengeluaran != null) {
             txtSearchPengeluaran.setOnAction(event -> muatDataPengeluaran());
@@ -100,9 +109,8 @@ public class PengeluaranController implements Initializable {
         vboxPengeluaranList.getChildren().clear();
 
         List<Pengeluaran> list = getFilteredPengeluaran();
-        list.sort(Comparator
-                .comparing(Pengeluaran::getTglPengeluaran, Comparator.nullsLast(Comparator.reverseOrder()))
-                .thenComparing(Pengeluaran::getIdPengeluaran, Comparator.nullsLast(String::compareToIgnoreCase)));
+        applyCurrentSort(list);
+        updateSortHeaderLabels();
         boolean isDark = MainController.isDarkMode;
         String textColor = isDark ? "white" : "#2C3E50";
         String rowBg = isDark ? "#1e1e1e" : "#FFFFFF";
@@ -121,7 +129,7 @@ public class PengeluaranController implements Initializable {
             lblNo.setMinWidth(40.0); lblNo.setStyle("-fx-text-fill: " + textColor + ";");
 
             Label lblId = new Label(p.getIdPengeluaran());
-            lblId.setMinWidth(100.0); lblId.setStyle("-fx-text-fill: " + textColor + ";");
+            lblId.setMinWidth(125.0); lblId.setStyle("-fx-text-fill: " + textColor + ";");
 
             String tglFormat = (p.getTglPengeluaran() != null) ? p.getTglPengeluaran().format(formatter) : "-";
             Label lblTgl = new Label(tglFormat);
@@ -143,11 +151,11 @@ public class PengeluaranController implements Initializable {
             actionBox.setMinWidth(160.0); actionBox.setAlignment(Pos.CENTER);
 
             // Listener Edit
-            Button btnEdit = createActionButton("Edit", "#3498DB", null);
+            Button btnEdit = createActionButton("Edit", "#3498DB", EDIT_ICON_PATH);
             btnEdit.setOnAction(e -> showPengeluaranDialog(p));
 
             // Listener Hapus
-            Button btnHapus = createActionButton("Hapus", "#E74C3C", null);
+            Button btnHapus = createActionButton("Hapus", "#E74C3C", DELETE_ICON_PATH);
             btnHapus.setOnAction(e -> handleHapus(p));
 
             actionBox.getChildren().addAll(btnEdit, btnHapus);
@@ -192,6 +200,109 @@ public class PengeluaranController implements Initializable {
         return value != null && value.toLowerCase(Locale.ROOT).contains(keyword);
     }
 
+    private void setupSortHeaders() {
+        setupSortHeader(lblSortIdPengeluaran, SortColumn.ID);
+        setupSortHeader(lblSortTanggal, SortColumn.TANGGAL);
+        setupSortHeader(lblSortNominal, SortColumn.NOMINAL);
+        setupSortHeader(lblSortJenis, SortColumn.JENIS);
+        setupSortHeader(lblSortPic, SortColumn.PIC);
+        updateSortHeaderLabels();
+    }
+
+    private void setupSortHeader(Label label, SortColumn column) {
+        if (label == null) return;
+        label.setOnMouseClicked(event -> handleSort(column));
+        label.setStyle(label.getStyle() + "; -fx-cursor: hand;");
+    }
+
+    private void handleSort(SortColumn column) {
+        if (activeSortColumn == column) {
+            sortAscending = !sortAscending;
+        } else {
+            activeSortColumn = column;
+            sortAscending = true;
+        }
+        muatDataPengeluaran();
+    }
+
+    private void applyCurrentSort(List<Pengeluaran> list) {
+        Comparator<Pengeluaran> comparator = getSortComparator();
+        list.sort(comparator);
+    }
+
+    private Comparator<Pengeluaran> getSortComparator() {
+        Comparator<Pengeluaran> comparator;
+
+        if (activeSortColumn == null) {
+            return Comparator
+                    .comparing(Pengeluaran::getTglPengeluaran, Comparator.nullsLast(Comparator.reverseOrder()))
+                    .thenComparing(Pengeluaran::getIdPengeluaran, this::compareIdPengeluaran);
+        }
+
+        switch (activeSortColumn) {
+            case ID:
+                comparator = (a, b) -> compareIdPengeluaran(a.getIdPengeluaran(), b.getIdPengeluaran());
+                break;
+            case TANGGAL:
+                comparator = Comparator.comparing(Pengeluaran::getTglPengeluaran, Comparator.nullsLast(Comparator.naturalOrder()));
+                break;
+            case NOMINAL:
+                comparator = Comparator.comparingDouble(Pengeluaran::getNominal);
+                break;
+            case JENIS:
+                comparator = Comparator.comparing(Pengeluaran::getJenis, Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER));
+                break;
+            case PIC:
+                comparator = Comparator.comparing(Pengeluaran::getIdUser, Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER));
+                break;
+            default:
+                comparator = (a, b) -> 0;
+        }
+
+        if (!sortAscending) {
+            comparator = comparator.reversed();
+        }
+        return comparator.thenComparing(Pengeluaran::getIdPengeluaran, this::compareIdPengeluaran);
+    }
+
+    private int compareIdPengeluaran(String firstId, String secondId) {
+        int numberCompare = Integer.compare(extractIdNumber(firstId), extractIdNumber(secondId));
+        if (numberCompare != 0) {
+            return numberCompare;
+        }
+        return nullSafeText(firstId).compareToIgnoreCase(nullSafeText(secondId));
+    }
+
+    private int extractIdNumber(String idPengeluaran) {
+        if (idPengeluaran == null || idPengeluaran.length() <= 3) {
+            return Integer.MAX_VALUE;
+        }
+
+        try {
+            return Integer.parseInt(idPengeluaran.substring(3));
+        } catch (NumberFormatException e) {
+            return Integer.MAX_VALUE;
+        }
+    }
+
+    private String nullSafeText(String value) {
+        return value == null ? "" : value;
+    }
+
+    private void updateSortHeaderLabels() {
+        setSortHeaderText(lblSortIdPengeluaran, "ID Pengeluaran", SortColumn.ID);
+        setSortHeaderText(lblSortTanggal, "Tanggal", SortColumn.TANGGAL);
+        setSortHeaderText(lblSortNominal, "Nominal", SortColumn.NOMINAL);
+        setSortHeaderText(lblSortJenis, "Jenis", SortColumn.JENIS);
+        setSortHeaderText(lblSortPic, "PIC (User)", SortColumn.PIC);
+    }
+
+    private void setSortHeaderText(Label label, String baseText, SortColumn column) {
+        if (label == null) return;
+        String indicator = activeSortColumn == column ? (sortAscending ? " \u25B2" : " \u25BC") : "";
+        label.setText(baseText + indicator);
+    }
+
     @FXML
     private void handleCariPengeluaran() {
         muatDataPengeluaran();
@@ -217,8 +328,9 @@ public class PengeluaranController implements Initializable {
         InputStream iconStream = iconPath == null ? null : getClass().getResourceAsStream(iconPath);
         if (iconStream != null) {
             ImageView iv = new ImageView(new Image(iconStream));
-            iv.setFitHeight(14); iv.setFitWidth(14);
+            iv.setFitHeight(14); iv.setFitWidth(14); iv.setPreserveRatio(true);
             btn.setGraphic(iv);
+            btn.setGraphicTextGap(5);
         }
         btn.setStyle("-fx-background-color: " + color + "; -fx-text-fill: white; -fx-background-radius: 6; -fx-cursor: hand; -fx-font-weight: bold; -fx-font-size: 11px; -fx-padding: 6 12 6 12;");
         return btn;

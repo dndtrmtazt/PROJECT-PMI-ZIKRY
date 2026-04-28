@@ -21,8 +21,6 @@ public class FormKategoriController {
 
     private KategoriDAO dao = new KategoriDAO();
     private boolean isEdit = false;
-
-    // --- PERBAIKAN 1: Tambahkan variabel ini agar baris 59 tidak merah lagi ---
     private String idLama;
 
     @FXML

@@ -892,7 +892,7 @@ public class KasirDashboardController {
         }
 
         try {
-            URL popupView = getClass().getResource("/FXML/Kasir/Pop Up Simpan & Cetak.fxml");
+            URL popupView = getClass().getResource("/FXML/Kasir/PopUpSimpan&Cetak.fxml");
             if (popupView == null) {
                 showAlert("Error", "Popup simpan & cetak tidak ditemukan.");
                 return;

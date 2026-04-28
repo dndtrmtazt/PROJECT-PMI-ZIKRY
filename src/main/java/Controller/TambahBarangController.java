@@ -85,9 +85,18 @@ public class TambahBarangController {
         cbSatuan.setValue("Pcs");
     }
 
-    // Bikin method bantuan ini di bawah initialize
     private void setupComboBoxStyle(ComboBox<String> cb) {
-        cb.setButtonCell(new ListCell<String>() {
+        if (cb == null) {
+            return;
+        }
+
+        boolean darkMode = MainController.isDarkMode;
+        cb.setButtonCell(createComboBoxButtonCell(cb, darkMode));
+        cb.setCellFactory(darkMode ? listView -> createDarkComboBoxPopupCell() : null);
+    }
+
+    private ListCell<String> createComboBoxButtonCell(ComboBox<String> cb, boolean darkMode) {
+        return new ListCell<>() {
             @Override
             protected void updateItem(String item, boolean empty) {
                 super.updateItem(item, empty);
@@ -96,15 +105,31 @@ public class TambahBarangController {
                     setStyle("-fx-text-fill: derive(-fx-control-inner-background, -30%);"); // Warna prompt
                 } else {
                     setText(item);
-                    // CEK APAKAH LAGI DARK MODE
-                    if (MainController.isDarkMode) {
-                        setStyle("-fx-text-fill: white;");
-                    } else {
-                        setStyle("-fx-text-fill: #2C3E50;");
-                    }
+                    setStyle("-fx-text-fill: " + (darkMode ? "#F8FAFC" : "#2C3E50") + ";");
                 }
             }
-        });
+        };
+    }
+
+    private ListCell<String> createDarkComboBoxPopupCell() {
+        return new ListCell<>() {
+            {
+                hoverProperty().addListener((observable, oldValue, newValue) -> updateDarkPopupCellStyle());
+                selectedProperty().addListener((observable, oldValue, newValue) -> updateDarkPopupCellStyle());
+            }
+
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || item == null ? null : item);
+                updateDarkPopupCellStyle();
+            }
+
+            private void updateDarkPopupCellStyle() {
+                String background = isSelected() ? "#0EA5C6" : isHover() ? "#3A3A3A" : "#2C2C2C";
+                setStyle("-fx-background-color: " + background + "; -fx-text-fill: #F8FAFC; -fx-opacity: 1;");
+            }
+        };
     }
 
     private void loadKategori() {
@@ -223,8 +248,14 @@ public class TambahBarangController {
         }
 
         // 4. Terapkan ke kedua ComboBox agar tulisannya terang
-        if (cmbKategori != null) cmbKategori.setStyle(txtStyle);
-        if (cbSatuan != null) cbSatuan.setStyle(txtStyle);
+        if (cmbKategori != null) {
+            cmbKategori.setStyle(txtStyle);
+            setupComboBoxStyle(cmbKategori);
+        }
+        if (cbSatuan != null) {
+            cbSatuan.setStyle(txtStyle);
+            setupComboBoxStyle(cbSatuan);
+        }
 
     }
 

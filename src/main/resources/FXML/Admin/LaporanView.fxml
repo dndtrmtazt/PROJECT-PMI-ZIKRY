@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.DatePicker?>
@@ -14,7 +15,7 @@
 
 <VBox fx:id="paneRoot" prefHeight="600.0" style="-fx-background-color: #F4F4F4;" styleClass="admin-page-root" stylesheets="@../../CSS/admin.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.LaporanController">
     <children>
-        <HBox fx:id="hboxHeader" alignment="CENTER_LEFT" prefHeight="60.0" styleClass="admin-header">
+        <HBox fx:id="hboxHeader" alignment="CENTER_LEFT" minHeight="60.0" prefHeight="60.0" styleClass="admin-header">
             <children>
                 <Label fx:id="lblTitle" styleClass="admin-title" text="Laporan Penjualan">
                     <font><Font name="System Bold" size="24.0" /></font>
@@ -23,12 +24,12 @@
             </children>
         </HBox>
 
-        <VBox spacing="20.0" VBox.vgrow="ALWAYS">
-            <padding><Insets bottom="10.0" left="25.0" right="25.0" top="25.0" /></padding>
+        <VBox spacing="18.0" VBox.vgrow="ALWAYS">
+            <padding><Insets bottom="10.0" left="25.0" right="25.0" top="22.0" /></padding>
             <children>
-                <HBox alignment="CENTER" spacing="20.0">
+                <HBox alignment="CENTER" minHeight="90.0" prefHeight="90.0" spacing="24.0">
                     <children>
-                        <VBox fx:id="cardPenjualan" prefHeight="80.0" prefWidth="260.0" style="-fx-background-color: #5CB85C; -fx-background-radius: 10;">
+                        <VBox fx:id="cardPenjualan" prefHeight="88.0" prefWidth="260.0" spacing="4.0" style="-fx-background-color: #5CB85C; -fx-background-radius: 10;">
                             <padding><Insets bottom="15.0" left="20.0" right="20.0" top="15.0" /></padding>
                             <children>
                                 <HBox alignment="CENTER_LEFT" spacing="10.0">
@@ -40,7 +41,7 @@
                                 <Label fx:id="lblTotalPenjualan" prefHeight="32.0" prefWidth="142.0" text="Rp 2.500.000" textFill="WHITE"><font><Font name="System Bold" size="22.0" /></font></Label>
                             </children>
                         </VBox>
-                        <VBox fx:id="cardPengeluaran" prefHeight="80.0" prefWidth="260.0" style="-fx-background-color: #D9534F; -fx-background-radius: 10;">
+                        <VBox fx:id="cardPengeluaran" prefHeight="88.0" prefWidth="260.0" spacing="4.0" style="-fx-background-color: #D9534F; -fx-background-radius: 10;">
                             <padding><Insets bottom="15.0" left="20.0" right="20.0" top="15.0" /></padding>
                             <children>
                                 <HBox alignment="CENTER_LEFT" spacing="10.0">
@@ -52,7 +53,7 @@
                                 <Label fx:id="lblTotalPengeluaran" text="Rp 1.500.000" textFill="WHITE"><font><Font name="System Bold" size="22.0" /></font></Label>
                             </children>
                         </VBox>
-                        <VBox fx:id="cardTransaksi" prefHeight="80.0" prefWidth="260.0" style="-fx-background-color: #5BC0DE; -fx-background-radius: 10;">
+                        <VBox fx:id="cardTransaksi" prefHeight="88.0" prefWidth="260.0" spacing="4.0" style="-fx-background-color: #5BC0DE; -fx-background-radius: 10;">
                             <padding><Insets bottom="15.0" left="20.0" right="20.0" top="15.0" /></padding>
                             <children>
                                 <HBox alignment="CENTER_LEFT" spacing="10.0">
@@ -67,12 +68,12 @@
                     </children>
                 </HBox>
 
-                <HBox fx:id="hboxSearch" alignment="CENTER_LEFT" prefHeight="58.0" spacing="10.0" styleClass="admin-search-card">
-                    <padding><Insets left="20.0" right="20.0" /></padding>
+                <HBox fx:id="hboxSearch" alignment="CENTER_LEFT" minHeight="64.0" prefHeight="64.0" spacing="12.0" styleClass="admin-search-card">
+                    <padding><Insets left="24.0" right="24.0" /></padding>
                     <children>
                         <Label fx:id="lblPilihTanggal" styleClass="admin-label" text="Pilih Tanggal:" />
-                        <DatePicker fx:id="datePicker" maxWidth="1.7976931348623157E308" prefHeight="35.0" promptText="Pilih Tanggal..." styleClass="admin-date-picker" HBox.hgrow="ALWAYS" />
-                        <Button onAction="#handleFilter" prefHeight="35.0" prefWidth="120.0" styleClass="admin-button-primary" text="Tampilkan" />
+                        <DatePicker fx:id="datePicker" maxWidth="1.7976931348623157E308" minHeight="40.0" prefHeight="40.0" promptText="Pilih Tanggal..." styleClass="admin-date-picker" HBox.hgrow="ALWAYS" />
+                        <Button onAction="#handleFilter" minHeight="40.0" prefHeight="40.0" prefWidth="130.0" styleClass="admin-button-primary" text="Tampilkan" />
                     </children>
                 </HBox>
 
@@ -80,7 +81,11 @@
                     <padding><Insets bottom="15.0" left="20.0" right="20.0" top="20.0" /></padding>
                     <children>
                         <Label fx:id="lblRiwayat" styleClass="admin-section-title" text="Riwayat Laporan Penjualan" />
-                        <TableView fx:id="tableLaporan" styleClass="barang-table" VBox.vgrow="ALWAYS">
+                        <TableView fx:id="tableLaporan" VBox.vgrow="ALWAYS">
+                            <styleClass>
+                                <String fx:value="barang-table" />
+                                <String fx:value="laporan-penjualan-table" />
+                            </styleClass>
                             <columns>
                                 <TableColumn fx:id="colTanggal" prefWidth="150.0" text="Tanggal" />
                                 <TableColumn fx:id="colPenjualan" prefWidth="200.0" text="Total Penjualan" />
