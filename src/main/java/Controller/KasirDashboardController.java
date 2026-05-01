@@ -945,8 +945,6 @@ public class KasirDashboardController {
                 return;
             }
 
-            showAlert("Sukses", "Transaksi Berhasil Disimpan!");
-
             cartItems.clear();
             if (txtBayar != null)        txtBayar.clear();
             totalBelanja = 0;
