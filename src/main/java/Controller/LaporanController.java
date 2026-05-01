@@ -4,17 +4,25 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import DAO.LaporanDao;
 import model.Laporan;
 import util.LaporanExportUtil;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.text.NumberFormat;
 import java.time.LocalDateTime;
@@ -23,7 +31,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class LaporanController implements Initializable {
@@ -201,22 +208,12 @@ public class LaporanController implements Initializable {
             return;
         }
 
-        ButtonType pdfButton = new ButtonType("Export ke PDF");
-        ButtonType excelButton = new ButtonType("Export ke Excel");
-        ButtonType cancelButton = new ButtonType("Batal", ButtonBar.ButtonData.CANCEL_CLOSE);
-
-        Alert dialog = new Alert(Alert.AlertType.CONFIRMATION);
-        dialog.setTitle("Cetak Laporan");
-        dialog.setHeaderText("Pilih format export laporan");
-        dialog.setContentText("Pilih format file yang ingin dibuat.");
-        dialog.getButtonTypes().setAll(pdfButton, excelButton, cancelButton);
-
-        Optional<ButtonType> selected = dialog.showAndWait();
-        if (!selected.isPresent() || selected.get() == cancelButton) {
+        ExportLaporanDialogController.ExportFormat selectedFormat = showExportFormatDialog();
+        if (selectedFormat == null) {
             return;
         }
 
-        boolean exportPdf = selected.get() == pdfButton;
+        boolean exportPdf = selectedFormat == ExportLaporanDialogController.ExportFormat.PDF;
         File targetFile = pilihLokasiExport(exportPdf);
         if (targetFile == null) {
             return;
@@ -229,12 +226,90 @@ public class LaporanController implements Initializable {
             } else {
                 LaporanExportUtil.exportToExcel(targetFile, dataExport, periode);
             }
-            showAlert(Alert.AlertType.INFORMATION, "Export Berhasil",
-                    "Laporan berhasil disimpan:\n" + targetFile.getAbsolutePath());
+            showExportSuccessDialog(selectedFormat, targetFile);
         } catch (Exception e) {
             e.printStackTrace();
             showAlert(Alert.AlertType.ERROR, "Export Gagal",
                     "Gagal membuat file laporan:\n" + e.getMessage());
+        }
+    }
+
+    private ExportLaporanDialogController.ExportFormat showExportFormatDialog() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/FXML/Admin/ExportLaporanDialog.fxml"));
+            Parent root = loader.load();
+            ExportLaporanDialogController controller = loader.getController();
+            setStyleClass(root, "dark", MainController.isDarkMode);
+
+            Stage dialog = new Stage();
+            dialog.initModality(Modality.APPLICATION_MODAL);
+            if (tableLaporan != null && tableLaporan.getScene() != null) {
+                dialog.initOwner(tableLaporan.getScene().getWindow());
+            }
+            dialog.initStyle(StageStyle.TRANSPARENT);
+            dialog.setResizable(false);
+
+            Scene scene = new Scene(root);
+            scene.setFill(Color.TRANSPARENT);
+            URL css = getClass().getResource("/CSS/laporan-export-dialog.css");
+            if (css != null) {
+                scene.getStylesheets().add(css.toExternalForm());
+            }
+
+            dialog.setScene(scene);
+            if (dialog.getOwner() != null) {
+                dialog.setOnShown(event -> {
+                    Stage owner = (Stage) dialog.getOwner();
+                    dialog.setX(owner.getX() + (owner.getWidth() - dialog.getWidth()) / 2);
+                    dialog.setY(owner.getY() + (owner.getHeight() - dialog.getHeight()) / 2);
+                });
+            }
+            dialog.showAndWait();
+            return controller.getSelectedFormat();
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Popup Gagal Dibuka",
+                    "Gagal membuka pilihan export laporan:\n" + e.getMessage());
+            return null;
+        }
+    }
+
+    private void showExportSuccessDialog(ExportLaporanDialogController.ExportFormat format, File targetFile) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/FXML/Admin/ExportSuccessDialog.fxml"));
+            Parent root = loader.load();
+            ExportSuccessDialogController controller = loader.getController();
+            controller.setExportResult(format, targetFile.getAbsolutePath());
+            setStyleClass(root, "dark", MainController.isDarkMode);
+
+            Stage dialog = new Stage();
+            dialog.initModality(Modality.APPLICATION_MODAL);
+            if (tableLaporan != null && tableLaporan.getScene() != null) {
+                dialog.initOwner(tableLaporan.getScene().getWindow());
+            }
+            dialog.initStyle(StageStyle.TRANSPARENT);
+            dialog.setResizable(false);
+
+            Scene scene = new Scene(root);
+            scene.setFill(Color.TRANSPARENT);
+            URL css = getClass().getResource("/CSS/laporan-export-dialog.css");
+            if (css != null) {
+                scene.getStylesheets().add(css.toExternalForm());
+            }
+
+            dialog.setScene(scene);
+            if (dialog.getOwner() != null) {
+                dialog.setOnShown(event -> {
+                    Stage owner = (Stage) dialog.getOwner();
+                    dialog.setX(owner.getX() + (owner.getWidth() - dialog.getWidth()) / 2);
+                    dialog.setY(owner.getY() + (owner.getHeight() - dialog.getHeight()) / 2);
+                });
+            }
+            dialog.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert(Alert.AlertType.INFORMATION, "Export Berhasil",
+                    "Laporan berhasil disimpan:\n" + targetFile.getAbsolutePath());
         }
     }
 

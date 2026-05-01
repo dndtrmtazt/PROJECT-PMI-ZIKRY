@@ -573,6 +573,169 @@
     -fx-background-color: #9A9A9A;
 }
 
+.admin-update-dialog-root {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+.admin-update-dialog-card {
+    -fx-min-width: 460;
+    -fx-pref-width: 460;
+    -fx-max-width: 460;
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 10;
+    -fx-background-insets: 0;
+    -fx-border-color: #D5DEE9;
+    -fx-border-radius: 10;
+    -fx-border-width: 1.2;
+    -fx-border-insets: 0;
+    -fx-effect: dropshadow(gaussian, rgba(15, 23, 42, 0.22), 24, 0, 0, 8);
+}
+
+.admin-update-dialog-root.dark .admin-update-dialog-card {
+    -fx-background-color: #1F1F1F;
+    -fx-border-color: #4B5563;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.46), 24, 0, 0, 8);
+}
+
+.admin-update-dialog-header {
+    -fx-padding: 18 20 18 24;
+    -fx-border-color: transparent transparent #E2E8F0 transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+.admin-update-dialog-root.dark .admin-update-dialog-header {
+    -fx-border-color: transparent transparent #3A3A3A transparent;
+}
+
+.admin-update-dialog-title {
+    -fx-text-fill: #1F2937;
+    -fx-font-size: 23px;
+    -fx-font-weight: bold;
+}
+
+.admin-update-dialog-root.dark .admin-update-dialog-title {
+    -fx-text-fill: #F8FAFC;
+}
+
+.admin-update-dialog-close {
+    -fx-min-width: 32;
+    -fx-pref-width: 32;
+    -fx-min-height: 32;
+    -fx-pref-height: 32;
+    -fx-background-color: transparent;
+    -fx-background-radius: 999;
+    -fx-border-color: transparent;
+    -fx-text-fill: #4B5563;
+    -fx-font-size: 22px;
+    -fx-padding: 0;
+    -fx-cursor: hand;
+}
+
+.admin-update-dialog-close:hover {
+    -fx-background-color: #F3F4F6;
+    -fx-text-fill: #1F2937;
+}
+
+.admin-update-dialog-root.dark .admin-update-dialog-close {
+    -fx-text-fill: #E5E7EB;
+}
+
+.admin-update-dialog-root.dark .admin-update-dialog-close:hover {
+    -fx-background-color: #2C2C2C;
+    -fx-text-fill: #FFFFFF;
+}
+
+.admin-update-dialog-body {
+    -fx-padding: 26 30 26 34;
+    -fx-background-color: #FFFFFF;
+}
+
+.admin-update-dialog-root.dark .admin-update-dialog-body {
+    -fx-background-color: #1F1F1F;
+}
+
+.admin-update-dialog-icon-glow {
+    -fx-min-width: 66;
+    -fx-pref-width: 66;
+    -fx-max-width: 66;
+    -fx-min-height: 66;
+    -fx-pref-height: 66;
+    -fx-max-height: 66;
+    -fx-background-color: #E8F2FF;
+    -fx-background-radius: 999;
+}
+
+.admin-update-dialog-root.dark .admin-update-dialog-icon-glow {
+    -fx-background-color: rgba(37, 99, 235, 0.22);
+}
+
+.admin-update-dialog-icon-circle {
+    -fx-min-width: 46;
+    -fx-pref-width: 46;
+    -fx-max-width: 46;
+    -fx-min-height: 46;
+    -fx-pref-height: 46;
+    -fx-max-height: 46;
+    -fx-background-color: linear-gradient(to bottom, #38BDF8, #2563EB);
+    -fx-background-radius: 999;
+    -fx-effect: dropshadow(gaussian, rgba(37, 99, 235, 0.26), 12, 0, 0, 4);
+}
+
+.admin-update-dialog-icon-text {
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+}
+
+.admin-update-dialog-message {
+    -fx-text-fill: #374151;
+    -fx-font-size: 16px;
+}
+
+.admin-update-dialog-root.dark .admin-update-dialog-message {
+    -fx-text-fill: #E5E7EB;
+}
+
+.admin-update-dialog-footer {
+    -fx-padding: 14 22 14 22;
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 0 0 8.8 8.8;
+    -fx-background-insets: 0 1.2 1.2 1.2;
+    -fx-border-color: #E2E8F0 transparent transparent transparent;
+    -fx-border-width: 1 0 0 0;
+    -fx-border-insets: 0 1.2 0 1.2;
+}
+
+.admin-update-dialog-root.dark .admin-update-dialog-footer {
+    -fx-background-color: #1F1F1F;
+    -fx-border-color: #3A3A3A transparent transparent transparent;
+}
+
+.admin-update-dialog-ok {
+    -fx-min-width: 112;
+    -fx-pref-width: 112;
+    -fx-min-height: 36;
+    -fx-pref-height: 36;
+    -fx-background-color: linear-gradient(to bottom, #27A5F8, #2563EB);
+    -fx-background-radius: 8;
+    -fx-border-color: transparent;
+    -fx-border-radius: 8;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(37, 99, 235, 0.25), 12, 0, 0, 4);
+}
+
+.admin-update-dialog-ok:hover {
+    -fx-background-color: linear-gradient(to bottom, #1593EA, #1D4ED8);
+}
+
+.admin-update-dialog-ok:pressed {
+    -fx-background-color: #1D4ED8;
+}
+
 .admin-success-dialog-root {
     -fx-background-color: transparent;
     -fx-padding: 18;
@@ -653,4 +816,158 @@
 
 .admin-success-dialog-ok:pressed {
     -fx-background-color: #356EAF;
+}
+
+.admin-delete-dialog-root {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+.admin-delete-dialog-card {
+    -fx-min-width: 460;
+    -fx-pref-width: 460;
+    -fx-max-width: 460;
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 10;
+    -fx-background-insets: 0;
+    -fx-border-color: #B8C4D4;
+    -fx-border-radius: 10;
+    -fx-border-width: 1.5;
+    -fx-border-insets: 0;
+    -fx-effect: dropshadow(gaussian, rgba(15, 23, 42, 0.26), 24, 0, 0, 8);
+}
+
+.admin-delete-dialog-root.dark .admin-delete-dialog-card {
+    -fx-background-color: #1F1F1F;
+    -fx-border-color: #5B6472;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.48), 24, 0, 0, 8);
+}
+
+.admin-delete-dialog-body {
+    -fx-padding: 22 20 24 28;
+}
+
+.admin-delete-dialog-icon {
+    -fx-min-width: 54;
+    -fx-pref-width: 54;
+    -fx-max-width: 54;
+    -fx-min-height: 54;
+    -fx-pref-height: 54;
+    -fx-max-height: 54;
+    -fx-background-color: #B8B8B8;
+    -fx-background-radius: 999;
+}
+
+.admin-delete-dialog-icon-text {
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 34px;
+    -fx-font-weight: bold;
+}
+
+.admin-delete-dialog-title {
+    -fx-text-fill: #111827;
+    -fx-font-size: 23px;
+    -fx-font-weight: bold;
+}
+
+.admin-delete-dialog-message {
+    -fx-text-fill: #4B5563;
+    -fx-font-size: 15px;
+}
+
+.admin-delete-dialog-root.dark .admin-delete-dialog-title {
+    -fx-text-fill: #F8FAFC;
+}
+
+.admin-delete-dialog-root.dark .admin-delete-dialog-message {
+    -fx-text-fill: #D1D5DB;
+}
+
+.admin-delete-dialog-close {
+    -fx-min-width: 28;
+    -fx-pref-width: 28;
+    -fx-min-height: 28;
+    -fx-pref-height: 28;
+    -fx-background-color: transparent;
+    -fx-background-radius: 999;
+    -fx-border-color: transparent;
+    -fx-text-fill: #8C8C8C;
+    -fx-font-size: 21px;
+    -fx-font-weight: bold;
+    -fx-padding: 0;
+    -fx-cursor: hand;
+}
+
+.admin-delete-dialog-close:hover {
+    -fx-background-color: #F3F4F6;
+    -fx-text-fill: #EF4444;
+}
+
+.admin-delete-dialog-root.dark .admin-delete-dialog-close {
+    -fx-text-fill: #E5E7EB;
+}
+
+.admin-delete-dialog-root.dark .admin-delete-dialog-close:hover {
+    -fx-background-color: #2C2C2C;
+    -fx-text-fill: #FCA5A5;
+}
+
+.admin-delete-dialog-footer {
+    -fx-padding: 14 22 14 22;
+    -fx-background-color: #F8F8F8;
+    -fx-background-radius: 0 0 8.5 8.5;
+    -fx-background-insets: 0 1.5 1.5 1.5;
+    -fx-border-color: #C5CEDA transparent transparent transparent;
+    -fx-border-width: 1.2 0 0 0;
+    -fx-border-insets: 0 1.5 0 1.5;
+}
+
+.admin-delete-dialog-root.dark .admin-delete-dialog-footer {
+    -fx-background-color: #252525;
+    -fx-border-color: #5B6472 transparent transparent transparent;
+}
+
+.admin-delete-dialog-cancel,
+.admin-delete-dialog-confirm {
+    -fx-min-width: 112;
+    -fx-pref-width: 112;
+    -fx-min-height: 36;
+    -fx-pref-height: 36;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-font-size: 14px;
+    -fx-cursor: hand;
+}
+
+.admin-delete-dialog-cancel {
+    -fx-background-color: #F3F4F6;
+    -fx-border-color: #BDBDBD;
+    -fx-text-fill: #111827;
+}
+
+.admin-delete-dialog-cancel:hover {
+    -fx-background-color: #E9ECEF;
+}
+
+.admin-delete-dialog-root.dark .admin-delete-dialog-cancel {
+    -fx-background-color: #2C2C2C;
+    -fx-border-color: #555555;
+    -fx-text-fill: #F8FAFC;
+}
+
+.admin-delete-dialog-confirm {
+    -fx-background-color: #FF5757;
+    -fx-border-color: #FF5757;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-weight: bold;
+}
+
+.admin-delete-dialog-confirm:hover {
+    -fx-background-color: #EF4444;
+    -fx-border-color: #EF4444;
+}
+
+.admin-delete-dialog-confirm:pressed {
+    -fx-background-color: #DC2626;
+    -fx-border-color: #DC2626;
 }

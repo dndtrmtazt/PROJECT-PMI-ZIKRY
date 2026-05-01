@@ -20,8 +20,11 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Modality; // Tambahkan ini
 import javafx.stage.Stage; // Tambahkan ini
+import javafx.stage.StageStyle;
 import DAO.KategoriDAO;
 import model.Kategori;
 import java.io.InputStream;
@@ -188,21 +191,115 @@ public class KategoriController implements Initializable {
     }
 
     private void handleHapus(Kategori k) {
-        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
-        confirm.setTitle("Konfirmasi Hapus");
-        confirm.setHeaderText(null);
-        confirm.setContentText("Apakah Anda yakin ingin menghapus kategori '" + k.getNamaKategori() + "'?");
-
-        confirm.showAndWait().ifPresent(response -> {
-            if (response == ButtonType.OK) {
-                // Pastikan method ini ada di DAO kamu
-                if (KategoriDAO.deleteKategori(k.getIdKategori())) {
-                    loadDataKategori(); // Refresh tampilan
-                } else {
-                    System.err.println("Gagal menghapus data dari DB.");
-                }
+        if (showDeleteConfirmationDialog()) {
+            // Pastikan method ini ada di DAO kamu
+            if (KategoriDAO.deleteKategori(k.getIdKategori())) {
+                loadDataKategori(); // Refresh tampilan
+            } else {
+                System.err.println("Gagal menghapus data dari DB.");
             }
+        }
+    }
+
+    private boolean showDeleteConfirmationDialog() {
+        final boolean[] confirmed = {false};
+        boolean darkMode = MainController.isDarkMode;
+
+        Stage dialog = new Stage();
+        dialog.initModality(Modality.APPLICATION_MODAL);
+        if (paneRoot != null && paneRoot.getScene() != null) {
+            dialog.initOwner(paneRoot.getScene().getWindow());
+        }
+        dialog.initStyle(StageStyle.TRANSPARENT);
+        dialog.setResizable(false);
+
+        StackPane root = new StackPane();
+        root.getStyleClass().add("admin-delete-dialog-root");
+        setStyleClass(root, "dark", darkMode);
+
+        VBox card = new VBox();
+        card.getStyleClass().add("admin-delete-dialog-card");
+        card.setMinWidth(460);
+        card.setPrefWidth(460);
+        card.setMaxWidth(460);
+        applyRoundedClip(card);
+
+        HBox body = new HBox(12);
+        body.getStyleClass().add("admin-delete-dialog-body");
+        body.setAlignment(Pos.TOP_LEFT);
+
+        StackPane warningIcon = new StackPane();
+        warningIcon.getStyleClass().add("admin-delete-dialog-icon");
+        Label warningText = new Label("!");
+        warningText.getStyleClass().add("admin-delete-dialog-icon-text");
+        warningIcon.getChildren().add(warningText);
+
+        VBox textBox = new VBox(12);
+        textBox.setAlignment(Pos.TOP_LEFT);
+        Label title = new Label("Konfirmasi Hapus?");
+        title.getStyleClass().add("admin-delete-dialog-title");
+        Label message = new Label("Anda yakin ingin menghapus kategori ini?");
+        message.getStyleClass().add("admin-delete-dialog-message");
+        message.setWrapText(true);
+        message.setMaxWidth(320);
+        textBox.getChildren().addAll(title, message);
+
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+
+        Button closeButton = new Button("X");
+        closeButton.getStyleClass().add("admin-delete-dialog-close");
+        HBox.setMargin(closeButton, new Insets(-12, -2, 0, 0));
+        closeButton.setOnAction(event -> dialog.close());
+
+        body.getChildren().addAll(warningIcon, textBox, spacer, closeButton);
+
+        HBox footer = new HBox(18);
+        footer.getStyleClass().add("admin-delete-dialog-footer");
+        footer.setAlignment(Pos.CENTER_RIGHT);
+
+        Button cancelButton = new Button("Batal");
+        cancelButton.getStyleClass().add("admin-delete-dialog-cancel");
+        cancelButton.setOnAction(event -> dialog.close());
+
+        Button deleteButton = new Button("Hapus");
+        deleteButton.getStyleClass().add("admin-delete-dialog-confirm");
+        deleteButton.setOnAction(event -> {
+            confirmed[0] = true;
+            dialog.close();
         });
+
+        footer.getChildren().addAll(cancelButton, deleteButton);
+        card.getChildren().addAll(body, footer);
+        root.getChildren().add(card);
+
+        Scene scene = new Scene(root);
+        scene.setFill(Color.TRANSPARENT);
+        URL css = getClass().getResource("/CSS/admin.css");
+        if (css != null) {
+            scene.getStylesheets().add(css.toExternalForm());
+        }
+
+        dialog.setScene(scene);
+        if (dialog.getOwner() != null) {
+            dialog.setOnShown(event -> {
+                Stage owner = (Stage) dialog.getOwner();
+                dialog.setX(owner.getX() + (owner.getWidth() - dialog.getWidth()) / 2);
+                dialog.setY(owner.getY() + (owner.getHeight() - dialog.getHeight()) / 2);
+            });
+        }
+        dialog.showAndWait();
+
+        return confirmed[0];
+    }
+
+    private void applyRoundedClip(Region region) {
+        Rectangle clip = new Rectangle();
+        clip.setArcWidth(20);
+        clip.setArcHeight(20);
+        clip.widthProperty().bind(region.widthProperty());
+        clip.heightProperty().bind(region.heightProperty());
+        region.setClip(clip);
     }
 
     private Button createActionButton(String text, String color, String iconPath) {
