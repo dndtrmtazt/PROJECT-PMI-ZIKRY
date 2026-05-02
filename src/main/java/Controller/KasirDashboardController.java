@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -46,14 +47,20 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import DAO.BarangDAO;
+import DAO.TokoDAO;
 import DAO.TransaksiDAO;
 import model.Barang;
 import model.Detail_Transaksi;
+import model.Toko;
 import model.Transaksi;
+import model.User;
+import util.StrukPdfUtil;
 import config.UserSession;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.ArrayList;
 
 public class KasirDashboardController {
     private enum SortField {
@@ -939,11 +946,19 @@ public class KasirDashboardController {
             trx.setIdUser(idUser);
             trx.setTotal(totalBelanja);
 
-            boolean trxSaved = TransaksiDAO.saveTransaksiWithDetails(trx, new java.util.ArrayList<>(cartItems));
+            double nominalBayar = getNominalBayarValue();
+            double kembalian = nominalBayar - totalBelanja;
+            List<StrukPdfUtil.StrukItem> strukItems = buildStrukItems();
+            Toko toko = TokoDAO.getDataToko();
+            String kasirName = getCashierName();
+
+            boolean trxSaved = TransaksiDAO.saveTransaksiWithDetails(trx, new ArrayList<>(cartItems));
             if (!trxSaved) {
                 showAlert("Error", "Gagal menyimpan transaksi. Periksa stok barang dan coba lagi.");
                 return;
             }
+
+            prosesCetakStruk(trx, strukItems, toko, kasirName, nominalBayar, kembalian);
 
             cartItems.clear();
             if (txtBayar != null)        txtBayar.clear();
@@ -959,6 +974,80 @@ public class KasirDashboardController {
             showAlert("Error Database", "Gagal menyimpan transaksi: " + e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    private double getNominalBayarValue() {
+        if (txtBayar == null || txtBayar.getText() == null) {
+            return 0;
+        }
+
+        String cleanValue = txtBayar.getText().replaceAll("[^0-9]", "");
+        return cleanValue.isEmpty() ? 0 : Double.parseDouble(cleanValue);
+    }
+
+    private List<StrukPdfUtil.StrukItem> buildStrukItems() {
+        List<StrukPdfUtil.StrukItem> items = new ArrayList<>();
+        for (Detail_Transaksi item : cartItems) {
+            Barang barang = findBarangById(item.getIdBarang());
+            if (barang == null) {
+                barang = BarangDAO.getBarangById(item.getIdBarang());
+            }
+
+            String namaBarang = barang != null ? barang.getNamaBarang() : item.getIdBarang();
+            items.add(new StrukPdfUtil.StrukItem(
+                    namaBarang,
+                    item.getJumlah(),
+                    item.getHargaSatuan(),
+                    item.getSubtotal()
+            ));
+        }
+        return items;
+    }
+
+    private String getCashierName() {
+        User currentUser = UserSession.getInstance().getCurrentUser();
+        if (currentUser == null) {
+            return "-";
+        }
+        if (currentUser.getNamaLengkap() != null && !currentUser.getNamaLengkap().trim().isEmpty()) {
+            return currentUser.getNamaLengkap();
+        }
+        return currentUser.getIdUser();
+    }
+
+    private void prosesCetakStruk(Transaksi transaksi, List<StrukPdfUtil.StrukItem> items, Toko toko,
+                                  String kasirName, double nominalBayar, double kembalian) {
+        File targetFile = pilihLokasiStruk(transaksi);
+        if (targetFile == null) {
+            return;
+        }
+
+        try {
+            StrukPdfUtil.exportToPdf(targetFile, toko, transaksi, items, kasirName, nominalBayar, kembalian);
+            showAlert("Struk Berhasil", "Struk berhasil dibuat:\n" + targetFile.getAbsolutePath());
+        } catch (Exception e) {
+            showAlert("Gagal Cetak Struk", "Transaksi sudah tersimpan, tetapi struk gagal dibuat: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    private File pilihLokasiStruk(Transaksi transaksi) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Simpan Struk Belanja");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PDF Files (*.pdf)", "*.pdf"));
+        fileChooser.setInitialFileName(buildStrukFileName(transaksi));
+
+        Stage owner = btnSimpanCetak != null && btnSimpanCetak.getScene() != null
+                ? (Stage) btnSimpanCetak.getScene().getWindow()
+                : null;
+        return fileChooser.showSaveDialog(owner);
+    }
+
+    private String buildStrukFileName(Transaksi transaksi) {
+        String idTransaksi = transaksi.getIdTransaksi() == null ? "TRK" : transaksi.getIdTransaksi();
+        LocalDateTime tanggal = transaksi.getTglTransaksi() == null ? LocalDateTime.now() : transaksi.getTglTransaksi();
+        String waktu = tanggal.format(DateTimeFormatter.ofPattern("yyyyMMdd-HHmm"));
+        return "struk-toko-zikry-" + idTransaksi + "-" + waktu + ".pdf";
     }
 
 
