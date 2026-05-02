@@ -17,6 +17,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -254,36 +255,53 @@ public class EditBarangController {
         final boolean[] confirmed = {false};
         boolean darkMode = MainController.isDarkMode;
 
+        Stage ownerStage = btnSimpan != null
+                && btnSimpan.getScene() != null
+                && btnSimpan.getScene().getWindow() instanceof Stage
+                ? (Stage) btnSimpan.getScene().getWindow()
+                : null;
+
         Stage dialog = new Stage();
-        dialog.initModality(Modality.APPLICATION_MODAL);
-        if (btnSimpan != null && btnSimpan.getScene() != null) {
-            dialog.initOwner(btnSimpan.getScene().getWindow());
+        if (ownerStage != null) {
+            dialog.initOwner(ownerStage);
+            dialog.initModality(Modality.WINDOW_MODAL);
+        } else {
+            dialog.initModality(Modality.APPLICATION_MODAL);
         }
-        dialog.initStyle(StageStyle.UNDECORATED);
+        dialog.initStyle(StageStyle.TRANSPARENT);
         dialog.setResizable(false);
 
-        BorderPane root = new BorderPane();
+        StackPane root = new StackPane();
+        root.setStyle("-fx-background-color: transparent; -fx-padding: 8;");
+
+        BorderPane card = new BorderPane();
         String dialogBg = darkMode ? "#1F1F1F" : "white";
         String titleColor = darkMode ? "white" : "#111111";
         String messageColor = darkMode ? "#D1D5DB" : "#4E4E4E";
-        String closeColor = darkMode ? "#D1D5DB" : "#9E9E9E";
+        String closeColor = darkMode ? "#D1D5DB" : "#8B95A7";
+        String closeHoverColor = "#E05A5A";
         String cancelBg = darkMode ? "#2C2C2C" : "#EFEFEF";
         String cancelText = darkMode ? "white" : "#111111";
         String cancelBorder = darkMode ? "#4B5563" : "#C6C6C6";
         String separatorColor = darkMode ? "#3A3A3A" : "#D9D9D9";
-        root.setStyle("-fx-background-color: " + dialogBg + "; -fx-background-radius: 14; -fx-border-radius: 14; -fx-border-color: " + separatorColor + "; -fx-border-width: 1;");
-        root.setPrefWidth(520);
-        root.setPrefHeight(250);
+        card.setStyle("-fx-background-color: " + dialogBg + "; -fx-background-radius: 16; -fx-border-radius: 16; -fx-border-color: " + separatorColor + "; -fx-border-width: 1;");
+        card.setPrefWidth(520);
+        card.setPrefHeight(250);
+        applyRoundedClip(card, 16);
 
         HBox topBar = new HBox();
         topBar.setAlignment(Pos.TOP_RIGHT);
         topBar.setPadding(new Insets(12, 14, 0, 14));
 
-        Button btnClose = new Button("×");
+        Button btnClose = new Button("\u2715");
         btnClose.setOnAction(event -> dialog.close());
-        btnClose.setStyle("-fx-background-color: transparent; -fx-text-fill: " + closeColor + "; -fx-font-size: 24px; -fx-cursor: hand; -fx-padding: 0;");
+        String closeBaseStyle = "-fx-background-color: transparent; -fx-text-fill: " + closeColor + "; -fx-font-size: 18px; -fx-font-weight: bold; -fx-cursor: hand; -fx-padding: 6 10 6 10; -fx-background-radius: 8;";
+        String closeHoverStyle = "-fx-background-color: rgba(224,90,90,0.10); -fx-text-fill: " + closeHoverColor + "; -fx-font-size: 18px; -fx-font-weight: bold; -fx-cursor: hand; -fx-padding: 6 10 6 10; -fx-background-radius: 8;";
+        btnClose.setStyle(closeBaseStyle);
+        btnClose.setOnMouseEntered(event -> btnClose.setStyle(closeHoverStyle));
+        btnClose.setOnMouseExited(event -> btnClose.setStyle(closeBaseStyle));
         topBar.getChildren().add(btnClose);
-        root.setTop(topBar);
+        card.setTop(topBar);
 
         HBox content = new HBox(20);
         content.setAlignment(Pos.TOP_LEFT);
@@ -318,7 +336,7 @@ public class EditBarangController {
 
         textBox.getChildren().addAll(titleLabel, messageLabel);
         content.getChildren().addAll(iconWrapper, textBox);
-        root.setCenter(content);
+        card.setCenter(content);
 
         HBox bottomBar = new HBox(24);
         bottomBar.setAlignment(Pos.CENTER_RIGHT);
@@ -342,15 +360,34 @@ public class EditBarangController {
         btnConfirm.setStyle("-fx-background-color: " + confirmColor + "; -fx-text-fill: white; -fx-background-radius: 10; -fx-font-size: 15px; -fx-font-weight: bold; -fx-cursor: hand;");
 
         bottomBar.getChildren().addAll(spacer, btnCancel, btnConfirm);
-        root.setBottom(bottomBar);
+        card.setBottom(bottomBar);
+        root.getChildren().add(card);
 
         Scene scene = new Scene(root);
-        scene.setFill(null);
+        scene.setFill(Color.TRANSPARENT);
         dialog.setScene(scene);
+        if (ownerStage != null) {
+            dialog.setOnShown(event -> {
+                dialog.setX(ownerStage.getX() + (ownerStage.getWidth() - dialog.getWidth()) / 2);
+                dialog.setY(ownerStage.getY() + (ownerStage.getHeight() - dialog.getHeight()) / 2);
+            });
+        }
         dialog.showAndWait();
 
         return confirmed[0];
     }
+
+    private void applyRoundedClip(Region region, double radius) {
+        if (region == null) return;
+
+        Rectangle clip = new Rectangle();
+        clip.setArcWidth(radius * 2);
+        clip.setArcHeight(radius * 2);
+        clip.widthProperty().bind(region.widthProperty());
+        clip.heightProperty().bind(region.heightProperty());
+        region.setClip(clip);
+    }
+
     private void showSuccessDialog(String titleText) {
         SuccessDialogController.showDialog(
                 btnSimpan == null || btnSimpan.getScene() == null ? null : btnSimpan.getScene().getWindow(),

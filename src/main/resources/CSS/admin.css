@@ -833,7 +833,7 @@
 
 .admin-delete-dialog-root {
     -fx-background-color: transparent;
-    -fx-padding: 0;
+    -fx-padding: 8;
 }
 
 .admin-delete-dialog-card {
@@ -841,10 +841,10 @@
     -fx-pref-width: 460;
     -fx-max-width: 460;
     -fx-background-color: #FFFFFF;
-    -fx-background-radius: 10;
+    -fx-background-radius: 16;
     -fx-background-insets: 0;
-    -fx-border-color: #B8C4D4;
-    -fx-border-radius: 10;
+    -fx-border-color: #D8DEE8;
+    -fx-border-radius: 16;
     -fx-border-width: 1.5;
     -fx-border-insets: 0;
     -fx-effect: dropshadow(gaussian, rgba(15, 23, 42, 0.26), 24, 0, 0, 8);
@@ -858,6 +858,8 @@
 
 .admin-delete-dialog-body {
     -fx-padding: 22 20 24 28;
+    -fx-background-color: transparent;
+    -fx-background-radius: 16 16 0 0;
 }
 
 .admin-delete-dialog-icon {
@@ -928,11 +930,11 @@
 .admin-delete-dialog-footer {
     -fx-padding: 14 22 14 22;
     -fx-background-color: #F8F8F8;
-    -fx-background-radius: 0 0 8.5 8.5;
-    -fx-background-insets: 0 1.5 1.5 1.5;
+    -fx-background-radius: 0 0 16 16;
+    -fx-background-insets: 0;
     -fx-border-color: #C5CEDA transparent transparent transparent;
     -fx-border-width: 1.2 0 0 0;
-    -fx-border-insets: 0 1.5 0 1.5;
+    -fx-border-insets: 0;
 }
 
 .admin-delete-dialog-root.dark .admin-delete-dialog-footer {

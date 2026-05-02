@@ -684,7 +684,7 @@
 
 .kasir-logout-dialog-root {
     -fx-background-color: transparent;
-    -fx-padding: 0;
+    -fx-padding: 8;
 }
 
 .kasir-logout-dialog-card {
@@ -692,9 +692,11 @@
     -fx-pref-width: 460;
     -fx-max-width: 460;
     -fx-background-color: #FFFFFF;
-    -fx-background-radius: 10;
+    -fx-background-insets: 0;
+    -fx-background-radius: 14;
     -fx-border-color: #E2E8F0;
-    -fx-border-radius: 10;
+    -fx-border-insets: 0;
+    -fx-border-radius: 14;
     -fx-effect: dropshadow(gaussian, rgba(15, 23, 42, 0.18), 18, 0, 0, 6);
 }
 
@@ -706,6 +708,8 @@
 
 .kasir-logout-dialog-body {
     -fx-padding: 22 20 24 28;
+    -fx-background-color: transparent;
+    -fx-background-radius: 14 14 0 0;
 }
 
 .kasir-logout-dialog-icon {
@@ -767,7 +771,8 @@
     -fx-background-color: #F8F8F8;
     -fx-border-color: #D7D7D7 transparent transparent transparent;
     -fx-border-width: 1 0 0 0;
-    -fx-background-radius: 0 0 10 10;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0 0 14 14;
 }
 
 .kasir-logout-dialog-root.dark .kasir-logout-dialog-footer {

@@ -867,12 +867,28 @@ public class KasirDashboardController {
             controller.setData(totalBelanja, nominalBayar);
             controller.setDarkMode(MainController.isDarkMode);
 
+            Stage ownerStage = getKasirOwnerStage();
             Stage popupStage = new Stage();
-            popupStage.initModality(Modality.APPLICATION_MODAL);
-            popupStage.initOwner(btnSimpanCetak.getScene().getWindow());
+            if (ownerStage != null) {
+                popupStage.initOwner(ownerStage);
+                popupStage.initModality(Modality.WINDOW_MODAL);
+            } else {
+                popupStage.initModality(Modality.APPLICATION_MODAL);
+            }
             popupStage.initStyle(StageStyle.UNDECORATED);
-            popupStage.setScene(new Scene(root));
-            popupStage.centerOnScreen();
+
+            Scene scene = new Scene(root);
+            scene.setFill(Color.TRANSPARENT);
+            popupStage.setScene(scene);
+
+            if (ownerStage != null) {
+                popupStage.setOnShown(event -> {
+                    double centerX = ownerStage.getX() + (ownerStage.getWidth() - popupStage.getWidth()) / 2;
+                    double centerY = ownerStage.getY() + (ownerStage.getHeight() - popupStage.getHeight()) / 2;
+                    popupStage.setX(centerX);
+                    popupStage.setY(centerY);
+                });
+            }
             popupStage.showAndWait();
 
             if (controller.isConfirmed()) {
@@ -883,6 +899,16 @@ public class KasirDashboardController {
             showAlert("Error", "Gagal memuat popup: " + e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    private Stage getKasirOwnerStage() {
+        if (paneRoot != null && paneRoot.getScene() != null && paneRoot.getScene().getWindow() instanceof Stage) {
+            return (Stage) paneRoot.getScene().getWindow();
+        }
+        if (btnSimpanCetak != null && btnSimpanCetak.getScene() != null && btnSimpanCetak.getScene().getWindow() instanceof Stage) {
+            return (Stage) btnSimpanCetak.getScene().getWindow();
+        }
+        return null;
     }
 
     private void simpanTransaksi() {
@@ -979,7 +1005,7 @@ public class KasirDashboardController {
 
         try {
             StrukPdfUtil.exportToPdf(targetFile, toko, transaksi, items, kasirName, nominalBayar, kembalian);
-            showAlert("Struk Berhasil", "Struk berhasil dibuat:\n" + targetFile.getAbsolutePath());
+            System.out.println("Struk berhasil dibuat: " + targetFile.getAbsolutePath());
         } catch (Exception e) {
             showAlert("Gagal Cetak Struk", "Transaksi sudah tersimpan, tetapi struk gagal dibuat: " + e.getMessage());
             e.printStackTrace();

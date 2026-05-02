@@ -8,8 +8,11 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -20,6 +23,7 @@ import java.net.URL;
 public class ConfirmDeleteDialogController {
 
     @FXML private StackPane dialogRoot;
+    @FXML private VBox dialogCard;
     @FXML private Label lblTitle;
     @FXML private Label lblMessage;
     @FXML private Button btnClose;
@@ -27,6 +31,11 @@ public class ConfirmDeleteDialogController {
     @FXML private Button btnConfirm;
 
     private boolean confirmed = false;
+
+    @FXML
+    private void initialize() {
+        applyRoundedClip(dialogCard, 16);
+    }
 
     public static boolean showDialog(Window owner, boolean darkMode, String title, String message, String confirmText) {
         try {
@@ -124,5 +133,16 @@ public class ConfirmDeleteDialogController {
         } else {
             node.getStyleClass().remove(styleClass);
         }
+    }
+
+    private void applyRoundedClip(Region region, double radius) {
+        if (region == null) return;
+
+        Rectangle clip = new Rectangle();
+        clip.setArcWidth(radius * 2);
+        clip.setArcHeight(radius * 2);
+        clip.widthProperty().bind(region.widthProperty());
+        clip.heightProperty().bind(region.heightProperty());
+        region.setClip(clip);
     }
 }

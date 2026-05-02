@@ -10,7 +10,7 @@
 
 <StackPane fx:id="dialogRoot" styleClass="admin-delete-dialog-root" stylesheets="@../../CSS/admin.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.ConfirmDeleteDialogController">
     <children>
-        <VBox minWidth="460.0" prefWidth="460.0" maxWidth="460.0" styleClass="admin-delete-dialog-card">
+        <VBox fx:id="dialogCard" minWidth="460.0" prefWidth="460.0" maxWidth="460.0" styleClass="admin-delete-dialog-card">
             <children>
                 <HBox alignment="TOP_LEFT" spacing="12.0" styleClass="admin-delete-dialog-body">
                     <children>
