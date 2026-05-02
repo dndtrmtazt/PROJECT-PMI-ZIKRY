@@ -3,17 +3,26 @@ package Controller;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
 public class AdminLogoutDialogController {
 
     @FXML private StackPane dialogRoot;
+    @FXML private VBox dialogCard;
     @FXML private Button btnClose;
     @FXML private Button btnCancel;
     @FXML private Button btnConfirm;
 
     private Runnable confirmAction;
+
+    @FXML
+    private void initialize() {
+        applyRoundedClip(dialogCard, 14);
+    }
 
     public void setDarkMode(boolean enabled) {
         setStyleClass(dialogRoot, "dark", enabled);
@@ -58,5 +67,16 @@ public class AdminLogoutDialogController {
         } else {
             node.getStyleClass().remove(styleClass);
         }
+    }
+
+    private void applyRoundedClip(Region region, double radius) {
+        if (region == null) return;
+
+        Rectangle clip = new Rectangle();
+        clip.setArcWidth(radius * 2);
+        clip.setArcHeight(radius * 2);
+        clip.widthProperty().bind(region.widthProperty());
+        clip.heightProperty().bind(region.heightProperty());
+        region.setClip(clip);
     }
 }
