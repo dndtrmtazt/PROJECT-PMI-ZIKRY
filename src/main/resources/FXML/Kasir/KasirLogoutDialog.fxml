@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<StackPane fx:id="dialogRoot" styleClass="kasir-logout-dialog-root" stylesheets="@../../CSS/kasir-scroll.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.KasirLogoutDialogController">
+    <children>
+        <VBox minWidth="460.0" prefWidth="460.0" maxWidth="460.0" styleClass="kasir-logout-dialog-card">
+            <children>
+                <HBox alignment="TOP_LEFT" spacing="12.0" styleClass="kasir-logout-dialog-body">
+                    <children>
+                        <StackPane styleClass="kasir-logout-dialog-icon">
+                            <children>
+                                <Label text="?" styleClass="kasir-logout-dialog-icon-text" />
+                            </children>
+                        </StackPane>
+
+                        <VBox alignment="TOP_LEFT" spacing="8.0">
+                            <children>
+                                <Label text="Konfirmasi Logout" styleClass="kasir-logout-dialog-title" />
+                                <Label maxWidth="340.0" text="Anda yakin ingin keluar dari halaman kasir?" wrapText="true" styleClass="kasir-logout-dialog-message" />
+                            </children>
+                        </VBox>
+
+                        <Region HBox.hgrow="ALWAYS" />
+
+                        <Button fx:id="btnClose" mnemonicParsing="false" onAction="#handleClose" text="X" styleClass="kasir-logout-dialog-close">
+                            <HBox.margin>
+                                <Insets top="-12.0" right="-2.0" />
+                            </HBox.margin>
+                        </Button>
+                    </children>
+                </HBox>
+
+                <HBox alignment="CENTER_RIGHT" spacing="18.0" styleClass="kasir-logout-dialog-footer">
+                    <children>
+                        <Button fx:id="btnCancel" mnemonicParsing="false" onAction="#handleCancel" text="Batal" styleClass="kasir-logout-dialog-cancel" />
+                        <Button fx:id="btnConfirm" mnemonicParsing="false" onAction="#handleConfirm" text="Ya, Keluar" styleClass="kasir-logout-dialog-confirm" />
+                    </children>
+                </HBox>
+            </children>
+        </VBox>
+    </children>
+</StackPane>

@@ -464,90 +464,43 @@ public class MainController {
     }
 
     private void showAdminLogoutConfirmationPopup() {
-        Stage owner = (Stage) btnLogout.getScene().getWindow();
-        Stage dialog = new Stage();
-        dialog.initOwner(owner);
-        dialog.initModality(Modality.WINDOW_MODAL);
-        dialog.initStyle(StageStyle.TRANSPARENT);
-        dialog.setResizable(false);
-
-        StackPane root = new StackPane();
-        root.getStyleClass().add("kasir-logout-dialog-root");
-        setStyleClass(root, "dark", isDarkMode);
-
-        VBox card = new VBox();
-        card.getStyleClass().add("kasir-logout-dialog-card");
-        card.setMinWidth(460);
-        card.setPrefWidth(460);
-        card.setMaxWidth(460);
-
-        HBox body = new HBox(12);
-        body.getStyleClass().add("kasir-logout-dialog-body");
-        body.setAlignment(Pos.TOP_LEFT);
-
-        StackPane iconCircle = new StackPane();
-        iconCircle.getStyleClass().add("kasir-logout-dialog-icon");
-        Label iconText = new Label("?");
-        iconText.getStyleClass().add("kasir-logout-dialog-icon-text");
-        iconCircle.getChildren().add(iconText);
-
-        VBox textBox = new VBox(8);
-        textBox.setAlignment(Pos.TOP_LEFT);
-        Label title = new Label("Konfirmasi Logout");
-        title.getStyleClass().add("kasir-logout-dialog-title");
-        Label message = new Label("Anda yakin ingin keluar dari halaman admin?");
-        message.getStyleClass().add("kasir-logout-dialog-message");
-        message.setWrapText(true);
-        message.setMaxWidth(340);
-        textBox.getChildren().addAll(title, message);
-
-        Region spacer = new Region();
-        HBox.setHgrow(spacer, Priority.ALWAYS);
-
-        Button closeButton = new Button("X");
-        closeButton.getStyleClass().add("kasir-logout-dialog-close");
-        HBox.setMargin(closeButton, new Insets(-12, -2, 0, 0));
-        closeButton.setOnAction(event -> dialog.close());
-
-        body.getChildren().addAll(iconCircle, textBox, spacer, closeButton);
-
-        HBox footer = new HBox(18);
-        footer.getStyleClass().add("kasir-logout-dialog-footer");
-        footer.setAlignment(Pos.CENTER_RIGHT);
-
-        Button cancelButton = new Button("Batal");
-        cancelButton.getStyleClass().add("kasir-logout-dialog-cancel");
-        cancelButton.setOnAction(event -> dialog.close());
-
-        Button confirmButton = new Button("Ya, Keluar");
-        confirmButton.getStyleClass().add("kasir-logout-dialog-confirm");
-        confirmButton.setOnAction(event -> {
-            dialog.close();
-            handleLogout();
-        });
-
-        footer.getChildren().addAll(cancelButton, confirmButton);
-        card.getChildren().addAll(body, footer);
-        root.getChildren().add(card);
-
-        Scene scene = new Scene(root);
-        scene.setFill(Color.TRANSPARENT);
-        URL css = getClass().getResource("/CSS/kasir-scroll.css");
-        if (css != null) {
-            scene.getStylesheets().add(css.toExternalForm());
-        }
-        scene.setOnKeyPressed(event -> {
-            if (event.getCode() == KeyCode.ESCAPE) {
-                dialog.close();
+        try {
+            URL dialogView = getClass().getResource("/FXML/Admin/AdminLogoutDialog.fxml");
+            if (dialogView == null) {
+                return;
             }
-        });
 
-        dialog.setScene(scene);
-        dialog.setOnShown(event -> {
-            dialog.setX(owner.getX() + (owner.getWidth() - dialog.getWidth()) / 2);
-            dialog.setY(owner.getY() + (owner.getHeight() - dialog.getHeight()) / 2);
-        });
-        dialog.showAndWait();
+            FXMLLoader loader = new FXMLLoader(dialogView);
+            Parent root = loader.load();
+
+            AdminLogoutDialogController controller = loader.getController();
+            controller.setDarkMode(isDarkMode);
+            controller.setOnConfirm(this::handleLogout);
+
+            Stage owner = (Stage) btnLogout.getScene().getWindow();
+            Stage dialog = new Stage();
+            dialog.initOwner(owner);
+            dialog.initModality(Modality.WINDOW_MODAL);
+            dialog.initStyle(StageStyle.TRANSPARENT);
+            dialog.setResizable(false);
+
+            Scene scene = new Scene(root);
+            scene.setFill(Color.TRANSPARENT);
+            scene.setOnKeyPressed(event -> {
+                if (event.getCode() == KeyCode.ESCAPE) {
+                    dialog.close();
+                }
+            });
+
+            dialog.setScene(scene);
+            dialog.setOnShown(event -> {
+                dialog.setX(owner.getX() + (owner.getWidth() - dialog.getWidth()) / 2);
+                dialog.setY(owner.getY() + (owner.getHeight() - dialog.getHeight()) / 2);
+            });
+            dialog.showAndWait();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void handleLogout() {

@@ -782,6 +782,19 @@
     -fx-text-fill: #F8FAFC;
 }
 
+.admin-success-dialog-message {
+    -fx-text-fill: #4B5563;
+    -fx-font-size: 14px;
+    -fx-font-weight: normal;
+    -fx-alignment: center;
+    -fx-text-alignment: center;
+    -fx-line-spacing: 2px;
+}
+
+.admin-success-dialog-root.dark .admin-success-dialog-message {
+    -fx-text-fill: #D1D5DB;
+}
+
 .admin-success-dialog-footer {
     -fx-padding: 18 0 20 0;
     -fx-background-color: #F8FBFF;

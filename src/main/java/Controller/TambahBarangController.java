@@ -2,26 +2,15 @@ package Controller;
 
 import config.koneksi;
 import javafx.fxml.FXML;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import DAO.BarangDAO;
 import DAO.KategoriDAO;
 import model.Kategori;
@@ -369,68 +358,10 @@ public class TambahBarangController {
     }
 
     private void showSuccessDialog(String titleText) {
-        Stage dialog = new Stage();
-        dialog.initModality(Modality.APPLICATION_MODAL);
-        if (btnTambah != null && btnTambah.getScene() != null) {
-            dialog.initOwner(btnTambah.getScene().getWindow());
-        }
-        dialog.initStyle(StageStyle.TRANSPARENT);
-        dialog.setResizable(false);
-
-        StackPane dialogRoot = new StackPane();
-        dialogRoot.getStyleClass().add("admin-success-dialog-root");
-        setStyleClass(dialogRoot, "dark", MainController.isDarkMode);
-
-        BorderPane root = new BorderPane();
-        root.getStyleClass().add("admin-success-dialog-card");
-        root.setPrefWidth(360);
-        root.setPrefHeight(270);
-
-        VBox content = new VBox(18);
-        content.setAlignment(Pos.CENTER);
-        content.setPadding(new Insets(30, 32, 22, 32));
-
-        try {
-            ImageView iconView = new ImageView(new Image(getClass().getResourceAsStream("/Images/iconsukses.png")));
-            iconView.setFitWidth(66);
-            iconView.setFitHeight(66);
-            iconView.setPreserveRatio(true);
-            iconView.getStyleClass().add("admin-success-dialog-icon");
-            content.getChildren().add(iconView);
-        } catch (Exception ignored) {
-            StackPane fallback = new StackPane();
-            fallback.getStyleClass().add("admin-success-dialog-icon-fallback");
-            fallback.setPrefSize(66, 66);
-            Label check = new Label("✓");
-            check.getStyleClass().add("admin-success-dialog-check");
-            fallback.getChildren().add(check);
-            content.getChildren().add(fallback);
-        }
-
-        Label titleLabel = new Label(titleText);
-        titleLabel.getStyleClass().add("admin-success-dialog-title");
-        content.getChildren().add(titleLabel);
-        root.setCenter(content);
-
-        HBox footer = new HBox();
-        footer.getStyleClass().add("admin-success-dialog-footer");
-        footer.setAlignment(Pos.CENTER);
-
-        Button btnOk = new Button("OK");
-        btnOk.getStyleClass().add("admin-success-dialog-ok");
-        btnOk.setOnAction(event -> dialog.close());
-        footer.getChildren().add(btnOk);
-        root.setBottom(footer);
-
-        dialogRoot.getChildren().add(root);
-
-        Scene scene = new Scene(dialogRoot);
-        scene.setFill(Color.TRANSPARENT);
-        java.net.URL css = getClass().getResource("/CSS/admin.css");
-        if (css != null) {
-            scene.getStylesheets().add(css.toExternalForm());
-        }
-        dialog.setScene(scene);
-        dialog.showAndWait();
+        SuccessDialogController.showDialog(
+                btnTambah == null || btnTambah.getScene() == null ? null : btnTambah.getScene().getWindow(),
+                MainController.isDarkMode,
+                titleText
+        );
     }
 }

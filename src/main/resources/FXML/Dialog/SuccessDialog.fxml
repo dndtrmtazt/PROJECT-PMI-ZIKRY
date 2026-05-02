@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<StackPane fx:id="dialogRoot" styleClass="admin-success-dialog-root" stylesheets="@../../CSS/admin.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.SuccessDialogController">
+    <children>
+        <BorderPane prefWidth="360.0" prefHeight="270.0" styleClass="admin-success-dialog-card">
+            <center>
+                <VBox alignment="CENTER" spacing="18.0">
+                    <padding>
+                        <Insets top="30.0" right="32.0" bottom="22.0" left="32.0" />
+                    </padding>
+                    <children>
+                        <ImageView fitWidth="66.0" fitHeight="66.0" preserveRatio="true" styleClass="admin-success-dialog-icon">
+                            <image>
+                                <Image url="@../../Images/iconsukses.png" />
+                            </image>
+                        </ImageView>
+                        <Label fx:id="lblTitle" text="Berhasil ditambahkan" styleClass="admin-success-dialog-title" />
+                        <Label fx:id="lblMessage" managed="false" maxWidth="280.0" text="" visible="false" wrapText="true" styleClass="admin-success-dialog-message" />
+                    </children>
+                </VBox>
+            </center>
+            <bottom>
+                <HBox alignment="CENTER" styleClass="admin-success-dialog-footer">
+                    <children>
+                        <Button fx:id="btnOk" mnemonicParsing="false" onAction="#handleOk" text="OK" styleClass="admin-success-dialog-ok" />
+                    </children>
+                </HBox>
+            </bottom>
+        </BorderPane>
+    </children>
+</StackPane>

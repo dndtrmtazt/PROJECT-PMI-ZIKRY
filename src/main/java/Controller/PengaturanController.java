@@ -1,24 +1,14 @@
 package Controller;
 
-import java.net.URL;
 import javafx.fxml.FXML;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.Node;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
+import javafx.stage.Window;
 import DAO.TokoDAO;
 import model.Toko;
 
@@ -211,100 +201,16 @@ public class PengaturanController {
     }
 
     private void showUpdateSuccessDialog() {
-        boolean darkMode = MainController.isDarkMode;
+        Window owner = vboxMainContent != null && vboxMainContent.getScene() != null
+                ? vboxMainContent.getScene().getWindow()
+                : null;
 
-        Stage dialog = new Stage();
-        dialog.initModality(Modality.APPLICATION_MODAL);
-        if (vboxMainContent != null && vboxMainContent.getScene() != null) {
-            dialog.initOwner(vboxMainContent.getScene().getWindow());
-        }
-        dialog.initStyle(StageStyle.TRANSPARENT);
-        dialog.setResizable(false);
-
-        StackPane root = new StackPane();
-        root.getStyleClass().add("admin-update-dialog-root");
-        setStyleClass(root, "dark", darkMode);
-
-        VBox card = new VBox();
-        card.getStyleClass().add("admin-update-dialog-card");
-        card.setMinWidth(460);
-        card.setPrefWidth(460);
-        card.setMaxWidth(460);
-        applyRoundedClip(card, 20);
-
-        HBox header = new HBox();
-        header.getStyleClass().add("admin-update-dialog-header");
-        header.setAlignment(Pos.CENTER_LEFT);
-
-        Label title = new Label("Update Berhasil");
-        title.getStyleClass().add("admin-update-dialog-title");
-
-        Region headerSpacer = new Region();
-        HBox.setHgrow(headerSpacer, javafx.scene.layout.Priority.ALWAYS);
-
-        Button closeButton = new Button("X");
-        closeButton.getStyleClass().add("admin-update-dialog-close");
-        closeButton.setOnAction(event -> dialog.close());
-
-        header.getChildren().addAll(title, headerSpacer, closeButton);
-
-        HBox body = new HBox(22);
-        body.getStyleClass().add("admin-update-dialog-body");
-        body.setAlignment(Pos.CENTER_LEFT);
-
-        StackPane iconGlow = new StackPane();
-        iconGlow.getStyleClass().add("admin-update-dialog-icon-glow");
-        StackPane iconCircle = new StackPane();
-        iconCircle.getStyleClass().add("admin-update-dialog-icon-circle");
-        Label infoIcon = new Label("i");
-        infoIcon.getStyleClass().add("admin-update-dialog-icon-text");
-        iconCircle.getChildren().add(infoIcon);
-        iconGlow.getChildren().add(iconCircle);
-
-        Label message = new Label("Data Toko Zikry telah diperbarui!");
-        message.getStyleClass().add("admin-update-dialog-message");
-        message.setWrapText(true);
-        message.setMaxWidth(280);
-
-        body.getChildren().addAll(iconGlow, message);
-
-        HBox footer = new HBox();
-        footer.getStyleClass().add("admin-update-dialog-footer");
-        footer.setAlignment(Pos.CENTER_RIGHT);
-
-        Button okButton = new Button("OK");
-        okButton.getStyleClass().add("admin-update-dialog-ok");
-        okButton.setOnAction(event -> dialog.close());
-        footer.getChildren().add(okButton);
-
-        card.getChildren().addAll(header, body, footer);
-        root.getChildren().add(card);
-
-        Scene scene = new Scene(root);
-        scene.setFill(Color.TRANSPARENT);
-        URL css = getClass().getResource("/CSS/admin.css");
-        if (css != null) {
-            scene.getStylesheets().add(css.toExternalForm());
-        }
-
-        dialog.setScene(scene);
-        if (dialog.getOwner() != null) {
-            dialog.setOnShown(event -> {
-                Stage owner = (Stage) dialog.getOwner();
-                dialog.setX(owner.getX() + (owner.getWidth() - dialog.getWidth()) / 2);
-                dialog.setY(owner.getY() + (owner.getHeight() - dialog.getHeight()) / 2);
-            });
-        }
-        dialog.showAndWait();
-    }
-
-    private void applyRoundedClip(Region region, double arc) {
-        Rectangle clip = new Rectangle();
-        clip.setArcWidth(arc);
-        clip.setArcHeight(arc);
-        clip.widthProperty().bind(region.widthProperty());
-        clip.heightProperty().bind(region.heightProperty());
-        region.setClip(clip);
+        SuccessDialogController.showDialog(
+                owner,
+                MainController.isDarkMode,
+                "Update Berhasil",
+                "Data Toko Zikry telah diperbarui!"
+        );
     }
 
     // Helper method agar kode lebih bersih

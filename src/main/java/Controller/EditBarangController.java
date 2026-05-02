@@ -351,71 +351,12 @@ public class EditBarangController {
 
         return confirmed[0];
     }
-
     private void showSuccessDialog(String titleText) {
-        Stage dialog = new Stage();
-        dialog.initModality(Modality.APPLICATION_MODAL);
-        if (btnSimpan != null && btnSimpan.getScene() != null) {
-            dialog.initOwner(btnSimpan.getScene().getWindow());
-        }
-        dialog.initStyle(StageStyle.TRANSPARENT);
-        dialog.setResizable(false);
-
-        StackPane dialogRoot = new StackPane();
-        dialogRoot.getStyleClass().add("admin-success-dialog-root");
-        setStyleClass(dialogRoot, "dark", MainController.isDarkMode);
-
-        BorderPane root = new BorderPane();
-        root.getStyleClass().add("admin-success-dialog-card");
-        root.setPrefWidth(360);
-        root.setPrefHeight(270);
-
-        VBox content = new VBox(18);
-        content.setAlignment(Pos.CENTER);
-        content.setPadding(new Insets(30, 32, 22, 32));
-
-        try {
-            ImageView iconView = new ImageView(new Image(getClass().getResourceAsStream("/Images/iconsukses.png")));
-            iconView.setFitWidth(66);
-            iconView.setFitHeight(66);
-            iconView.setPreserveRatio(true);
-            iconView.getStyleClass().add("admin-success-dialog-icon");
-            content.getChildren().add(iconView);
-        } catch (Exception ignored) {
-            StackPane fallback = new StackPane();
-            fallback.getStyleClass().add("admin-success-dialog-icon-fallback");
-            fallback.setPrefSize(66, 66);
-            Label check = new Label("✓");
-            check.getStyleClass().add("admin-success-dialog-check");
-            fallback.getChildren().add(check);
-            content.getChildren().add(fallback);
-        }
-
-        Label titleLabel = new Label(titleText);
-        titleLabel.getStyleClass().add("admin-success-dialog-title");
-        content.getChildren().add(titleLabel);
-        root.setCenter(content);
-
-        HBox footer = new HBox();
-        footer.getStyleClass().add("admin-success-dialog-footer");
-        footer.setAlignment(Pos.CENTER);
-
-        Button btnOk = new Button("OK");
-        btnOk.getStyleClass().add("admin-success-dialog-ok");
-        btnOk.setOnAction(event -> dialog.close());
-        footer.getChildren().add(btnOk);
-        root.setBottom(footer);
-
-        dialogRoot.getChildren().add(root);
-
-        Scene scene = new Scene(dialogRoot);
-        scene.setFill(Color.TRANSPARENT);
-        java.net.URL css = getClass().getResource("/CSS/admin.css");
-        if (css != null) {
-            scene.getStylesheets().add(css.toExternalForm());
-        }
-        dialog.setScene(scene);
-        dialog.showAndWait();
+        SuccessDialogController.showDialog(
+                btnSimpan == null || btnSimpan.getScene() == null ? null : btnSimpan.getScene().getWindow(),
+                MainController.isDarkMode,
+                titleText
+        );
     }
 
     public void setDarkMode(boolean enabled) {
