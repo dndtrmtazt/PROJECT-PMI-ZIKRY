@@ -12,16 +12,13 @@ public class koneksi {
     private static final Path DATABASE_PATH = resolveDatabasePath();
 
     private static Path resolveDatabasePath() {
-        Path currentPath = Paths.get("").toAbsolutePath().normalize();
+        String appData = System.getenv("APPDATA");
 
-        for (Path path = currentPath; path != null; path = path.getParent()) {
-            Path databaseDirectory = path.resolve("database");
-            if (Files.exists(path.resolve("pom.xml")) || Files.exists(databaseDirectory)) {
-                return databaseDirectory.resolve("umkm.db");
-            }
+        if (appData != null && !appData.isBlank()) {
+            return Paths.get(appData, "TokoZikry", "tokozikry.db");
         }
 
-        return currentPath.resolve("database").resolve("umkm.db");
+        return Paths.get(System.getProperty("user.home"), "AppData", "Roaming", "TokoZikry", "tokozikry.db");
     }
 
     public static Connection koneksiDB() throws SQLException {
