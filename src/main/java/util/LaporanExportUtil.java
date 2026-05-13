@@ -52,6 +52,7 @@ public final class LaporanExportUtil {
     public static void exportToPdf(File file, List<Laporan> data, String periode) throws IOException {
         CURRENCY_FORMAT.setMaximumFractionDigits(0);
         CURRENCY_FORMAT.setMinimumFractionDigits(0);
+        // Ringkasan dihitung dari data tabel yang sedang ditampilkan, lalu dipakai di header laporan.
         ReportSummary summary = calculateSummary(data);
         LocalDateTime printTime = LocalDateTime.now();
         String printedAt = printTime.format(PRINT_TIME_FORMAT);
@@ -70,6 +71,7 @@ public final class LaporanExportUtil {
             y = drawPdfTableHeader(content, y);
 
             for (int i = 0; i < data.size(); i++) {
+                // Jika halaman hampir penuh, lanjutkan tabel ke halaman PDF baru.
                 if (y < PDF_MARGIN + 42) {
                     drawPdfFooter(content, page, printedAt);
                     content.close();
@@ -107,6 +109,7 @@ public final class LaporanExportUtil {
     }
 
     public static void exportToExcel(File file, List<Laporan> data, String periode) throws IOException {
+        // Export Excel memakai data yang sama dengan PDF agar angka laporan tetap konsisten.
         ReportSummary summary = calculateSummary(data);
         LocalDateTime printTime = LocalDateTime.now();
         String printedAt = printTime.format(PRINT_TIME_FORMAT);
@@ -218,6 +221,7 @@ public final class LaporanExportUtil {
 
     private static float drawPdfHeader(PDPageContentStream content, PDPage page, PDImageXObject logo,
                                        String periode, String printedAt, String reportNumber) throws IOException {
+        // Header PDF berisi identitas laporan, periode, nomor laporan, dan waktu cetak.
         float width = page.getMediaBox().getWidth();
         float height = page.getMediaBox().getHeight();
         content.setNonStrokingColor(new Color(74, 118, 168));
@@ -247,6 +251,7 @@ public final class LaporanExportUtil {
     }
 
     private static float drawPdfSummary(PDPageContentStream content, float y, ReportSummary summary) throws IOException {
+        // Tiga kartu ringkasan ini memudahkan pembaca melihat penjualan, pengeluaran, dan jumlah transaksi.
         float boxWidth = 230f;
         float boxHeight = 58f;
         float gap = 18f;

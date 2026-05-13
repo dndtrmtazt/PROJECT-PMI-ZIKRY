@@ -17,6 +17,7 @@ public final class DatabaseInitializer {
      * ALUR UTAMA INISIALISASI DATABASE:
      */
     public static void initialize(Connection connection) throws SQLException {
+        // Method ini dipanggil saat koneksi SQLite dibuka. Tujuannya memastikan database siap dipakai aplikasi.
         // 1. Cek apakah semua tabel utama sudah ada
         if (tableExists(connection, "user")
                 && tableExists(connection, "kategori")
@@ -36,6 +37,7 @@ public final class DatabaseInitializer {
         connection.setAutoCommit(false); // Mematikan auto-commit untuk transaksi aman
 
         try (Statement statement = connection.createStatement()) {
+            // Semua schema, index, dan seed data dibuat dalam satu transaksi agar tidak setengah jadi.
             // 4. Eksekusi semua perintah SQL pembuat tabel (Schema)
             for (String sql : getSchemaStatements()) {
                 statement.execute(sql);
@@ -56,6 +58,7 @@ public final class DatabaseInitializer {
      * ALUR MATA RANTAI MIGRASI (Update Struktur):
      */
     private static void applyCompatibilityMigrations(Connection connection) throws SQLException {
+        // Migrasi ini menjaga database lama tetap kompatibel tanpa menghapus data yang sudah ada.
         try (Statement statement = connection.createStatement()) {
             // 1. Pastikan tabel inti sudah dibuat (IF NOT EXISTS)
             for (String sql : getCoreSchemaStatements()) {
@@ -138,6 +141,7 @@ public final class DatabaseInitializer {
      * MENGGABUNGKAN SEMUA SQL (Schema + Index + Seed Data)
      */
     private static List<String> getSchemaStatements() {
+        // Urutan penting: tabel dibuat dulu, index setelahnya, lalu data awal dimasukkan.
         List<String> schemaStatements = new ArrayList<>(getCoreSchemaStatements());
         schemaStatements.addAll(getIndexStatements());
         schemaStatements.addAll(getSeedStatements());
@@ -148,6 +152,7 @@ public final class DatabaseInitializer {
      * DAFTAR PERINTAH PEMBUATAN TABEL (CORE SCHEMA)
      */
     private static List<String> getCoreSchemaStatements() {
+        // Bagian ini adalah struktur utama database. Jangan diubah tanpa menyesuaikan DAO dan data lama.
         return List.of(
                 "CREATE TABLE IF NOT EXISTS user (" +
                         "id_user TEXT PRIMARY KEY, " +
@@ -208,6 +213,7 @@ public final class DatabaseInitializer {
      * DAFTAR PERINTAH PEMBUATAN INDEX (OPTIMASI KECEPATAN)
      */
     private static List<String> getIndexStatements() {
+        // Index membantu pencarian/join lebih cepat, terutama untuk laporan dan detail transaksi.
         return List.of(
                 "CREATE INDEX IF NOT EXISTS idx_barang_kategori ON barang(id_kategori)",
                 "CREATE INDEX IF NOT EXISTS idx_transaksi_user ON transaksi(id_user)",
@@ -221,6 +227,7 @@ public final class DatabaseInitializer {
      * DAFTAR DATA AWAL (SEED DATA) SAAT DATABASE PERTAMA KALI DIBUAT
      */
     private static List<String> getSeedStatements() {
+        // Seed data dipakai agar aplikasi langsung punya akun, kategori, barang contoh, dan pengaturan toko.
         return List.of(
                 "INSERT OR IGNORE INTO user (id_user, nama_lengkap, user_password, role) VALUES ('KSR001', 'Kasir Utama', 'EZAK123', 'kasir')",
                 "INSERT OR IGNORE INTO user (id_user, nama_lengkap, user_password, role) VALUES ('PMK001', 'Pemilik Toko', 'EZAK321', 'pemilik')",

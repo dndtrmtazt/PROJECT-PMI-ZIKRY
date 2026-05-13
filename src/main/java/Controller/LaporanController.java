@@ -51,12 +51,13 @@ public class LaporanController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        // Saat halaman laporan dibuka, data langsung dimuat dan ringkasan kartu atas diperbarui.
         setupCurrencyFormatter();
         setupTable();
         loadData();
         updateSummary();
 
-        // Load CSS for table
+        // CSS tabel dipasang terpisah agar tampilan TableView tetap konsisten.
         URL tableCss = getClass().getResource("/CSS/tabel.css");
         if (tableCss != null) {
             tableLaporan.getStylesheets().add(tableCss.toExternalForm());
@@ -71,12 +72,13 @@ public class LaporanController implements Initializable {
     }
 
     private void setupTable() {
+        // Kolom tabel dihubungkan ke property model Laporan agar TableView otomatis membaca data.
         colTanggal.setCellValueFactory(cellData -> cellData.getValue().tanggalProperty());
         colPenjualan.setCellValueFactory(cellData -> cellData.getValue().totalPenjualanProperty().asObject());
         colPengeluaran.setCellValueFactory(cellData -> cellData.getValue().totalPengeluaranProperty().asObject());
         colTransaksi.setCellValueFactory(cellData -> cellData.getValue().jumlahTransaksiProperty().asObject());
 
-        // Format currency columns
+        // Nominal penjualan dan pengeluaran ditampilkan dalam format Rupiah tanpa mengubah data aslinya.
         colPenjualan.setCellFactory(column -> new TableCell<Laporan, Double>() {
             @Override
             protected void updateItem(Double item, boolean empty) {
@@ -103,12 +105,14 @@ public class LaporanController implements Initializable {
     }
 
     private void loadData() {
+        // Data master berisi seluruh riwayat laporan sebelum user melakukan filter tanggal.
         List<Laporan> data = LaporanDao.getAllLaporan();
         masterData.setAll(data);
         tableLaporan.setItems(masterData);
     }
 
     private void updateSummary() {
+        // Kartu ringkasan atas mengambil data hari ini supaya pemilik langsung melihat performa terbaru.
         LocalDate today = LocalDate.now();
         Laporan summary = LaporanDao.getLaporanByDateRange(today, today).stream()
                 .findFirst()
@@ -184,6 +188,7 @@ public class LaporanController implements Initializable {
 
     @FXML
     public void handleFilter(ActionEvent event) {
+        // Jika tanggal kosong, tabel dikembalikan ke semua data. Jika ada tanggal, tampilkan hari itu saja.
         if (datePicker.getValue() == null) {
             loadData();
             return;
@@ -202,6 +207,7 @@ public class LaporanController implements Initializable {
 
     @FXML
     public void handleCetak(ActionEvent event) {
+        // Tombol Cetak Laporan mengambil data yang sedang tampil, jadi hasil export mengikuti filter tabel.
         List<Laporan> dataExport = new ArrayList<>(tableLaporan.getItems());
         if (dataExport.isEmpty()) {
             showAlert(Alert.AlertType.WARNING, "Data Kosong", "Tidak ada data laporan untuk diexport.");
@@ -221,6 +227,7 @@ public class LaporanController implements Initializable {
 
         String periode = getPeriodeExport();
         try {
+            // Logic export utama tetap dipisah di LaporanExportUtil agar controller tidak terlalu penuh.
             if (exportPdf) {
                 LaporanExportUtil.exportToPdf(targetFile, dataExport, periode);
             } else {
@@ -236,6 +243,7 @@ public class LaporanController implements Initializable {
 
     private ExportLaporanDialogController.ExportFormat showExportFormatDialog() {
         try {
+            // Popup custom ini hanya memilih format, sedangkan proses simpan file tetap dilakukan setelahnya.
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/FXML/Admin/ExportLaporanDialog.fxml"));
             Parent root = loader.load();
             ExportLaporanDialogController controller = loader.getController();
@@ -276,6 +284,7 @@ public class LaporanController implements Initializable {
 
     private void showExportSuccessDialog(ExportLaporanDialogController.ExportFormat format, File targetFile) {
         try {
+            // Popup sukses menampilkan format export dan lokasi file agar user tahu hasilnya tersimpan di mana.
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/FXML/Admin/ExportSuccessDialog.fxml"));
             Parent root = loader.load();
             ExportSuccessDialogController controller = loader.getController();
@@ -307,6 +316,7 @@ public class LaporanController implements Initializable {
             }
             dialog.showAndWait();
         } catch (IOException e) {
+            // Jika popup custom gagal dibuka, export tetap dianggap berhasil dan user diberi info lewat Alert.
             e.printStackTrace();
             showAlert(Alert.AlertType.INFORMATION, "Export Berhasil",
                     "Laporan berhasil disimpan:\n" + targetFile.getAbsolutePath());
@@ -314,6 +324,7 @@ public class LaporanController implements Initializable {
     }
 
     private File pilihLokasiExport(boolean pdf) {
+        // FileChooser membuat user bebas memilih folder tujuan tanpa menyimpan file ke folder instalasi aplikasi.
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle(pdf ? "Simpan Laporan PDF" : "Simpan Laporan Excel");
         String extension = pdf ? ".pdf" : ".xlsx";

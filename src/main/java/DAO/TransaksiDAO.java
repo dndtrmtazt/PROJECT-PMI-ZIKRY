@@ -107,6 +107,7 @@ public class TransaksiDAO {
             return false;
         }
 
+        // Transaksi kasir harus atomik: header transaksi, detail belanja, dan stok barang harus berhasil bersama.
         String transaksiQuery = "INSERT INTO transaksi (id_transaksi, tgl_transaksi, id_user, total) VALUES (?, ?, ?, ?)";
         String detailQuery = "INSERT INTO detail_transaksi (id_detail, id_transaksi, id_barang, jumlah, harga_satuan) VALUES (?, ?, ?, ?, ?)";
         String stokQuery = "UPDATE barang SET stok = stok - ? WHERE id_barang = ? AND stok >= ?";
@@ -153,6 +154,7 @@ public class TransaksiDAO {
                     stokPs.setString(2, detail.getIdBarang());
                     stokPs.setInt(3, detail.getJumlah());
 
+                    // Stok dikurangi dengan syarat stok masih cukup, supaya stok tidak pernah menjadi minus.
                     if (stokPs.executeUpdate() != 1) {
                         throw new SQLException("Stok barang " + detail.getIdBarang() + " tidak mencukupi.");
                     }
@@ -161,6 +163,7 @@ public class TransaksiDAO {
                 conn.commit();
                 return true;
             } catch (SQLException e) {
+                // Jika salah satu detail gagal tersimpan atau stok tidak cukup, semua perubahan transaksi dibatalkan.
                 conn.rollback();
                 System.err.println("Error saving transaksi atomically: " + e.getMessage());
                 e.printStackTrace();

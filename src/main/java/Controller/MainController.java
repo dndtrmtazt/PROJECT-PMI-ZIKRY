@@ -92,6 +92,7 @@ public class MainController {
     }
 
     public void setHakAkses(String role) {
+        // Menu sidebar disaring berdasarkan role agar kasir dan pemilik hanya melihat fitur yang sesuai.
         aturVisibility(false, wrapperDashboard, wrapperTransaksi, wrapperDataBarang,
                 wrapperLaporan, wrapperKategori, wrapperPengeluaran,
                 wrapperUser, wrapperPengaturan);
@@ -112,6 +113,7 @@ public class MainController {
     private void handleMenuAction(ActionEvent event) {
         Object source = event.getSource();
 
+        // Semua tombol sidebar masuk ke satu handler ini, lalu diarahkan ke halaman yang sesuai.
         if (source == btnDashboard) {
             bukaDashboard();
         }
@@ -147,7 +149,7 @@ public class MainController {
 
     public FXMLLoader panggilHalaman(String fxmlFile) {
         try {
-            // Cek di folder Admin atau Kasir jika tidak ditemukan di root FXML
+            // Halaman dicari bertahap di folder FXML root, Admin, lalu Kasir agar navigasi tetap fleksibel.
             String path = "/FXML/" + fxmlFile + ".fxml";
             java.net.URL url = getClass().getResource(path);
             
@@ -177,7 +179,7 @@ public class MainController {
             AnchorPane.setRightAnchor(root, 0.0);
             contentArea.getChildren().add(root);
             
-            // Notify controller about theme
+            // Setelah halaman diganti, controller baru langsung disinkronkan dengan mode tema aktif.
             notifyControllerTheme();
             return loader;
         } catch (IOException e) {
@@ -190,7 +192,7 @@ public class MainController {
     private void notifyControllerTheme() {
         if (currentController == null) return;
         
-        // Gunakan reflection untuk memanggil setDarkMode agar lebih fleksibel dan menghindari error 'cannot find symbol'
+        // Reflection dipakai supaya controller yang punya setDarkMode bisa ikut tema tanpa wajib implement interface.
         try {
             java.lang.reflect.Method method = currentController.getClass().getMethod("setDarkMode", boolean.class);
             method.invoke(currentController, isDarkMode);
@@ -206,6 +208,7 @@ public class MainController {
         if (wrapper == null || indicator == null || iconView == null) return;
         resetAllMenus();
 
+        // Simpan menu aktif agar warna/icon tetap konsisten saat tema diganti.
         activeWrapper = wrapper;
         activeIndicator = indicator;
         activeIconView = iconView;
@@ -264,6 +267,7 @@ public class MainController {
         ImageView[] icons = {imgDashboard, imgTransaksi, imgDataBarang, imgLaporan, imgKategori, imgPengeluaran, imgUser, imgPengaturan};
         String[] originalIcons = {"icon39.png", "ICON5.png", "icon40.png", "icon42.png", "icon43.png", "icon41.png", "icon 37.png", "icon38.png"};
 
+        // Reset visual menu sebelum satu menu baru diberi state aktif.
         for (int i = 0; i < wrappers.length; i++) {
             if (wrappers[i] != null && wrappers[i].isVisible()) {
                 stabilizeMenuLayout(wrappers[i], indicators[i]);
@@ -359,6 +363,7 @@ public class MainController {
     }
 
     private void applyDarkMode() {
+        // Mode gelap mengubah class utama, gambar icon, dan warna menu tanpa mengganti halaman.
         isDarkMode = true;
         setStyleClass(mainPane, "dark", true);
         clearInlineStyles(mainPane, sidebarVBox, lblLogo, hboxThemeToggle, btnLogout);
@@ -377,6 +382,7 @@ public class MainController {
     }
 
     private void applyLightMode() {
+        // Mode terang mengembalikan class utama, gambar icon, dan warna menu ke tampilan default.
         isDarkMode = false;
         setStyleClass(mainPane, "dark", false);
         clearInlineStyles(mainPane, sidebarVBox, lblLogo, hboxThemeToggle, btnLogout);
@@ -404,6 +410,7 @@ public class MainController {
             return;
         }
 
+        // Transisi kecil ini hanya untuk visual, sedangkan perubahan tema sebenarnya tetap di applyThemeInstantly.
         if (mainPane == null) {
             applyThemeInstantly(darkModeTarget);
             return;
@@ -465,6 +472,7 @@ public class MainController {
 
     private void showAdminLogoutConfirmationPopup() {
         try {
+            // Popup logout dibuat modal agar user memilih Batal/X atau Ya, Keluar sebelum kembali ke halaman.
             URL dialogView = getClass().getResource("/FXML/Admin/AdminLogoutDialog.fxml");
             if (dialogView == null) {
                 return;
@@ -494,6 +502,7 @@ public class MainController {
 
             dialog.setScene(scene);
             dialog.setOnShown(event -> {
+                // Posisi dihitung dari owner window, bukan layar monitor, agar popup selalu tepat di tengah aplikasi.
                 dialog.setX(owner.getX() + (owner.getWidth() - dialog.getWidth()) / 2);
                 dialog.setY(owner.getY() + (owner.getHeight() - dialog.getHeight()) / 2);
             });
@@ -505,6 +514,7 @@ public class MainController {
 
     private void handleLogout() {
         try {
+            // Logic logout lama tetap dipakai: bersihkan sesi lalu kembali ke halaman login.
             UserSession.getInstance().logout();
             Stage stage = (Stage) btnLogout.getScene().getWindow();
             URL loginView = getClass().getResource("/FXML/LoginView.fxml");

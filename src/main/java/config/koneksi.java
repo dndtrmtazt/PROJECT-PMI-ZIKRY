@@ -10,12 +10,12 @@ import java.sql.Statement;
 
 public class koneksi {
     // [0] Inisialisasi awal: Menentukan lokasi file database saat class dipanggil
-    private static final Path DATABASE_PATH = resolveDatabasePath();
+    private static final Path DATABASE_PATH = tentukanLokasiDatabase();
 
     /**
      * ALUR PENCARIAN LOKASI DATABASE:
      */
-    private static Path resolveDatabasePath() {
+    private static Path tentukanLokasiDatabase() {
         // 1. Ambil path direktori tempat aplikasi dijalankan saat ini
         Path currentPath = Paths.get("").toAbsolutePath().normalize();
 
@@ -57,6 +57,7 @@ public class koneksi {
         }
 
         // 5. Menjalankan inisialisasi tabel (membuat tabel jika database masih kosong)
+        // DatabaseInitializer juga mengisi seed data awal, jadi aplikasi siap dipakai saat database baru dibuat.
         DatabaseInitializer.initialize(connection);
         
         // 6. Memberikan info bahwa koneksi telah berhasil terhubung

@@ -44,6 +44,7 @@ public final class StrukPdfUtil {
         RUPIAH_FORMAT.setMaximumFractionDigits(0);
         RUPIAH_FORMAT.setMinimumFractionDigits(0);
 
+        // Tinggi halaman dihitung dari jumlah item agar struk tetap receipt style, bukan ukuran A4.
         float pageHeight = calculateReceiptHeight(toko, items);
         try (PDDocument document = new PDDocument()) {
             PDPage page = new PDPage(new PDRectangle(RECEIPT_WIDTH, pageHeight));
@@ -94,6 +95,7 @@ public final class StrukPdfUtil {
 
     private static float drawItems(PDPageContentStream content, List<StrukItem> items, float y) throws IOException {
         for (StrukItem item : items) {
+            // Nama barang boleh turun baris, sedangkan qty/harga dan subtotal tetap rapi seperti struk kasir.
             List<String> nameLines = wrapText(safeText(item.getNamaBarang(), "-"), PDType1Font.HELVETICA_BOLD,
                     NORMAL_FONT_SIZE, CONTENT_WIDTH);
             for (String line : nameLines) {
@@ -114,6 +116,7 @@ public final class StrukPdfUtil {
 
     private static float drawPaymentSummary(PDPageContentStream content, double total, double nominalBayar,
                                             double kembalian, float y) throws IOException {
+        // Ringkasan pembayaran dibuat tegas agar total, bayar, dan kembali mudah dicek kasir.
         y = drawSummaryValue(content, "TOTAL", formatRupiah(total), y);
         y = drawSummaryValue(content, "BAYAR", formatRupiah(nominalBayar), y);
         y = drawSummaryValue(content, "KEMBALI", formatRupiah(kembalian), y);
@@ -240,6 +243,7 @@ public final class StrukPdfUtil {
     }
 
     private static float calculateReceiptHeight(Toko toko, List<StrukItem> items) throws IOException {
+        // Perhitungan tinggi mengikuti jumlah baris alamat, telepon, dan item yang ter-wrap.
         float height = 242f;
         String storeName = safeText(toko != null ? toko.getNamaToko() : null, "Toko Zikry");
         height += countWrappedLines(getPrintableAddress(toko, storeName), SMALL_FONT_SIZE, CONTENT_WIDTH) * LINE_HEIGHT;

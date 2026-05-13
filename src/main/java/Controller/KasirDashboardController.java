@@ -108,9 +108,9 @@ public class KasirDashboardController {
         } else {
             // Jika kita berada di dalam view konten (seperti TransaksiView)
             setupSortHeaders();
-            loadProducts(isDarkMode);
+            muatProduk(isDarkMode);
             setupSearch();
-            setupPayment();
+            aturInputPembayaran();
             setupRealTimeClock();
         }
 
@@ -263,7 +263,7 @@ public class KasirDashboardController {
         setImageIfPresent(imgLogout, enabled ? "/Images/ICON33.png" : "/Images/ICON6.png");
 
         displayProducts(allBarang, enabled);
-        updateCartUI();
+        perbaruiTampilanKeranjang();
     }
 
     private void setStyleClass(Node node, String styleClass, boolean enabled) {
@@ -367,17 +367,17 @@ public class KasirDashboardController {
     }
 
     // --- LOAD DATA DARI DATABASE ---
-    private void loadProducts(boolean isDarkMode) {
+    private void muatProduk(boolean isDarkMode) {
         allBarang = BarangDAO.getAllBarang();
         // Gunakan filter pencarian jika ada
         if (txtSearch != null && !txtSearch.getText().isEmpty()) {
-            filterProducts(txtSearch.getText(), isDarkMode);
+            saringProduk(txtSearch.getText(), isDarkMode);
         } else {
             displayProducts(getSortedProducts(allBarang), isDarkMode);
         }
     }
 
-    private void filterProducts(String query, boolean isDarkMode) {
+    private void saringProduk(String query, boolean isDarkMode) {
         if (allBarang == null) return;
         List<Barang> filtered = allBarang.stream()
                 .filter(b -> b.getNamaBarang().toLowerCase().contains(query.toLowerCase())
@@ -409,7 +409,7 @@ public class KasirDashboardController {
 
         updateSortHeaderText();
         if (txtSearch != null && !txtSearch.getText().trim().isEmpty()) {
-            filterProducts(txtSearch.getText(), MainController.isDarkMode);
+            saringProduk(txtSearch.getText(), MainController.isDarkMode);
         } else {
             displayProducts(getSortedProducts(allBarang), MainController.isDarkMode);
         }
@@ -608,18 +608,18 @@ public class KasirDashboardController {
             showAlert("Stok Habis", "Maaf, stok barang di gudang sudah habis!");
         }
 
-        loadProducts(MainController.isDarkMode);
-        updateCartUI();
+        muatProduk(MainController.isDarkMode);
+        perbaruiTampilanKeranjang();
     }
 
     // --- UPDATE TAMPILAN KERANJANG ---
-    private void updateCartUI() {
+    private void perbaruiTampilanKeranjang() {
         if (vboxCartList == null) return;
         vboxCartList.getChildren().clear();
         totalBelanja = 0;
         boolean isDark = MainController.isDarkMode;
         for (Detail_Transaksi item : cartItems) {
-            Barang b = findBarangById(item.getIdBarang());
+            Barang b = cariBarangBerdasarkanId(item.getIdBarang());
             if (b != null) {
                 totalBelanja += item.getSubtotal();
                 vboxCartList.getChildren().add(createCartRow(item, b));
@@ -633,7 +633,7 @@ public class KasirDashboardController {
         }
 
         if (lblTotalBelanja != null) lblTotalBelanja.setText("Rp " + nfIndo.format(totalBelanja));
-        updateKembalian();
+        perbaruiKembalian();
     }
 
     // --- DESAIN BARIS KERANJANG ---
@@ -744,8 +744,8 @@ public class KasirDashboardController {
         } else {
             cartItems.remove(item);
         }
-        loadProducts(MainController.isDarkMode);
-        updateCartUI();
+        muatProduk(MainController.isDarkMode);
+        perbaruiTampilanKeranjang();
     }
 
     // --- TAMBAH QTY DI KERANJANG ---
@@ -768,15 +768,15 @@ public class KasirDashboardController {
         if (latestBarang.getStok() > currentQtyInCart) {
             item.setJumlah(item.getJumlah() + 1);
             item.setSubtotal(item.getJumlah() * item.getHargaSatuan());
-            loadProducts(MainController.isDarkMode);
-            updateCartUI();
+            muatProduk(MainController.isDarkMode);
+            perbaruiTampilanKeranjang();
         } else {
             showAlert("Stok Tidak Cukup", "Maaf, stok barang di gudang sudah habis!");
         }
     }
 
     // --- HELPER: Cari barang berdasarkan ID ---
-    private Barang findBarangById(String id) {
+    private Barang cariBarangBerdasarkanId(String id) {
         if (allBarang == null || id == null) return null;
         String searchId = id.trim();
         for (Barang b : allBarang) {
@@ -789,9 +789,10 @@ public class KasirDashboardController {
     }
 
     // --- FITUR PEMBAYARAN ---
-    private void setupPayment() {
+    private void aturInputPembayaran() {
         if (txtBayar == null) return;
 
+        // Input bayar hanya menerima angka dan langsung diformat ribuan agar kasir mudah membaca nominal.
         txtBayar.setTextFormatter(new TextFormatter<>(change -> {
             String newText = change.getControlNewText();
             String digitsOnly = newText.replaceAll("[^0-9]", "");
@@ -813,33 +814,34 @@ public class KasirDashboardController {
             }
         }));
 
-        txtBayar.textProperty().addListener((obs, old, newVal) -> updateKembalian());
+        txtBayar.textProperty().addListener((obs, old, newVal) -> perbaruiKembalian());
 
         if (btnSimpanCetak != null) btnSimpanCetak.setOnAction(e -> handleCheckout());
     }
 
     // --- UPDATE KEMBALIAN ---
-    private void updateKembalian() {
+    private void perbaruiKembalian() {
         if (lblKembalian == null || txtBayar == null) return;
         try {
             String cleanVal = txtBayar.getText().replaceAll("[^0-9]", "");
             double bayar  = cleanVal.isEmpty() ? 0 : Double.parseDouble(cleanVal);
             double kembali = bayar - totalBelanja;
             lblKembalian.setText("Rp " + nfIndo.format(kembali));
-            applyChangeState(lblKembalian, kembali);
+            aturWarnaKembalian(lblKembalian, kembali);
         } catch (Exception e) {
             lblKembalian.setText("Rp 0");
-            applyChangeState(lblKembalian, 0);
+            aturWarnaKembalian(lblKembalian, 0);
         }
     }
 
-    private void applyChangeState(Label label, double value) {
+    private void aturWarnaKembalian(Label label, double value) {
         setStyleClass(label, "kasir-change-positive", value >= 0);
         setStyleClass(label, "kasir-change-negative", value < 0);
     }
 
     // --- CHECKOUT & SIMPAN TRANSAKSI ---
     private void handleCheckout() {
+        // Alur checkout: validasi keranjang dan nominal bayar sebelum popup konfirmasi ditampilkan.
         if (cartItems.isEmpty()) {
             showAlert("Peringatan", "Keranjang belanja masih kosong!");
             return;
@@ -929,27 +931,31 @@ public class KasirDashboardController {
 
             double nominalBayar = getNominalBayarValue();
             double kembalian = nominalBayar - totalBelanja;
-            List<StrukPdfUtil.StrukItem> strukItems = buildStrukItems();
+            // Data struk dibuat sebelum keranjang di-reset supaya isi PDF sama dengan transaksi yang tersimpan.
+            List<StrukPdfUtil.StrukItem> strukItems = buatItemStruk();
             Toko toko = TokoDAO.getDataToko();
-            String kasirName = getCashierName();
+            String kasirName = ambilNamaKasir();
 
+            // DAO menyimpan header transaksi, detail item, dan pengurangan stok dalam satu transaksi database.
             boolean trxSaved = TransaksiDAO.saveTransaksiWithDetails(trx, new ArrayList<>(cartItems));
             if (!trxSaved) {
                 showAlert("Error", "Gagal menyimpan transaksi. Periksa stok barang dan coba lagi.");
                 return;
             }
 
+            // Struk hanya dicetak setelah database berhasil menyimpan transaksi.
             prosesCetakStruk(trx, strukItems, toko, kasirName, nominalBayar, kembalian);
 
+            // Setelah selesai, form pembayaran dan keranjang dikosongkan untuk transaksi berikutnya.
             cartItems.clear();
             if (txtBayar != null)        txtBayar.clear();
             totalBelanja = 0;
             if (lblTotalBelanja != null) lblTotalBelanja.setText("Rp 0");
             if (lblKembalian != null)    lblKembalian.setText("Rp 0");
-            if (lblKembalian != null)    applyChangeState(lblKembalian, 0);
+            if (lblKembalian != null)    aturWarnaKembalian(lblKembalian, 0);
 
-            loadProducts(MainController.isDarkMode);
-            updateCartUI();
+            muatProduk(MainController.isDarkMode);
+            perbaruiTampilanKeranjang();
 
         } catch (Exception e) {
             showAlert("Error Database", "Gagal menyimpan transaksi: " + e.getMessage());
@@ -966,10 +972,10 @@ public class KasirDashboardController {
         return cleanValue.isEmpty() ? 0 : Double.parseDouble(cleanValue);
     }
 
-    private List<StrukPdfUtil.StrukItem> buildStrukItems() {
+    private List<StrukPdfUtil.StrukItem> buatItemStruk() {
         List<StrukPdfUtil.StrukItem> items = new ArrayList<>();
         for (Detail_Transaksi item : cartItems) {
-            Barang barang = findBarangById(item.getIdBarang());
+            Barang barang = cariBarangBerdasarkanId(item.getIdBarang());
             if (barang == null) {
                 barang = BarangDAO.getBarangById(item.getIdBarang());
             }
@@ -985,7 +991,7 @@ public class KasirDashboardController {
         return items;
     }
 
-    private String getCashierName() {
+    private String ambilNamaKasir() {
         User currentUser = UserSession.getInstance().getCurrentUser();
         if (currentUser == null) {
             return "-";
@@ -998,6 +1004,7 @@ public class KasirDashboardController {
 
     private void prosesCetakStruk(Transaksi transaksi, List<StrukPdfUtil.StrukItem> items, Toko toko,
                                   String kasirName, double nominalBayar, double kembalian) {
+        // Jika kasir membatalkan FileChooser, transaksi tetap tersimpan dan hanya struk yang tidak dibuat.
         File targetFile = pilihLokasiStruk(transaksi);
         if (targetFile == null) {
             return;
@@ -1037,7 +1044,7 @@ public class KasirDashboardController {
         if (txtSearch == null) return;
         txtSearch.focusedProperty().addListener((obs, wasFocused, isFocused) -> setStyleClass(hboxSearch, "focused", isFocused));
         txtSearch.textProperty().addListener((obs, old, newVal) -> {
-            filterProducts(newVal, MainController.isDarkMode);
+            saringProduk(newVal, MainController.isDarkMode);
         });
     }
 
