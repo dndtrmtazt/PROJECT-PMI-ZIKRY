@@ -12,6 +12,7 @@ import javafx.stage.Stage;
 import DAO.KategoriDAO;
 import model.Kategori;
 
+// Controller form tambah dan edit kategori.
 public class FormKategoriController {
 
     @FXML private VBox rootPane;
@@ -23,6 +24,7 @@ public class FormKategoriController {
     private boolean isEdit = false;
     private String idLama;
 
+    // Menyesuaikan form dengan tema aktif saat dibuka.
     @FXML
     public void initialize() {
         setDarkMode(MainController.isDarkMode);
@@ -53,6 +55,7 @@ public class FormKategoriController {
         }
     }
 
+    // Menyimpan data kategori baru atau perubahan kategori lama.
     @FXML
     private void handleSimpan(ActionEvent event) {
         String id = txtIdKategori.getText().trim();
@@ -86,16 +89,19 @@ public class FormKategoriController {
         }
     }
 
+    // Menutup form tanpa menyimpan.
     @FXML
     private void handleBatal(ActionEvent event) {
         closeWindow(event);
     }
 
+    // Menutup Stage form.
     private void closeWindow(ActionEvent event) {
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.close();
     }
 
+    // Mengatur warna form kategori sesuai light/dark mode.
     public void setDarkMode(boolean enabled) {
         String bgMain = enabled ? "#1E1E1E" : "white";
         String textColor = enabled ? "white" : "#1F2937";
@@ -142,6 +148,7 @@ public class FormKategoriController {
         }
     }
 
+    // Helper untuk memasang class CSS.
     private void setStyleClass(Node node, String styleClass, boolean enabled) {
         if (node == null) return;
         if (enabled) {

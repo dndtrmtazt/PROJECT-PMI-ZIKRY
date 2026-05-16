@@ -9,6 +9,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
+// Controller popup konfirmasi logout untuk halaman admin/pemilik.
 public class AdminLogoutDialogController {
 
     @FXML private StackPane dialogRoot;
@@ -17,31 +18,38 @@ public class AdminLogoutDialogController {
     @FXML private Button btnCancel;
     @FXML private Button btnConfirm;
 
+    // Aksi yang dijalankan setelah user benar-benar menekan tombol keluar.
     private Runnable confirmAction;
 
+    // Memasang clip rounded agar sudut dialog tetap rapi.
     @FXML
     private void initialize() {
         applyRoundedClip(dialogCard, 14);
     }
 
+    // Menyesuaikan tampilan popup dengan tema aktif.
     public void setDarkMode(boolean enabled) {
         setStyleClass(dialogRoot, "dark", enabled);
     }
 
+    // Menerima aksi logout dari controller pemanggil.
     public void setOnConfirm(Runnable confirmAction) {
         this.confirmAction = confirmAction;
     }
 
+    // Tombol X hanya menutup popup.
     @FXML
     private void handleClose() {
         closeDialog();
     }
 
+    // Tombol batal hanya menutup popup.
     @FXML
     private void handleCancel() {
         closeDialog();
     }
 
+    // Tombol konfirmasi menutup popup lalu menjalankan logout.
     @FXML
     private void handleConfirm() {
         closeDialog();
@@ -50,6 +58,7 @@ public class AdminLogoutDialogController {
         }
     }
 
+    // Mengambil Stage dialog dari tombol lalu menutupnya.
     private void closeDialog() {
         if (btnClose != null && btnClose.getScene() != null) {
             Stage stage = (Stage) btnClose.getScene().getWindow();
@@ -57,6 +66,7 @@ public class AdminLogoutDialogController {
         }
     }
 
+    // Menambah atau menghapus class CSS sesuai kondisi.
     private void setStyleClass(Node node, String styleClass, boolean enabled) {
         if (node == null || styleClass == null) return;
 
@@ -69,6 +79,7 @@ public class AdminLogoutDialogController {
         }
     }
 
+    // Membuat tampilan card dialog memiliki sudut membulat.
     private void applyRoundedClip(Region region, double radius) {
         if (region == null) return;
 

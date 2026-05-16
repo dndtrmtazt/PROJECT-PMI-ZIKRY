@@ -15,6 +15,7 @@ import javafx.stage.Stage;
 import DAO.UserDAO;
 import model.User;
 
+// Controller form tambah dan edit user.
 public class TambahUserController {
 
     @FXML private VBox rootPane;
@@ -27,12 +28,14 @@ public class TambahUserController {
     private boolean isEdit = false;
     private String idLama; // Menampung ID asli sebelum diedit
 
+    // Mengisi pilihan role dan menyesuaikan tema form.
     @FXML
     public void initialize() {
         cbRole.getItems().addAll("PEMILIK", "KASIR");
         setDarkMode(MainController.isDarkMode);
     }
 
+    // Mengubah form menjadi mode edit dengan data user yang dipilih.
     public void setEditMode(User user) {
         this.isEdit = true;
         this.idLama = user.getIdUser(); // Simpan ID asli di sini
@@ -51,6 +54,7 @@ public class TambahUserController {
         setDarkMode(MainController.isDarkMode);
     }
 
+    // Validasi input lalu menyimpan user baru atau update user lama.
     @FXML
     private void handleSimpan(ActionEvent event) {
         String idBaru = txtID.getText();
@@ -79,26 +83,31 @@ public class TambahUserController {
         }
     }
 
+    // Menutup form tanpa menyimpan.
     @FXML
     private void handleBatal(ActionEvent event) {
         closeWindow(event);
     }
 
+    // Menutup window form dari tombol yang ditekan.
     private void closeWindow(ActionEvent event) {
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         if (stage != null) stage.close();
     }
 
+    // Dipakai UserController untuk tahu apakah data berhasil disimpan.
     public boolean isSaved() {
         return saved;
     }
 
+    // Menampilkan pesan error sederhana jika validasi atau simpan gagal.
     private void alertError(String msg) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setContentText(msg);
         alert.showAndWait();
     }
 
+    // Mengatur warna form agar konsisten dengan light/dark mode.
     public void setDarkMode(boolean enabled) {
         String bgMain = enabled ? "#1E1E1E" : "white";
         String textColor = enabled ? "white" : "#1F2937";
@@ -150,6 +159,7 @@ public class TambahUserController {
         }
     }
 
+    // Helper untuk memasang class CSS tanpa duplikasi.
     private void setStyleClass(Node node, String styleClass, boolean enabled) {
         if (node == null) return;
         if (enabled) {

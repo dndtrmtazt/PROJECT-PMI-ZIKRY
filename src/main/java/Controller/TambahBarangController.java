@@ -23,6 +23,7 @@ import java.text.NumberFormat;
 import java.util.List;
 import java.util.Locale;
 
+// Controller form tambah barang, termasuk generate ID otomatis dan validasi input.
 public class TambahBarangController {
 
     @FXML
@@ -74,6 +75,7 @@ public class TambahBarangController {
         cbSatuan.setValue("Pcs");
     }
 
+    // Menyiapkan warna ComboBox agar cocok dengan tema.
     private void setupComboBoxStyle(ComboBox<String> cb) {
         if (cb == null) {
             return;
@@ -84,6 +86,7 @@ public class TambahBarangController {
         cb.setCellFactory(darkMode ? listView -> createDarkComboBoxPopupCell() : null);
     }
 
+    // Mengatur tampilan item yang sedang dipilih di ComboBox.
     private ListCell<String> createComboBoxButtonCell(ComboBox<String> cb, boolean darkMode) {
         return new ListCell<>() {
             @Override
@@ -100,6 +103,7 @@ public class TambahBarangController {
         };
     }
 
+    // Mengatur tampilan daftar pilihan ComboBox saat popup dibuka.
     private ListCell<String> createDarkComboBoxPopupCell() {
         return new ListCell<>() {
             {
@@ -121,6 +125,7 @@ public class TambahBarangController {
         };
     }
 
+    // Mengambil kategori dari database untuk pilihan kategori barang.
     private void loadKategori() {
         // 1. WAJIB: Bersihkan dulu isi dropdown-nya sebelum diisi ulang
         if (cmbKategori != null) {
@@ -137,6 +142,7 @@ public class TambahBarangController {
         }
     }
 
+    // Membuat ID barang otomatis berdasarkan kategori yang dipilih.
     private void updateGeneratedBarangId() {
         String idKategori = getSelectedKategoriId();
         if (idKategori.trim().isEmpty()) {
@@ -148,6 +154,7 @@ public class TambahBarangController {
         txtIdBarang.setText(BarangDAO.getNextBarangId(prefix));
     }
 
+    // Mengambil ID kategori dari format ComboBox "ID - Nama".
     private String getSelectedKategoriId() {
         String selected = cmbKategori.getValue();
         if (selected == null || !selected.contains(" - ")) {
@@ -157,6 +164,7 @@ public class TambahBarangController {
         return selected.split(" - ")[0].trim();
     }
 
+    // Membuat field harga hanya menerima angka dan menampilkan pemisah ribuan.
     private void setupCurrencyField(TextField field) {
         if (field == null) {
             return;
@@ -184,6 +192,7 @@ public class TambahBarangController {
         }));
     }
 
+    // Mengubah teks angka berformat ribuan menjadi angka double untuk database.
     private double parseFormattedNumber(String value) {
         String normalized = value == null ? "" : value.replace(".", "").replaceAll("[^0-9]", "").trim();
         return normalized.isEmpty() ? 0 : Double.parseDouble(normalized);
@@ -248,6 +257,7 @@ public class TambahBarangController {
 
     }
 
+    // Helper untuk memasang atau melepas class CSS.
     private void setStyleClass(Node node, String styleClass, boolean enabled) {
         if (node == null) return;
         if (enabled) {
@@ -260,13 +270,14 @@ public class TambahBarangController {
     }
 
     @FXML
+    // Validasi input lalu menyimpan barang baru ke database.
     private void handleSimpan() {
         if (isInputValid()) {
-            // 1. Tambahkan 'satuan' ke dalam list kolom dan tambahkan satu '?' lagi
+
             String sql = "INSERT INTO barang (id_barang, nama_barang, id_kategori, stok, satuan, harga_beli, harga_jual) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
             try (Connection conn = koneksi.koneksiDB();
-                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                 PreparedStatement ps = conn.prepareStatement(sql)) {
 
                 String selectedKategori = cmbKategori.getValue();
                 String idKategori = selectedKategori.split(" - ")[0];
@@ -274,20 +285,20 @@ public class TambahBarangController {
                 // --- AMBIL NILAI DARI COMBOBOX SATUAN ---
                 String satuan = cbSatuan.getValue();
 
-                // 2. Sesuaikan nomor urut (indeks) pstmt
-                pstmt.setString(1, txtIdBarang.getText());
-                pstmt.setString(2, txtNamaBarang.getText());
-                pstmt.setString(3, idKategori);
-                pstmt.setInt(4, Integer.parseInt(txtStok.getText()));
+                // 2. Sesuaikan nomor urut (indeks) ps
+                ps.setString(1, txtIdBarang.getText());
+                ps.setString(2, txtNamaBarang.getText());
+                ps.setString(3, idKategori);
+                ps.setInt(4, Integer.parseInt(txtStok.getText()));
 
                 // --- SET DATA SATUAN (Indeks ke-5) ---
-                pstmt.setString(5, satuan);
+                ps.setString(5, satuan);
 
                 // Indeks sisanya bergeser jadi 6 dan 7
-                pstmt.setDouble(6, parseFormattedNumber(txtHargaBeli.getText()));
-                pstmt.setDouble(7, parseFormattedNumber(txtHargaJual.getText()));
+                ps.setDouble(6, parseFormattedNumber(txtHargaBeli.getText()));
+                ps.setDouble(7, parseFormattedNumber(txtHargaJual.getText()));
 
-                pstmt.executeUpdate();
+                ps.executeUpdate();
                 showSuccessDialog("Berhasil ditambahkan");
                 pindahKeHalamanUtama();
 
@@ -299,16 +310,19 @@ public class TambahBarangController {
     }
 
     @FXML
+    // Membatalkan input dan kembali ke halaman data barang.
     private void handleBatal() {
         pindahKeHalamanUtama();
     }
 
+    // Navigasi kembali ke halaman daftar barang.
     private void pindahKeHalamanUtama() {
         if (MainController.getInstance() != null) {
             MainController.getInstance().panggilHalaman("BarangView");
         }
     }
 
+    // Mengecek field wajib dan format angka sebelum simpan.
     private boolean isInputValid() {
         if (txtIdBarang.getText().isEmpty() || txtNamaBarang.getText().isEmpty() ||
                 cmbKategori.getValue() == null || cbSatuan.getValue() == null || // Tambahin cek satuan
@@ -337,18 +351,10 @@ public class TambahBarangController {
             showAlert(Alert.AlertType.WARNING, "Peringatan", "Stok dan Harga harus berupa angka!");
             return false;
         }
-
-        String idKategori = getSelectedKategoriId();
-        if (!BarangDAO.isBarangIdMatchKategori(txtIdBarang.getText(), idKategori)) {
-            showAlert(Alert.AlertType.WARNING, "Peringatan",
-                    "ID Barang harus mengikuti prefix ID Kategori yang dipilih.");
-            updateGeneratedBarangId();
-            return false;
-        }
-
         return true;
     }
 
+    // Menampilkan alert validasi atau error.
     private void showAlert(Alert.AlertType type, String title, String content) {
         Alert alert = new Alert(type);
         alert.setTitle(title);
@@ -357,11 +363,12 @@ public class TambahBarangController {
         alert.showAndWait();
     }
 
-    private void showSuccessDialog(String titleText) {
+    // Menampilkan popup sukses setelah barang berhasil ditambahkan.
+    private void showSuccessDialog(String title) {
         SuccessDialogController.showDialog(
                 btnTambah == null || btnTambah.getScene() == null ? null : btnTambah.getScene().getWindow(),
                 MainController.isDarkMode,
-                titleText
+                title
         );
     }
 }

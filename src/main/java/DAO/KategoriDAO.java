@@ -6,8 +6,10 @@ import java.util.ArrayList;
 import java.util.List;
 import model.Kategori;
 
+// DAO untuk operasi CRUD tabel kategori.
 public class KategoriDAO {
 
+    // Mengambil seluruh kategori agar bisa ditampilkan di halaman kategori dan combo box barang.
     public static List<Kategori> getAllKategori() {
         List<Kategori> listKategori = new ArrayList<>();
         String query = "SELECT * FROM kategori";
@@ -26,6 +28,7 @@ public class KategoriDAO {
         return listKategori;
     }
 
+    // Menambahkan kategori baru ke database.
     public static boolean addKategori(Kategori kategori) {
         String query = "INSERT INTO kategori (id_kategori, nama_kategori) VALUES (?, ?)";
         try (Connection conn = koneksi.koneksiDB();
@@ -40,6 +43,7 @@ public class KategoriDAO {
         }
     }
 
+    // Mengubah data kategori berdasarkan ID lama, karena ID kategori juga bisa diedit.
     public static boolean updateKategori(Kategori kategori, String oldId) {
         String query = "UPDATE kategori SET id_kategori = ?, nama_kategori = ? WHERE id_kategori = ?";
         try (Connection conn = koneksi.koneksiDB();
@@ -59,6 +63,7 @@ public class KategoriDAO {
         }
     }
 
+    // Menghapus kategori berdasarkan ID yang dipilih user.
     public static boolean deleteKategori(String idKategori) {
         String query = "DELETE FROM kategori WHERE id_kategori = ?";
         try (Connection conn = koneksi.koneksiDB();
@@ -71,6 +76,7 @@ public class KategoriDAO {
         }
     }
 
+    // Mengubah baris ResultSet database menjadi objek Kategori.
     private static Kategori mapKategori(ResultSet rs) throws SQLException {
         Kategori kategori = new Kategori();
         kategori.setIdKategori(rs.getString("id_kategori"));

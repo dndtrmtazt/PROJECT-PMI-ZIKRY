@@ -32,6 +32,7 @@ import java.util.Comparator;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
+// Controller halaman admin untuk melihat, mencari, mengurutkan, tambah, edit, dan hapus pengeluaran.
 public class PengeluaranController implements Initializable {
     private static final String EDIT_ICON_PATH = "/Images/icon_edit.png";
     private static final String DELETE_ICON_PATH = "/Images/icon_hapus.png";
@@ -69,6 +70,7 @@ public class PengeluaranController implements Initializable {
      * PERBAIKAN UTAMA: Nama method disamakan dengan FXML
      */
     @FXML
+    // Membuka form tambah pengeluaran.
     private void handleTambahPengeluaran() {
         showPengeluaranDialog(null);
     }
@@ -76,6 +78,7 @@ public class PengeluaranController implements Initializable {
     /**
      * Membuka pop-up form pengeluaran
      */
+    // Membuka form pengeluaran untuk mode tambah atau edit.
     private void showPengeluaranDialog(Pengeluaran p) {
         try {
             // Path disesuaikan dengan struktur folder resources kamu
@@ -107,6 +110,7 @@ public class PengeluaranController implements Initializable {
         }
     }
 
+    // Memuat ulang data pengeluaran lalu membuat ulang baris tampilannya.
     private void muatDataPengeluaran() {
         if (vboxPengeluaranList == null) return;
         vboxPengeluaranList.getChildren().clear();
@@ -167,6 +171,7 @@ public class PengeluaranController implements Initializable {
         }
     }
 
+    // Menerapkan filter teks dan tanggal sebelum data ditampilkan.
     private List<Pengeluaran> getFilteredPengeluaran() {
         List<Pengeluaran> allPengeluaran = PengeluaranDAO.getAllPengeluaran();
         String keyword = txtSearchPengeluaran != null && txtSearchPengeluaran.getText() != null
@@ -199,10 +204,12 @@ public class PengeluaranController implements Initializable {
                 .collect(Collectors.toList());
     }
 
+    // Pencarian teks yang tidak membedakan huruf besar/kecil.
     private boolean containsIgnoreCase(String value, String keyword) {
         return value != null && value.toLowerCase(Locale.ROOT).contains(keyword);
     }
 
+    // Mengaktifkan klik pada header kolom untuk sorting.
     private void setupSortHeaders() {
         setupSortHeader(lblSortIdPengeluaran, SortColumn.ID);
         setupSortHeader(lblSortTanggal, SortColumn.TANGGAL);
@@ -212,12 +219,14 @@ public class PengeluaranController implements Initializable {
         updateSortHeaderLabels();
     }
 
+    // Menghubungkan satu label header dengan kolom sort tertentu.
     private void setupSortHeader(Label label, SortColumn column) {
         if (label == null) return;
         label.setOnMouseClicked(event -> handleSort(column));
         label.setStyle(label.getStyle() + "; -fx-cursor: hand;");
     }
 
+    // Mengubah kolom sort aktif dan arah ascending/descending.
     private void handleSort(SortColumn column) {
         if (activeSortColumn == column) {
             sortAscending = !sortAscending;
@@ -228,11 +237,13 @@ public class PengeluaranController implements Initializable {
         muatDataPengeluaran();
     }
 
+    // Mengurutkan list sesuai header yang sedang aktif.
     private void applyCurrentSort(List<Pengeluaran> list) {
         Comparator<Pengeluaran> comparator = getSortComparator();
         list.sort(comparator);
     }
 
+    // Menentukan comparator berdasarkan kolom sort yang dipilih.
     private Comparator<Pengeluaran> getSortComparator() {
         Comparator<Pengeluaran> comparator;
 
@@ -268,6 +279,7 @@ public class PengeluaranController implements Initializable {
         return comparator.thenComparing(Pengeluaran::getIdPengeluaran, this::compareIdPengeluaran);
     }
 
+    // Membandingkan ID pengeluaran berdasarkan angka di belakang prefix PGN.
     private int compareIdPengeluaran(String firstId, String secondId) {
         int numberCompare = Integer.compare(extractIdNumber(firstId), extractIdNumber(secondId));
         if (numberCompare != 0) {
@@ -276,6 +288,7 @@ public class PengeluaranController implements Initializable {
         return nullSafeText(firstId).compareToIgnoreCase(nullSafeText(secondId));
     }
 
+    // Mengambil angka dari ID seperti PGN012 menjadi 12.
     private int extractIdNumber(String idPengeluaran) {
         if (idPengeluaran == null || idPengeluaran.length() <= 3) {
             return Integer.MAX_VALUE;
@@ -288,10 +301,12 @@ public class PengeluaranController implements Initializable {
         }
     }
 
+    // Menghindari null saat proses sort atau pencarian teks.
     private String nullSafeText(String value) {
         return value == null ? "" : value;
     }
 
+    // Memperbarui tanda panah pada header sort.
     private void updateSortHeaderLabels() {
         setSortHeaderText(lblSortIdPengeluaran, "ID Pengeluaran", SortColumn.ID);
         setSortHeaderText(lblSortTanggal, "Tanggal", SortColumn.TANGGAL);
@@ -300,6 +315,7 @@ public class PengeluaranController implements Initializable {
         setSortHeaderText(lblSortPic, "PIC (User)", SortColumn.PIC);
     }
 
+    // Mengatur teks header berdasarkan kolom dan arah sort aktif.
     private void setSortHeaderText(Label label, String baseText, SortColumn column) {
         if (label == null) return;
         String indicator = activeSortColumn == column ? (sortAscending ? " \u25B2" : " \u25BC") : "";
@@ -307,10 +323,12 @@ public class PengeluaranController implements Initializable {
     }
 
     @FXML
+    // Tombol cari memuat ulang data sesuai filter yang aktif.
     private void handleCariPengeluaran() {
         muatDataPengeluaran();
     }
 
+    // Menampilkan konfirmasi lalu menghapus data pengeluaran.
     private void handleHapus(Pengeluaran p) {
         if (showDeleteConfirmationDialog()) {
             if (PengeluaranDAO.deletePengeluaran(p.getIdPengeluaran())) {
@@ -319,6 +337,7 @@ public class PengeluaranController implements Initializable {
         }
     }
 
+    // Popup konfirmasi sebelum pengeluaran dihapus.
     private boolean showDeleteConfirmationDialog() {
         return ConfirmDeleteDialogController.showDialog(
                 vboxMainContent == null || vboxMainContent.getScene() == null ? null : vboxMainContent.getScene().getWindow(),
@@ -329,6 +348,7 @@ public class PengeluaranController implements Initializable {
         );
     }
 
+    // Membuat tombol edit/hapus beserta icon pada baris pengeluaran.
     private Button createActionButton(String text, String color, String iconPath) {
         Button btn = new Button(text);
         InputStream iconStream = iconPath == null ? null : getClass().getResourceAsStream(iconPath);
@@ -342,6 +362,7 @@ public class PengeluaranController implements Initializable {
         return btn;
     }
 
+    // Mengatur warna halaman pengeluaran sesuai tema aktif.
     public void setDarkMode(boolean enabled) {
         String bgMain = enabled ? "#121212" : "#F4F4F4";
         String bgCard = enabled ? "#1e1e1e" : "white";
@@ -390,6 +411,7 @@ public class PengeluaranController implements Initializable {
         muatDataPengeluaran();
     }
 
+    // Helper untuk memasang atau melepas class CSS.
     private void setStyleClass(Node node, String styleClass, boolean enabled) {
         if (node == null) return;
         if (enabled) {

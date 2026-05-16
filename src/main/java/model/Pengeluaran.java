@@ -2,6 +2,7 @@ package model;
 
 import java.time.LocalDate;
 
+// Model data pengeluaran toko, seperti listrik, air, atau kebutuhan operasional.
 public class Pengeluaran {
     private String idPengeluaran;
     private LocalDate tglPengeluaran;
@@ -62,6 +63,7 @@ public class Pengeluaran {
 
     @Override
     public String toString() {
+        // Dipakai untuk menampilkan isi objek pengeluaran secara ringkas saat debugging.
         return "Pengeluaran{" +
                 "idPengeluaran='" + idPengeluaran + '\'' +
                 ", tglPengeluaran=" + tglPengeluaran +

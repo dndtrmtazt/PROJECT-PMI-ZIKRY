@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+// Utility untuk membuat struk transaksi dalam format PDF ukuran thermal 80mm.
 public final class StrukPdfUtil {
     private static final Locale LOCALE_ID = new Locale("id", "ID");
     private static final NumberFormat RUPIAH_FORMAT = NumberFormat.getCurrencyInstance(LOCALE_ID);
@@ -35,6 +36,7 @@ public final class StrukPdfUtil {
     private StrukPdfUtil() {
     }
 
+    // Entry utama untuk membuat file struk PDF dari transaksi dan item keranjang.
     public static void exportToPdf(File file, Toko toko, Transaksi transaksi, List<StrukItem> items,
                                    String kasirName, double nominalBayar, double kembalian) throws IOException {
         if (file == null || transaksi == null || items == null || items.isEmpty()) {
@@ -63,6 +65,7 @@ public final class StrukPdfUtil {
         }
     }
 
+    // Menggambar nama toko, alamat, dan kontak di bagian atas struk.
     private static float drawHeader(PDPageContentStream content, Toko toko, float y) throws IOException {
         String storeName = safeText(toko != null ? toko.getNamaToko() : null, "Toko Zikry");
         drawCentered(content, "TOKO ZIKRY", PDType1Font.HELVETICA_BOLD, TITLE_FONT_SIZE, y);
@@ -80,6 +83,7 @@ public final class StrukPdfUtil {
         return y - LINE_HEIGHT - 2;
     }
 
+    // Menggambar informasi nomor transaksi, waktu, dan kasir.
     private static float drawTransactionInfo(PDPageContentStream content, Transaksi transaksi,
                                              String kasirName, float y) throws IOException {
         y = drawLabelValue(content, "No", safeText(transaksi.getIdTransaksi(), "-"), y);
@@ -93,6 +97,7 @@ public final class StrukPdfUtil {
         return y - LINE_HEIGHT - 2;
     }
 
+    // Menggambar daftar item belanja beserta jumlah dan subtotal.
     private static float drawItems(PDPageContentStream content, List<StrukItem> items, float y) throws IOException {
         for (StrukItem item : items) {
             // Nama barang boleh turun baris, sedangkan qty/harga dan subtotal tetap rapi seperti struk kasir.
@@ -114,6 +119,7 @@ public final class StrukPdfUtil {
         return y - LINE_HEIGHT - 2;
     }
 
+    // Menggambar total, nominal bayar, dan kembalian.
     private static float drawPaymentSummary(PDPageContentStream content, double total, double nominalBayar,
                                             double kembalian, float y) throws IOException {
         // Ringkasan pembayaran dibuat tegas agar total, bayar, dan kembali mudah dicek kasir.
@@ -125,6 +131,7 @@ public final class StrukPdfUtil {
         return y - LINE_HEIGHT - 2;
     }
 
+    // Menggambar pesan penutup struk.
     private static void drawFooter(PDPageContentStream content, float y) throws IOException {
         drawCentered(content, "Terima kasih telah berbelanja", PDType1Font.HELVETICA, SMALL_FONT_SIZE, y);
         y -= LINE_HEIGHT;
@@ -200,6 +207,7 @@ public final class StrukPdfUtil {
         return y;
     }
 
+    // Memecah teks menjadi beberapa baris sesuai lebar maksimal.
     private static List<String> wrapText(String text, PDType1Font font, float fontSize, float maxWidth)
             throws IOException {
         List<String> lines = new ArrayList<>();
@@ -228,6 +236,7 @@ public final class StrukPdfUtil {
         return lines;
     }
 
+    // Memendekkan teks agar muat pada lebar tertentu.
     private static String shortenToWidth(String text, PDType1Font font, float fontSize, float maxWidth)
             throws IOException {
         if (stringWidth(text, font, fontSize) <= maxWidth) {
@@ -256,14 +265,17 @@ public final class StrukPdfUtil {
         return Math.max(height, 330f);
     }
 
+    // Menghitung jumlah baris hasil wrap untuk teks tertentu.
     private static int countWrappedLines(String text, float fontSize, float maxWidth) throws IOException {
         return wrapText(text, PDType1Font.HELVETICA, fontSize, maxWidth).size();
     }
 
+    // Format angka menjadi Rupiah tanpa desimal.
     private static String formatRupiah(double value) {
         return RUPIAH_FORMAT.format(value).replace("Rp", "Rp").replace(",00", "");
     }
 
+    // Mengambil alamat toko yang aman ditampilkan di struk.
     private static String getPrintableAddress(Toko toko, String storeName) {
         if (toko == null || isBlank(toko.getAlamat())) {
             return "Samarinda";
@@ -280,6 +292,7 @@ public final class StrukPdfUtil {
         return font.getStringWidth(safePdfText(text)) / 1000f * fontSize;
     }
 
+    // Mengembalikan fallback jika teks kosong.
     private static String safeText(String value, String fallback) {
         return isBlank(value) ? fallback : value.trim();
     }
@@ -288,6 +301,7 @@ public final class StrukPdfUtil {
         return value == null || value.trim().isEmpty();
     }
 
+    // Membersihkan karakter yang kurang aman untuk font PDFBox bawaan.
     private static String safePdfText(String value) {
         if (value == null) {
             return "";
@@ -295,6 +309,7 @@ public final class StrukPdfUtil {
         return value.replaceAll("[^\\x20-\\x7E]", " ");
     }
 
+    // Data ringan untuk satu baris item struk.
     public static final class StrukItem {
         private final String namaBarang;
         private final int jumlah;

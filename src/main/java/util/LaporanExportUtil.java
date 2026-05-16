@@ -34,6 +34,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
 
+// Utility untuk export laporan penjualan ke PDF dan Excel.
 public final class LaporanExportUtil {
     private static final String REPORT_TITLE = "Laporan Penjualan Toko Zikry";
     private static final String STORE_NAME = "Toko Zikry";
@@ -49,6 +50,7 @@ public final class LaporanExportUtil {
     private LaporanExportUtil() {
     }
 
+    // Membuat file PDF laporan dari data yang sedang tampil di halaman laporan.
     public static void exportToPdf(File file, List<Laporan> data, String periode) throws IOException {
         CURRENCY_FORMAT.setMaximumFractionDigits(0);
         CURRENCY_FORMAT.setMinimumFractionDigits(0);
@@ -108,6 +110,7 @@ public final class LaporanExportUtil {
         }
     }
 
+    // Membuat file Excel laporan lengkap dengan styling dan ringkasan.
     public static void exportToExcel(File file, List<Laporan> data, String periode) throws IOException {
         // Export Excel memakai data yang sama dengan PDF agar angka laporan tetap konsisten.
         ReportSummary summary = calculateSummary(data);
@@ -215,10 +218,12 @@ public final class LaporanExportUtil {
         }
     }
 
+    // Membuat halaman PDF landscape agar tabel laporan muat.
     private static PDPage createLandscapePage() {
         return new PDPage(new PDRectangle(PDRectangle.A4.getHeight(), PDRectangle.A4.getWidth()));
     }
 
+    // Menggambar judul, logo, metadata, dan periode laporan di PDF.
     private static float drawPdfHeader(PDPageContentStream content, PDPage page, PDImageXObject logo,
                                        String periode, String printedAt, String reportNumber) throws IOException {
         // Header PDF berisi identitas laporan, periode, nomor laporan, dan waktu cetak.
@@ -250,6 +255,7 @@ public final class LaporanExportUtil {
         return height - 124;
     }
 
+    // Menggambar kotak ringkasan total penjualan, pengeluaran, dan transaksi.
     private static float drawPdfSummary(PDPageContentStream content, float y, ReportSummary summary) throws IOException {
         // Tiga kartu ringkasan ini memudahkan pembaca melihat penjualan, pengeluaran, dan jumlah transaksi.
         float boxWidth = 230f;
@@ -275,6 +281,7 @@ public final class LaporanExportUtil {
         drawText(content, value, x + 14, y - 43, PDType1Font.HELVETICA_BOLD, 16, Color.BLACK);
     }
 
+    // Menggambar header tabel PDF.
     private static float drawPdfTableHeader(PDPageContentStream content, float y) throws IOException {
         float[] widths = getPdfColumnWidths();
         String[] headers = {"Tanggal", "Total Penjualan", "Total Pengeluaran", "Jumlah Transaksi"};
@@ -291,6 +298,7 @@ public final class LaporanExportUtil {
         return y - PDF_ROW_HEIGHT;
     }
 
+    // Menggambar satu baris data laporan pada tabel PDF.
     private static void drawPdfTableRow(PDPageContentStream content, float y, Laporan laporan, boolean even) throws IOException {
         float[] widths = getPdfColumnWidths();
         String[] values = {
@@ -312,6 +320,7 @@ public final class LaporanExportUtil {
         }
     }
 
+    // Menggambar baris total di akhir tabel PDF.
     private static void drawPdfTotalRow(PDPageContentStream content, float y, ReportSummary summary) throws IOException {
         float[] widths = getPdfColumnWidths();
         String[] values = {
@@ -332,6 +341,7 @@ public final class LaporanExportUtil {
         }
     }
 
+    // Menggambar area tanda tangan pemilik pada laporan PDF.
     private static void drawPdfSignature(PDPageContentStream content, PDPage page, float y, String signDate) throws IOException {
         float signatureX = page.getMediaBox().getWidth() - PDF_MARGIN - 180f;
         drawText(content, "Samarinda, " + signDate, signatureX, y, PDType1Font.HELVETICA, 10, Color.BLACK);
@@ -345,6 +355,7 @@ public final class LaporanExportUtil {
         content.stroke();
     }
 
+    // Menggambar footer waktu cetak pada PDF.
     private static void drawPdfFooter(PDPageContentStream content, PDPage page, String printedAt) throws IOException {
         float y = 28f;
         content.setStrokingColor(new Color(226, 232, 240));
@@ -355,6 +366,7 @@ public final class LaporanExportUtil {
         drawText(content, "Tanggal cetak: " + printedAt, page.getMediaBox().getWidth() - 210, y, PDType1Font.HELVETICA, 9, new Color(71, 85, 105));
     }
 
+    // Memuat logo toko dari resources jika tersedia.
     private static PDImageXObject loadPdfLogo(PDDocument document) throws IOException {
         try (InputStream inputStream = LaporanExportUtil.class.getResourceAsStream("/Images/LOGO.png")) {
             if (inputStream == null) {
@@ -396,10 +408,12 @@ public final class LaporanExportUtil {
         return total;
     }
 
+    // Membersihkan teks agar aman ditulis dengan font PDFBox.
     private static String sanitizePdfText(String text) {
         return text == null ? "" : text.replace('\u2013', '-').replace('\u2014', '-');
     }
 
+    // Memotong teks yang terlalu panjang agar tidak keluar dari kolom PDF.
     private static String truncate(String text, float maxWidth, float fontSize) throws IOException {
         if (PDType1Font.HELVETICA.getStringWidth(sanitizePdfText(text)) / 1000 * fontSize <= maxWidth) {
             return sanitizePdfText(text);
@@ -580,6 +594,7 @@ public final class LaporanExportUtil {
         cell.setCellStyle(style);
     }
 
+    // Menghitung total ringkasan dari seluruh data laporan.
     private static ReportSummary calculateSummary(List<Laporan> data) {
         double totalPenjualan = 0;
         double totalPengeluaran = 0;
@@ -592,6 +607,7 @@ public final class LaporanExportUtil {
         return new ReportSummary(totalPenjualan, totalPengeluaran, jumlahTransaksi);
     }
 
+    // Model kecil khusus untuk menyimpan total ringkasan export.
     private static final class ReportSummary {
         private final double totalPenjualan;
         private final double totalPengeluaran;

@@ -20,6 +20,7 @@ import javafx.stage.Window;
 
 import java.net.URL;
 
+// Controller popup konfirmasi hapus yang dipakai di beberapa halaman.
 public class ConfirmDeleteDialogController {
 
     @FXML private StackPane dialogRoot;
@@ -30,13 +31,16 @@ public class ConfirmDeleteDialogController {
     @FXML private Button btnCancel;
     @FXML private Button btnConfirm;
 
+    // Menyimpan jawaban user: true jika user menekan tombol konfirmasi.
     private boolean confirmed = false;
 
+    // Membuat card dialog punya sudut membulat.
     @FXML
     private void initialize() {
         applyRoundedClip(dialogCard, 16);
     }
 
+    // Membuka dialog secara modal dan mengembalikan hasil pilihan user.
     public static boolean showDialog(Window owner, boolean darkMode, String title, String message, String confirmText) {
         try {
             URL dialogView = ConfirmDeleteDialogController.class.getResource("/FXML/Dialog/ConfirmDeleteDialog.fxml");
@@ -82,36 +86,43 @@ public class ConfirmDeleteDialogController {
         }
     }
 
+    // Mengisi teks dialog sesuai kebutuhan halaman pemanggil.
     public void setDialogText(String title, String message, String confirmText) {
         lblTitle.setText(isBlank(title) ? "Konfirmasi Hapus?" : title);
         lblMessage.setText(isBlank(message) ? "Anda yakin ingin menghapus data ini?" : message);
         btnConfirm.setText(isBlank(confirmText) ? "Hapus" : confirmText);
     }
 
+    // Mengikuti tema gelap/terang dari halaman aktif.
     public void setDarkMode(boolean enabled) {
         setStyleClass(dialogRoot, "dark", enabled);
     }
 
+    // Mengembalikan status konfirmasi setelah dialog ditutup.
     public boolean isConfirmed() {
         return confirmed;
     }
 
+    // Tombol X menutup dialog tanpa konfirmasi.
     @FXML
     private void handleClose() {
         closeDialog();
     }
 
+    // Tombol batal menutup dialog tanpa konfirmasi.
     @FXML
     private void handleCancel() {
         closeDialog();
     }
 
+    // Tombol hapus menyimpan status konfirmasi lalu menutup dialog.
     @FXML
     private void handleConfirm() {
         confirmed = true;
         closeDialog();
     }
 
+    // Menutup Stage dialog.
     private void closeDialog() {
         if (btnClose != null && btnClose.getScene() != null) {
             Stage stage = (Stage) btnClose.getScene().getWindow();
@@ -119,10 +130,12 @@ public class ConfirmDeleteDialogController {
         }
     }
 
+    // Helper untuk mengecek teks kosong.
     private boolean isBlank(String value) {
         return value == null || value.trim().isEmpty();
     }
 
+    // Helper untuk menambah atau menghapus class CSS.
     private void setStyleClass(Node node, String styleClass, boolean enabled) {
         if (node == null || styleClass == null) return;
 
@@ -135,6 +148,7 @@ public class ConfirmDeleteDialogController {
         }
     }
 
+    // Clip dipakai agar sudut rounded tetap terlihat pada Stage transparan.
     private void applyRoundedClip(Region region, double radius) {
         if (region == null) return;
 

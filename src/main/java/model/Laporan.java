@@ -2,12 +2,15 @@ package model;
 
 import javafx.beans.property.*;
 
+// Model ringkasan laporan harian yang ditampilkan di TableView laporan.
 public class Laporan {
+    // Property JavaFX dipakai agar TableView bisa membaca dan memperbarui nilai secara otomatis.
     private final StringProperty tanggal;
     private final DoubleProperty totalPenjualan;
     private final DoubleProperty totalPengeluaran;
     private final IntegerProperty jumlahTransaksi;
 
+    // Membungkus data laporan biasa menjadi property yang cocok untuk kolom TableView.
     public Laporan(String tanggal, double totalPenjualan, double totalPengeluaran, int jumlahTransaksi) {
         this.tanggal = new SimpleStringProperty(tanggal);
         this.totalPenjualan = new SimpleDoubleProperty(totalPenjualan);

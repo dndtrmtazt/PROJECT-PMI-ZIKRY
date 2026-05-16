@@ -17,6 +17,7 @@ import javafx.stage.Window;
 
 import java.net.URL;
 
+// Controller popup sukses umum yang dipakai beberapa form.
 public class SuccessDialogController {
 
     @FXML private StackPane dialogRoot;
@@ -24,10 +25,12 @@ public class SuccessDialogController {
     @FXML private Label lblMessage;
     @FXML private Button btnOk;
 
+    // Versi singkat jika hanya perlu judul sukses.
     public static void showDialog(Window owner, boolean darkMode, String title) {
         showDialog(owner, darkMode, title, null);
     }
 
+    // Membuka popup sukses sebagai dialog modal di atas window pemanggil.
     public static void showDialog(Window owner, boolean darkMode, String title, String message) {
         try {
             URL dialogView = SuccessDialogController.class.getResource("/FXML/Dialog/SuccessDialog.fxml");
@@ -71,10 +74,12 @@ public class SuccessDialogController {
         }
     }
 
+    // Mengganti judul popup tanpa pesan tambahan.
     public void setTitle(String title) {
         setContent(title, null);
     }
 
+    // Mengisi judul dan pesan opsional pada popup.
     public void setContent(String title, String message) {
         lblTitle.setText(isBlank(title) ? "Berhasil" : title);
 
@@ -86,10 +91,12 @@ public class SuccessDialogController {
         }
     }
 
+    // Mengikuti tema gelap/terang dari halaman pemanggil.
     public void setDarkMode(boolean enabled) {
         setStyleClass(dialogRoot, "dark", enabled);
     }
 
+    // Tombol OK menutup popup.
     @FXML
     private void handleOk() {
         if (btnOk != null && btnOk.getScene() != null) {
@@ -98,10 +105,12 @@ public class SuccessDialogController {
         }
     }
 
+    // Mengecek teks kosong agar bisa memakai nilai default.
     private boolean isBlank(String value) {
         return value == null || value.trim().isEmpty();
     }
 
+    // Helper untuk memasang atau melepas class CSS.
     private void setStyleClass(Node node, String styleClass, boolean enabled) {
         if (node == null || styleClass == null) return;
 

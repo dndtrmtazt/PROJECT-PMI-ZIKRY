@@ -28,6 +28,7 @@ import DAO.KategoriDAO;
 import model.Kategori;
 import java.io.InputStream;
 
+// Controller halaman admin untuk daftar, pencarian, tambah, edit, dan hapus kategori.
 public class KategoriController implements Initializable {
     private static final String EDIT_ICON_PATH = "/Images/icon_edit.png";
     private static final String DELETE_ICON_PATH = "/Images/icon_hapus.png";
@@ -47,12 +48,14 @@ public class KategoriController implements Initializable {
         setDarkMode(MainController.isDarkMode);
     }
 
+    // Mengaktifkan pencarian kategori secara otomatis saat user mengetik.
     private void setupSearchKategori() {
         if (txtSearchKategori != null) {
             txtSearchKategori.textProperty().addListener((obs, oldValue, newValue) -> applyKategoriFilter(newValue));
         }
     }
 
+    // Menyaring kategori berdasarkan ID atau nama kategori.
     private void applyKategoriFilter(String keywordText) {
         String keyword = keywordText == null ? "" : keywordText.trim().toLowerCase();
         List<Kategori> list = KategoriDAO.getAllKategori();
@@ -66,6 +69,7 @@ public class KategoriController implements Initializable {
         tampilkanDataKategori(list);
     }
 
+    // Mengecek apakah kategori cocok dengan kata kunci pencarian.
     private boolean matchesSearch(Kategori kategori, String keyword) {
         String idKategori = kategori.getIdKategori() == null ? "" : kategori.getIdKategori().toLowerCase();
         String namaKategori = kategori.getNamaKategori() == null ? "" : kategori.getNamaKategori().toLowerCase();
@@ -79,10 +83,12 @@ public class KategoriController implements Initializable {
     }
 
     // --- 2. PERBAIKAN TOMBOL EDIT ---
+    // Membuka form kategori dalam mode edit.
     private void handleEdit(Kategori k) {
         showKategoriDialog(k); // Membuka dialog dengan data
     }
 
+    // Membuka popup form kategori untuk tambah atau edit.
     private void showKategoriDialog(Kategori k) {
         try {
             // PERBAIKAN: Sesuai struktur folder di image_e93605.png
@@ -111,10 +117,12 @@ public class KategoriController implements Initializable {
         }
     }
 
+    // Memuat ulang data kategori dari database sambil mempertahankan kata kunci pencarian.
     private void loadDataKategori() {
         applyKategoriFilter(txtSearchKategori == null ? "" : txtSearchKategori.getText());
     }
 
+    // Membuat ulang baris kategori yang tampil di halaman.
     private void tampilkanDataKategori(List<Kategori> list) {
         if (vboxKategoriList == null) return;
 
@@ -164,6 +172,7 @@ public class KategoriController implements Initializable {
         }
     }
 
+    // Membuat tampilan kosong ketika hasil pencarian tidak menemukan kategori.
     private StackPane createKategoriPlaceholder(boolean isDark) {
         Label placeholder = new Label("Kategori tidak ditemukan");
         placeholder.setStyle("-fx-text-fill: " + (isDark ? "white" : "black") + ";");
@@ -176,6 +185,7 @@ public class KategoriController implements Initializable {
         return placeholderPane;
     }
 
+    // Menentukan tinggi placeholder agar area kosong tetap terasa penuh.
     private double getKategoriPlaceholderHeight() {
         if (scrollKategori != null && scrollKategori.getViewportBounds().getHeight() > 0) {
             return scrollKategori.getViewportBounds().getHeight();
@@ -183,6 +193,7 @@ public class KategoriController implements Initializable {
         return 520.0;
     }
 
+    // Menghapus kategori setelah user mengonfirmasi dialog hapus.
     private void handleHapus(Kategori k) {
         if (showDeleteConfirmationDialog()) {
             // Pastikan method ini ada di DAO kamu
@@ -194,6 +205,7 @@ public class KategoriController implements Initializable {
         }
     }
 
+    // Membuka popup konfirmasi sebelum data kategori dihapus.
     private boolean showDeleteConfirmationDialog() {
         return ConfirmDeleteDialogController.showDialog(
                 paneRoot == null || paneRoot.getScene() == null ? null : paneRoot.getScene().getWindow(),
@@ -204,6 +216,7 @@ public class KategoriController implements Initializable {
         );
     }
 
+    // Membuat tombol aksi edit/hapus beserta icon-nya.
     private Button createActionButton(String text, String color, String iconPath) {
         Button btn = new Button(text);
         btn.setMinWidth(Region.USE_PREF_SIZE);
@@ -218,6 +231,7 @@ public class KategoriController implements Initializable {
         return btn;
     }
 
+    // Mengatur warna halaman kategori sesuai tema aktif.
     public void setDarkMode(boolean enabled) {
         String bgMain = enabled ? "#121212" : "#F4F4F4";
         String bgCard = enabled ? "#1E1E1E" : "white";
@@ -255,6 +269,7 @@ public class KategoriController implements Initializable {
         loadDataKategori();
     }
 
+    // Helper untuk memasang atau melepas class CSS.
     private void setStyleClass(Node node, String styleClass, boolean enabled) {
         if (node == null) return;
         if (enabled) {

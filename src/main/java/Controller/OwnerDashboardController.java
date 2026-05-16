@@ -21,6 +21,7 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.util.List;
 
+// Controller dashboard owner versi tab, menampilkan laporan, pengeluaran, barang, dan pengaturan.
 public class OwnerDashboardController {
 
     @FXML
@@ -75,6 +76,7 @@ public class OwnerDashboardController {
         loadPengaturanTab();
     }
 
+    // Menampilkan identitas user yang sedang login.
     private void initializeUserInfo() {
         User currentUser = UserSession.getInstance().getCurrentUser();
         if (currentUser != null) {
@@ -84,6 +86,7 @@ public class OwnerDashboardController {
         }
     }
 
+    // Menyiapkan aksi tombol dan tab awal.
     private void initializeUI() {
         logoutButton.setOnAction(e -> handleLogout());
         laporanButton.setStyle("-fx-font-size: 12; -fx-padding: 8;");
@@ -92,6 +95,7 @@ public class OwnerDashboardController {
         pengaturanButton.setStyle("-fx-font-size: 12; -fx-padding: 8;");
     }
 
+    // Membuat isi tab laporan secara programatis.
     private void loadLaporanTab() {
         try {
             System.out.println("[OwnerDashboard] Loading Laporan Tab...");
@@ -152,6 +156,7 @@ public class OwnerDashboardController {
         }
     }
 
+    // Membuat kartu ringkasan kecil untuk dashboard owner.
     private VBox createSummaryCard(String title, String value, String color) {
         VBox card = new VBox(5);
         card.setStyle("-fx-border-color: " + color + "; -fx-border-width: 2; -fx-border-radius: 5; -fx-padding: 10; -fx-alignment: center;");
@@ -166,6 +171,7 @@ public class OwnerDashboardController {
         return card;
     }
 
+    // Membuat isi tab pengeluaran.
     private void loadPengeluaranTab() {
         try {
             System.out.println("[OwnerDashboard] Loading Pengeluaran Tab...");
@@ -233,6 +239,7 @@ public class OwnerDashboardController {
         }
     }
 
+    // Membuat isi tab barang.
     private void loadBarangTab() {
         try {
             System.out.println("[OwnerDashboard] Loading Barang Tab...");
@@ -277,6 +284,7 @@ public class OwnerDashboardController {
         }
     }
 
+    // Membuat isi tab pengaturan toko.
     private void loadPengaturanTab() {
         try {
             System.out.println("[OwnerDashboard] Loading Pengaturan Tab...");
@@ -323,6 +331,7 @@ public class OwnerDashboardController {
     }
 
     @FXML
+    // Menghapus session lalu kembali ke halaman login.
     private void handleLogout() {
         try {
             UserSession.getInstance().logout();

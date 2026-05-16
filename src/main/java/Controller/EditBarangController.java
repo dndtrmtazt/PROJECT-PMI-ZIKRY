@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Locale;
 import DAO.BarangDAO;
 
+// Controller form edit barang, termasuk validasi, update, dan hapus barang.
 public class EditBarangController {
 
     @FXML private VBox paneRoot, vboxFormCard;
@@ -64,6 +65,7 @@ public class EditBarangController {
     }
 
     // Method ini dipanggil dari Halaman Utama saat mau edit barang
+    // Mengisi form edit dengan data barang yang dipilih dari tabel.
     public void initData(String id, String nama, String idKat, String namaKat, int stok, String satuan, double hBeli, double hJual) {
         this.idBarangAsli = id;
 
@@ -81,6 +83,7 @@ public class EditBarangController {
         txtHargaJual.setText(numberFormat.format((long) hJual));
     }
 
+    // Mengambil ID kategori dari teks ComboBox berbentuk "ID - Nama".
     private String getSelectedKategoriId() {
         String selectedKategori = cmbKategori.getValue();
         if (selectedKategori == null || !selectedKategori.contains(" - ")) {
@@ -90,6 +93,7 @@ public class EditBarangController {
         return selectedKategori.split(" - ")[0].trim();
     }
 
+    // Mengisi pilihan kategori dari database.
     private void loadKategori() {
         if (cmbKategori != null) {
             cmbKategori.getItems().clear();
@@ -102,6 +106,7 @@ public class EditBarangController {
         }
     }
 
+    // Membuat input harga hanya menerima angka dan otomatis memakai pemisah ribuan.
     private void setupCurrencyField(TextField field) {
         if (field == null) {
             return;
@@ -135,6 +140,7 @@ public class EditBarangController {
     }
 
     @FXML
+    // Validasi lalu menyimpan perubahan barang ke database.
     private void handleSimpan() {
         if (isInputValid()) {
             boolean confirmed = showCustomConfirmationDialog(
@@ -176,6 +182,7 @@ public class EditBarangController {
     }
 
     @FXML
+    // Menghapus barang setelah user mengonfirmasi.
     private void handleHapus() {
         boolean confirmed = showCustomConfirmationDialog(
                 "Konfirmasi Hapus?",
@@ -202,12 +209,14 @@ public class EditBarangController {
     @FXML
     private void handleBatal() { pindahKeHalamanUtama(); }
 
+    // Kembali ke halaman daftar barang lewat MainController.
     private void pindahKeHalamanUtama() {
         if (MainController.getInstance() != null) {
             MainController.getInstance().panggilHalaman("BarangView");
         }
     }
 
+    // Mengecek seluruh input wajib sebelum update barang.
     private boolean isInputValid() {
         if (txtIdBarang.getText().isEmpty() || txtNamaBarang.getText().isEmpty() ||
                 cmbKategori.getValue() == null || cbSatuan.getValue() == null ||
@@ -243,6 +252,7 @@ public class EditBarangController {
         return true;
     }
 
+    // Menampilkan alert sederhana untuk validasi/error.
     private void showAlert(Alert.AlertType type, String title, String content) {
         Alert alert = new Alert(type);
         alert.setTitle(title);
@@ -251,6 +261,7 @@ public class EditBarangController {
         alert.showAndWait();
     }
 
+    // Popup konfirmasi custom untuk aksi hapus barang.
     private boolean showCustomConfirmationDialog(String title, String message, String confirmText, String confirmColor) {
         final boolean[] confirmed = {false};
         boolean darkMode = MainController.isDarkMode;
@@ -377,6 +388,7 @@ public class EditBarangController {
         return confirmed[0];
     }
 
+    // Membuat sudut dialog custom tetap membulat.
     private void applyRoundedClip(Region region, double radius) {
         if (region == null) return;
 
@@ -388,6 +400,7 @@ public class EditBarangController {
         region.setClip(clip);
     }
 
+    // Menampilkan popup sukses setelah update/hapus berhasil.
     private void showSuccessDialog(String titleText) {
         SuccessDialogController.showDialog(
                 btnSimpan == null || btnSimpan.getScene() == null ? null : btnSimpan.getScene().getWindow(),
@@ -396,6 +409,7 @@ public class EditBarangController {
         );
     }
 
+    // Mengatur warna form edit barang sesuai light/dark mode.
     public void setDarkMode(boolean enabled) {
         String bgMain = enabled ? "#121212" : "#F4F4F4";
         String bgCard = enabled ? "#1e1e1e" : "white";
@@ -439,6 +453,7 @@ public class EditBarangController {
         }
     }
 
+    // Mengatur warna teks ComboBox agar tetap terbaca di dark mode.
     private void setComboBoxTextColor(ComboBox<String> comboBox, boolean darkMode) {
         if (!darkMode) {
             comboBox.setButtonCell(null);
@@ -482,6 +497,7 @@ public class EditBarangController {
         };
     }
 
+    // Helper untuk memasang atau melepas class CSS.
     private void setStyleClass(Node node, String styleClass, boolean enabled) {
         if (node == null) return;
         if (enabled) {

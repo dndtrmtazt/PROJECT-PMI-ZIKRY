@@ -29,6 +29,7 @@ import DAO.UserDAO;
 import model.User;
 import java.net.URL;
 
+// Controller halaman admin untuk kelola user kasir dan pemilik.
 public class UserController {
     private static final String EDIT_ICON_PATH = "/Images/icon_edit.png";
     private static final String DELETE_ICON_PATH = "/Images/icon_hapus.png";
@@ -45,6 +46,7 @@ public class UserController {
         setDarkMode(MainController.isDarkMode);
     }
 
+    // Mengatur warna halaman user sesuai mode terang/gelap.
     public void setDarkMode(boolean enabled) {
         String bgMain = enabled ? "#121212" : "#F4F4F4";
         String bgCard = enabled ? "#1e1e1e" : "white";
@@ -78,6 +80,7 @@ public class UserController {
         muatDataUser();
     }
 
+    // Helper untuk memasang atau melepas class CSS.
     private void setStyleClass(Node node, String styleClass, boolean enabled) {
         if (node == null) return;
         if (enabled) {
@@ -89,6 +92,7 @@ public class UserController {
         }
     }
 
+    // Mengambil data user dari database dan membuat baris list user.
     private void muatDataUser() {
         vboxUserList.getChildren().clear();
         List<User> list = UserDAO.getAllUsers();
@@ -147,6 +151,7 @@ public class UserController {
     }
 
     // LOGIKA EDIT USER
+    // Membuka popup edit user dan refresh list jika ada perubahan.
     private void handleEditUser(User user) {
         try {
             FXMLLoader loader = createTambahUserLoader();
@@ -172,6 +177,7 @@ public class UserController {
     }
 
     // LOGIKA HAPUS USER
+    // Menampilkan konfirmasi lalu menghapus user dari database.
     private void handleHapusUser(User user) {
         if (showDeleteConfirmationDialog()) {
             if (UserDAO.deleteUser(user.getIdUser())) { // Panggil method di DAO
@@ -182,6 +188,7 @@ public class UserController {
         }
     }
 
+    // Popup konfirmasi sebelum user dihapus.
     private boolean showDeleteConfirmationDialog() {
         return ConfirmDeleteDialogController.showDialog(
                 vboxMainContent == null || vboxMainContent.getScene() == null ? null : vboxMainContent.getScene().getWindow(),
@@ -192,6 +199,7 @@ public class UserController {
         );
     }
 
+    // Membuka form tambah user dan refresh jika berhasil disimpan.
     @FXML
     private void handleTambahUser() {
         try {
@@ -214,6 +222,7 @@ public class UserController {
         }
     }
 
+    // Menyiapkan FXMLLoader untuk form tambah/edit user.
     private FXMLLoader createTambahUserLoader() throws IOException {
         URL fxmlUrl = getClass().getResource("/FXML/Admin/TambahUserView.fxml");
         if (fxmlUrl == null) {
@@ -222,6 +231,7 @@ public class UserController {
         return new FXMLLoader(fxmlUrl);
     }
 
+    // Menampilkan alert error untuk proses user.
     private void alertError(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Error");
@@ -230,6 +240,7 @@ public class UserController {
         alert.showAndWait();
     }
 
+    // Membuat icon aksi edit/hapus pada baris user.
     private ImageView createActionIcon(String iconPath) {
         InputStream iconStream = getClass().getResourceAsStream(iconPath);
         if (iconStream == null) {

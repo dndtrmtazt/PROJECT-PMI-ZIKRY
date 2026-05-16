@@ -8,8 +8,10 @@ import java.util.ArrayList;
 import java.util.List;
 import model.Pengeluaran;
 
+// DAO untuk data pengeluaran operasional toko.
 public class PengeluaranDAO {
 
+    // Mengambil semua pengeluaran dan mengurutkannya dari tanggal terbaru.
     public static List<Pengeluaran> getAllPengeluaran() {
         List<Pengeluaran> listPengeluaran = new ArrayList<>();
         String query = "SELECT * FROM pengeluaran ORDER BY tgl_pengeluaran DESC, id_pengeluaran ASC";
@@ -27,6 +29,7 @@ public class PengeluaranDAO {
         return listPengeluaran;
     }
 
+    // Menambahkan data pengeluaran baru.
     public static boolean addPengeluaran(Pengeluaran p) {
         String query = "INSERT INTO pengeluaran (id_pengeluaran, tgl_pengeluaran, nominal, jenis, id_user) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = koneksi.koneksiDB();
@@ -45,6 +48,7 @@ public class PengeluaranDAO {
         }
     }
 
+    // Membuat ID pengeluaran berikutnya dengan format PGN001, PGN002, dan seterusnya.
     public static String getNextIdPengeluaran() {
         String query = "SELECT MAX(CAST(SUBSTR(id_pengeluaran, 4) AS INTEGER)) FROM pengeluaran WHERE id_pengeluaran LIKE 'PGN%'";
 
@@ -63,6 +67,7 @@ public class PengeluaranDAO {
         }
     }
 
+    // Mengubah data pengeluaran berdasarkan ID lama.
     public static boolean updatePengeluaran(Pengeluaran p, String oldId) {
         String query = "UPDATE pengeluaran SET id_pengeluaran = ?, tgl_pengeluaran = ?, nominal = ?, jenis = ?, id_user = ? WHERE id_pengeluaran = ?";
         try (Connection conn = koneksi.koneksiDB();
@@ -82,6 +87,7 @@ public class PengeluaranDAO {
         }
     }
 
+    // Menghapus data pengeluaran berdasarkan ID.
     public static boolean deletePengeluaran(String idPengeluaran) {
         String query = "DELETE FROM pengeluaran WHERE id_pengeluaran = ?";
         try (Connection conn = koneksi.koneksiDB();
@@ -94,6 +100,7 @@ public class PengeluaranDAO {
         }
     }
 
+    // Menghitung total pengeluaran pada satu tanggal, dipakai di dashboard.
     public static double getTotalPengeluaranByDate(LocalDate tanggal) {
         String query = "SELECT COALESCE(SUM(nominal), 0) FROM pengeluaran WHERE tgl_pengeluaran = ?";
         try (Connection conn = koneksi.koneksiDB();
@@ -111,6 +118,7 @@ public class PengeluaranDAO {
         return 0;
     }
 
+    // Mengubah baris ResultSet menjadi model Pengeluaran.
     private static Pengeluaran mapPengeluaran(ResultSet rs) throws SQLException {
         Pengeluaran pengeluaran = new Pengeluaran();
         pengeluaran.setIdPengeluaran(rs.getString("id_pengeluaran"));
@@ -121,6 +129,7 @@ public class PengeluaranDAO {
         return pengeluaran;
     }
 
+    // Membaca tanggal pengeluaran dengan fallback jika format tanggal dari SQLite berbeda.
     private static LocalDate readPengeluaranDate(ResultSet rs) throws SQLException {
         String value = rs.getString("tgl_pengeluaran");
         if (value == null || value.trim().isEmpty()) {

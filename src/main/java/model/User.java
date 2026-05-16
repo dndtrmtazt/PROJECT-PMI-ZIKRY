@@ -1,5 +1,6 @@
 package model;
 
+// Model user aplikasi, dipakai untuk login, session, dan kelola user.
 public class User {
     private String idUser;      // Mapping ke kolom 'id_user'
     private String namaLengkap; // Mapping ke kolom 'nama_lengkap'
@@ -56,6 +57,7 @@ public class User {
 
     @Override
     public String toString() {
+        // Password tidak ditampilkan agar log/debug lebih aman dibaca.
         return "User{" +
                 "idUser='" + idUser + '\'' +
                 ", namaLengkap='" + namaLengkap + '\'' +

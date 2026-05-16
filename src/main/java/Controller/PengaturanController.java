@@ -12,6 +12,7 @@ import javafx.stage.Window;
 import DAO.TokoDAO;
 import model.Toko;
 
+// Controller halaman pengaturan profil toko.
 public class PengaturanController {
 
     @FXML private VBox vboxMainContent, vboxCard, VBP;
@@ -33,6 +34,7 @@ public class PengaturanController {
         setDarkMode(MainController.isDarkMode);
     }
 
+    // Mengambil data toko dari database dan menampilkannya ke form.
     private void muatDataToko() {
         Toko toko = TokoDAO.getDataToko();
         if (toko != null) {
@@ -44,6 +46,7 @@ public class PengaturanController {
     }
 
     @FXML
+    // Tombol edit berfungsi ganda: masuk mode edit atau menyimpan perubahan.
     private void handleEdit() {
         if (!isEditMode) {
             // AKTIFKAN MODE EDIT
@@ -79,6 +82,7 @@ public class PengaturanController {
     }
 
     @FXML
+    // Membatalkan edit dan mengembalikan data awal.
     private void handleBatal() {
         kembalikanDataAwalEdit();
         isEditMode = false;
@@ -87,6 +91,7 @@ public class PengaturanController {
         btnEdit.setText("Edit");
     }
 
+    // Menyimpan nilai awal agar bisa dikembalikan jika user batal.
     private void simpanDataAwalEdit() {
         namaAwal = txtNamaToko.getText();
         telpAwal = txtTelp.getText();
@@ -94,6 +99,7 @@ public class PengaturanController {
         emailAwal = txtEmail.getText();
     }
 
+    // Mengembalikan field ke nilai sebelum mode edit.
     private void kembalikanDataAwalEdit() {
         txtNamaToko.setText(namaAwal);
         txtTelp.setText(telpAwal);
@@ -101,6 +107,7 @@ public class PengaturanController {
         txtEmail.setText(emailAwal);
     }
 
+    // Mengubah teks tombol dan status field sesuai mode edit.
     private void updateModeEditView() {
         if (lblTitle != null) {
             lblTitle.setText(isEditMode ? "Edit Pengaturan Toko" : "Pengaturan Toko");
@@ -120,6 +127,7 @@ public class PengaturanController {
         }
     }
 
+    // Mengunci atau membuka field pengaturan toko.
     private void setFieldsEditable(boolean value) {
         txtNamaToko.setEditable(value);
         txtTelp.setEditable(value);
@@ -139,6 +147,7 @@ public class PengaturanController {
         txtEmail.setStyle(style);
     }
 
+    // Mengatur warna halaman pengaturan sesuai tema aktif.
     public void setDarkMode(boolean enabled) {
         String bgMain = enabled ? "#121212" : "#F4F4F4";
         String bgCard = enabled ? "#1E1E1E" : "white";
@@ -189,6 +198,7 @@ public class PengaturanController {
         setFieldsEditable(isEditMode);
     }
 
+    // Helper untuk memasang atau melepas class CSS.
     private void setStyleClass(Node node, String styleClass, boolean enabled) {
         if (node == null) return;
         if (enabled) {
@@ -200,6 +210,7 @@ public class PengaturanController {
         }
     }
 
+    // Menampilkan popup sukses setelah pengaturan toko disimpan.
     private void showUpdateSuccessDialog() {
         Window owner = vboxMainContent != null && vboxMainContent.getScene() != null
                 ? vboxMainContent.getScene().getWindow()
@@ -214,6 +225,7 @@ public class PengaturanController {
     }
 
     // Helper method agar kode lebih bersih
+    // Menampilkan alert untuk error atau informasi.
     private void tampilkanAlert(Alert.AlertType type, String title, String content) {
         Alert alert = new Alert(type);
         alert.setTitle(title);

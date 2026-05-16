@@ -1,5 +1,6 @@
 package model;
 
+// Model barang yang mewakili data produk di tabel barang.
 public class Barang {
     private String idBarang;
     private String namaBarang;
@@ -52,6 +53,7 @@ public class Barang {
 
     @Override
     public String toString() {
+        // Format ini memudahkan barang ditampilkan di ComboBox atau log.
         return idBarang + " - " + namaBarang;
     }
 }

@@ -6,8 +6,10 @@ import java.util.ArrayList;
 import java.util.List;
 import model.User;
 
+// DAO untuk membaca dan mengelola data user aplikasi.
 public class UserDAO {
 
+    // Mengambil daftar user tanpa password untuk ditampilkan di halaman kelola user.
     public static List<User> getAllUsers() {
         List<User> listUser = new ArrayList<>();
         String query = "SELECT id_user, nama_lengkap, role FROM user";
@@ -25,6 +27,7 @@ public class UserDAO {
         return listUser;
     }
 
+    // Memvalidasi login berdasarkan ID user dan password.
     public static User validateUser(String idUser, String password) {
         String query = "SELECT * FROM user WHERE id_user = ? AND user_password = ?";
         try (Connection conn = koneksi.koneksiDB();
@@ -43,6 +46,7 @@ public class UserDAO {
         return null;
     }
 
+    // Menambahkan user baru dari form kelola user.
     public static boolean insertUser(String idUser, String nama, String role, String password) {
         String query = "INSERT INTO user (id_user, nama_lengkap, role, user_password) VALUES (?, ?, ?, ?)";
 
@@ -61,6 +65,7 @@ public class UserDAO {
         }
     }
 
+    // Mengubah data user, termasuk jika ID user ikut diganti.
     public static boolean updateUser(String idLama, String idBaru, String nama, String role, String pass) {
         String query = "UPDATE user SET id_user = ?, nama_lengkap = ?, role = ?, user_password = ? WHERE id_user = ?";
 
@@ -80,6 +85,7 @@ public class UserDAO {
         }
     }
 
+    // Menghapus user berdasarkan ID.
     public static boolean deleteUser(String idUser) {
         String query = "DELETE FROM user WHERE id_user = ?";
 
@@ -94,6 +100,7 @@ public class UserDAO {
         }
     }
 
+    // Mengubah ResultSet dari database menjadi objek User.
     private static User mapUser(ResultSet rs) throws SQLException {
         User user = new User();
         user.setIdUser(rs.getString("id_user"));

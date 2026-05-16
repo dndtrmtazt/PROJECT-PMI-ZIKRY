@@ -1,5 +1,6 @@
 package model;
 
+// Model pengaturan identitas toko yang dipakai untuk struk dan laporan.
 public class Toko {
     private int id;
     private String namaToko;

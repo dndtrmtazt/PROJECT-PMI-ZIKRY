@@ -28,6 +28,7 @@ import java.util.ResourceBundle;
 import model.Barang;
 
 // --- 2. CLASS HEADER (Rumah utama kodingan dashboard) ---
+// Controller dashboard admin untuk ringkasan penjualan, pengeluaran, transaksi, dan stok menipis.
 public class DashboardController implements Initializable {
     private static final int BATAS_STOK_HAMPIR_HABIS = 5;
     private static final int LIMIT_STOK_HAMPIR_HABIS = 5;
@@ -50,6 +51,7 @@ public class DashboardController implements Initializable {
         setDarkMode(MainController.isDarkMode);
     }
 
+    // Mengatur klik pada kartu dashboard agar bisa langsung pindah ke halaman terkait.
     private void setupActions() {
         if (card1 != null) {
             card1.setStyle(card1.getStyle() + "; -fx-cursor: hand;");
@@ -76,24 +78,28 @@ public class DashboardController implements Initializable {
         }
     }
 
+    // Navigasi cepat ke halaman laporan melalui MainController.
     private void bukaLaporan() {
         if (MainController.getInstance() != null) {
             MainController.getInstance().bukaLaporan();
         }
     }
 
+    // Navigasi cepat ke halaman pengeluaran.
     private void bukaPengeluaran() {
         if (MainController.getInstance() != null) {
             MainController.getInstance().bukaPengeluaran();
         }
     }
 
+    // Navigasi cepat ke halaman data barang.
     private void bukaDataBarang() {
         if (MainController.getInstance() != null) {
             MainController.getInstance().bukaDataBarang();
         }
     }
 
+    // Mengambil angka ringkasan hari ini dari DAO.
     private void muatDataDashboard() {
         LocalDate hariIni = LocalDate.now();
         double totalPenjualanHariIni = TransaksiDAO.getTotalPenjualanByDate(hariIni);
@@ -111,10 +117,12 @@ public class DashboardController implements Initializable {
         }
     }
 
+    // Mengubah angka nominal menjadi format Rupiah.
     private String formatCurrency(double nominal) {
         return currencyFormat.format(nominal).replace(",00", "");
     }
 
+    // Mengatur warna dashboard dan komponen kartu sesuai tema.
     public void setDarkMode(boolean enabled) {
         setStyleClass(paneRoot, "dark", enabled);
         String bgMain = enabled ? "#121212" : "#f4f4f4";
@@ -175,6 +183,7 @@ public class DashboardController implements Initializable {
         muatDataStokHampirHabis(); // Re-render rows with theme
     }
 
+    // Mengambil barang dengan stok rendah lalu menampilkannya di dashboard.
     private void muatDataStokHampirHabis() {
         stokListContainer.getChildren().clear();
         boolean isDark = MainController.isDarkMode;
@@ -191,6 +200,7 @@ public class DashboardController implements Initializable {
         }
     }
 
+    // Baris fallback jika tidak ada barang yang stoknya menipis.
     private HBox buatBarisKosong(boolean isDark) {
         HBox hBox = new HBox();
         hBox.setPadding(new Insets(14));
@@ -208,6 +218,7 @@ public class DashboardController implements Initializable {
         return hBox;
     }
 
+    // Membuat satu baris informasi barang stok menipis.
     private HBox buatBarisStok(String nama, int sisa, boolean isDark) {
         HBox hBox = new HBox();
         hBox.setSpacing(18);
@@ -238,6 +249,7 @@ public class DashboardController implements Initializable {
         return hBox;
     }
 
+    // Mengganti grafik tombol kartu menjadi panah dengan warna sesuai tema.
     private void updateActionButtonArrow(Button button, boolean darkMode) {
         if (button == null) {
             return;
@@ -249,6 +261,7 @@ public class DashboardController implements Initializable {
         button.setGraphic(arrowLabel);
     }
 
+    // Helper untuk memasang atau melepas class CSS.
     private void setStyleClass(Node node, String styleClass, boolean enabled) {
         if (node == null || styleClass == null) return;
 
@@ -261,6 +274,7 @@ public class DashboardController implements Initializable {
         }
     }
 
+    // Membersihkan inline style agar CSS/tema baru bisa diterapkan rapi.
     private void clearInlineStyles(Node... nodes) {
         if (nodes == null) return;
         for (Node node : nodes) {
@@ -270,6 +284,7 @@ public class DashboardController implements Initializable {
         }
     }
 
+    // Mengganti gambar ImageView jika resource tersedia.
     private void setImageIfPresent(ImageView imageView, String resourcePath) {
         if (imageView == null || resourcePath == null) {
             return;

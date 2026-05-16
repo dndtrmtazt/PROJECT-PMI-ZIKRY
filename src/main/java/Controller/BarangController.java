@@ -18,6 +18,7 @@ import java.sql.*;
 import java.text.NumberFormat;
 import java.util.Locale;
 
+// Controller halaman admin untuk melihat, mencari, menambah, dan membuka edit barang.
 public class BarangController {
 
     @FXML private VBox paneRoot, vboxTableCard;
@@ -75,6 +76,7 @@ public class BarangController {
         setDarkMode(MainController.isDarkMode);
     }
 
+    // Mengatur warna halaman data barang sesuai mode terang/gelap.
     public void setDarkMode(boolean enabled) {
         String bgMain = enabled ? "#121212" : "#F4F4F4";
         String bgCard = enabled ? "#1e1e1e" : "white";
@@ -100,6 +102,7 @@ public class BarangController {
         }
     }
 
+    // Helper untuk menambah atau menghapus class CSS.
     private void setStyleClass(Node node, String styleClass, boolean enabled) {
         if (node == null) return;
         if (enabled) {
@@ -111,6 +114,7 @@ public class BarangController {
         }
     }
 
+    // Mengambil data barang dari database dan mengisi ObservableList tabel.
     private void loadData() {
         listBarang.clear();
 
@@ -142,22 +146,24 @@ public class BarangController {
         }
     }
 
+    // Menyaring data tabel secara real-time berdasarkan nama barang atau ID barang.
     private void setupPencarian() {
-        FilteredList<Barang> filteredData = new FilteredList<>(listBarang, p -> true);
-        txtCari.textProperty().addListener((observable, oldValue, newValue) -> {
-            filteredData.setPredicate(barang -> {
-                if (newValue == null || newValue.isEmpty()) return true;
-                String lowerCaseFilter = newValue.toLowerCase();
+        FilteredList<Barang> filteredData = new FilteredList<>(listBarang, p -> true); // BIKIN OBJEK BARU UNTUK FILTER PENCAIAN DAN MENAMPILKAN SEMUA DATA
+        txtCari.textProperty().addListener((observable, oldValue, newValue) -> { //ADD LISTENER AGAR BISA MANTAU
+            filteredData.setPredicate(barang -> { //UNTUK NGECEK DATA APA AJA YANG HARUS DITAMPILKAN
+                if (newValue == null || newValue.isEmpty()) return true; //KALAU KOSONG BERARTI MASIH NAMPILKAN SEMUA DATA
+                String lowerCaseFilter = newValue.toLowerCase(); //KALAU FALSE MAKA NEWVALUE DIUBAH KE HURUF KECIL SMUA
                 return barang.getNamaBarang().toLowerCase().contains(lowerCaseFilter) ||
-                        barang.getIdBarang().toLowerCase().contains(lowerCaseFilter);
+                        barang.getIdBarang().toLowerCase().contains(lowerCaseFilter); //CEK APA TEKS YANG KITA INPUT ADA DI TABEL GA? KLO ADA MAKA SIMPAN KE LOWECASE TRS TAMPIL DIA
             });
         });
 
-        SortedList<Barang> sortedData = new SortedList<>(filteredData);
+        SortedList<Barang> sortedData = new SortedList<>(filteredData); //INI BIKIN OBJEK BARU UNTUR SORTIR DATA DI FILTER DATA
         sortedData.comparatorProperty().bind(tableBarang.comparatorProperty());
         tableBarang.setItems(sortedData);
     }
 
+    // Mengubah tampilan kolom harga menjadi format Rupiah.
     private void setupFormatRupiah(TableColumn<Barang, Double> col, String property) {
         col.setCellValueFactory(new PropertyValueFactory<>(property));
         col.setCellFactory(tc -> new TableCell<Barang, Double>() {
@@ -198,6 +204,7 @@ public class BarangController {
         }
     }
 
+    // Membuka form tambah barang, lalu refresh tabel jika form ditutup.
     @FXML
     private void handleTambahBarang() {
         if (MainController.getInstance() != null) {

@@ -2,6 +2,7 @@ package model;
 
 import java.time.LocalDateTime;
 
+// Model header transaksi, berisi informasi utama dari satu penjualan.
 public class Transaksi {
     private String idTransaksi;
     private LocalDateTime tglTransaksi;
@@ -52,6 +53,7 @@ public class Transaksi {
 
     @Override
     public String toString() {
+        // Format teks sederhana untuk membantu pengecekan data transaksi saat debugging.
         return "Transaksi{" +
                 "idTransaksi='" + idTransaksi + '\'' +
                 ", tglTransaksi=" + tglTransaksi +

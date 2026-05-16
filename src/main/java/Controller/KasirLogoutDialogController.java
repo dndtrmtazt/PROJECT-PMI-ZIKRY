@@ -9,6 +9,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
+// Controller popup konfirmasi logout untuk halaman kasir.
 public class KasirLogoutDialogController {
 
     @FXML private StackPane dialogRoot;
@@ -17,31 +18,38 @@ public class KasirLogoutDialogController {
     @FXML private Button btnCancel;
     @FXML private Button btnConfirm;
 
+    // Aksi logout dikirim dari controller kasir agar popup tetap reusable.
     private Runnable confirmAction;
 
+    // Memasang clip rounded agar dialog tidak keluar dari bentuk card.
     @FXML
     private void initialize() {
         applyRoundedClip(dialogCard, 14);
     }
 
+    // Mengikuti mode gelap/terang yang sedang aktif di halaman kasir.
     public void setDarkMode(boolean enabled) {
         setStyleClass(dialogRoot, "dark", enabled);
     }
 
+    // Menyimpan aksi yang akan dijalankan saat user menekan konfirmasi.
     public void setOnConfirm(Runnable confirmAction) {
         this.confirmAction = confirmAction;
     }
 
+    // Tombol X menutup popup.
     @FXML
     private void handleClose() {
         closeDialog();
     }
 
+    // Tombol batal menutup popup.
     @FXML
     private void handleCancel() {
         closeDialog();
     }
 
+    // Tombol konfirmasi menutup popup lalu menjalankan aksi logout.
     @FXML
     private void handleConfirm() {
         closeDialog();
@@ -50,6 +58,7 @@ public class KasirLogoutDialogController {
         }
     }
 
+    // Menutup Stage popup.
     private void closeDialog() {
         if (btnClose != null && btnClose.getScene() != null) {
             Stage stage = (Stage) btnClose.getScene().getWindow();
@@ -57,6 +66,7 @@ public class KasirLogoutDialogController {
         }
     }
 
+    // Helper untuk sinkronisasi class CSS.
     private void setStyleClass(Node node, String styleClass, boolean enabled) {
         if (node == null || styleClass == null) return;
 
@@ -69,6 +79,7 @@ public class KasirLogoutDialogController {
         }
     }
 
+    // Membuat sudut popup tetap membulat walaupun Stage transparan.
     private void applyRoundedClip(Region region, double radius) {
         if (region == null) return;
 

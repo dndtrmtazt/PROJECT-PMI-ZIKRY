@@ -11,9 +11,12 @@ import java.util.List;
 import model.Detail_Transaksi;
 import model.Transaksi;
 
+// DAO untuk transaksi penjualan dan ringkasan penjualan harian.
 public class TransaksiDAO {
+    // Format tanggal yang disimpan ke SQLite agar konsisten saat dibaca kembali.
     private static final DateTimeFormatter SQL_DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
+    // Membuat ID transaksi berikutnya dengan format TRK001, TRK002, dan seterusnya.
     public static String getNextIdTransaksi() {
         String query = "SELECT id_transaksi FROM transaksi ORDER BY id_transaksi DESC LIMIT 1";
         try (Connection conn = koneksi.koneksiDB();
@@ -30,6 +33,7 @@ public class TransaksiDAO {
         return "TRK001";
     }
 
+    // Mengambil semua transaksi yang tersimpan.
     public static List<Transaksi> getAllTransaksi() {
         List<Transaksi> listTransaksi = new ArrayList<>();
         String query = "SELECT id_transaksi, tgl_transaksi, id_user, total FROM transaksi";
@@ -46,6 +50,7 @@ public class TransaksiDAO {
         return listTransaksi;
     }
 
+    // Mengambil satu transaksi berdasarkan ID.
     public static Transaksi getTransaksiById(String idTransaksi) {
         String query = "SELECT id_transaksi, tgl_transaksi, id_user, total FROM transaksi WHERE id_transaksi = ?";
         try (Connection conn = koneksi.koneksiDB();
@@ -64,6 +69,7 @@ public class TransaksiDAO {
         return null;
     }
 
+    // Mengambil riwayat transaksi berdasarkan user/kasir tertentu.
     public static List<Transaksi> getTransaksiByUser(String idUser) {
         List<Transaksi> listTransaksi = new ArrayList<>();
         String query = "SELECT id_transaksi, tgl_transaksi, id_user, total FROM transaksi WHERE id_user = ? ORDER BY tgl_transaksi DESC";
@@ -83,6 +89,7 @@ public class TransaksiDAO {
         return listTransaksi;
     }
 
+    // Menyimpan header transaksi saja, tanpa detail item.
     public static boolean insertTransaksi(Transaksi transaksi) {
         String query = "INSERT INTO transaksi (id_transaksi, tgl_transaksi, id_user, total) VALUES (?, ?, ?, ?)";
         try (Connection conn = koneksi.koneksiDB();
@@ -102,6 +109,7 @@ public class TransaksiDAO {
         return false;
     }
 
+    // Menyimpan transaksi lengkap: header, detail item, dan pengurangan stok dalam satu proses.
     public static boolean saveTransaksiWithDetails(Transaksi transaksi, List<Detail_Transaksi> details) {
         if (transaksi == null || details == null || details.isEmpty()) {
             return false;
@@ -178,6 +186,7 @@ public class TransaksiDAO {
         }
     }
 
+    // Mengubah data header transaksi.
     public static boolean updateTransaksi(Transaksi transaksi) {
         String query = "UPDATE transaksi SET tgl_transaksi = ?, id_user = ?, total = ? WHERE id_transaksi = ?";
         try (Connection conn = koneksi.koneksiDB();
@@ -196,6 +205,7 @@ public class TransaksiDAO {
         return false;
     }
 
+    // Menghapus transaksi berdasarkan ID.
     public static boolean deleteTransaksi(String idTransaksi) {
         String query = "DELETE FROM transaksi WHERE id_transaksi = ?";
         try (Connection conn = koneksi.koneksiDB();
@@ -211,6 +221,7 @@ public class TransaksiDAO {
         return false;
     }
 
+    // Menghitung total penjualan pada tanggal tertentu untuk dashboard.
     public static double getTotalPenjualanByDate(LocalDate tanggal) {
         String query = "SELECT COALESCE(SUM(total), 0) FROM transaksi WHERE DATE(tgl_transaksi) = ?";
         try (Connection conn = koneksi.koneksiDB();
@@ -227,6 +238,7 @@ public class TransaksiDAO {
         return 0;
     }
 
+    // Menghitung jumlah transaksi pada tanggal tertentu untuk dashboard.
     public static int getJumlahTransaksiByDate(LocalDate tanggal) {
         String query = "SELECT COUNT(*) FROM transaksi WHERE DATE(tgl_transaksi) = ?";
         try (Connection conn = koneksi.koneksiDB();
@@ -245,6 +257,7 @@ public class TransaksiDAO {
         return 0;
     }
 
+    // Mengubah baris ResultSet menjadi objek Transaksi.
     private static Transaksi mapTransaksi(ResultSet rs) throws SQLException {
         Transaksi transaksi = new Transaksi();
         transaksi.setIdTransaksi(rs.getString("id_transaksi"));
@@ -254,6 +267,7 @@ public class TransaksiDAO {
         return transaksi;
     }
 
+    // Membaca tanggal transaksi dari SQLite dengan beberapa fallback format.
     private static LocalDateTime readTransaksiDateTime(ResultSet rs) throws SQLException {
         String value = rs.getString("tgl_transaksi");
         if (value == null || value.trim().isEmpty()) {
@@ -273,6 +287,7 @@ public class TransaksiDAO {
         }
     }
 
+    // Mengubah LocalDateTime Java menjadi string yang siap disimpan ke SQLite.
     private static String formatDateTime(LocalDateTime value) {
         if (value == null) {
             return null;
@@ -280,6 +295,7 @@ public class TransaksiDAO {
         return value.format(SQL_DATE_TIME_FORMATTER);
     }
 
+    // Membuat ID detail transaksi berikutnya memakai koneksi yang sama dengan transaksi utama.
     private static String getNextIdDetail(Connection conn) throws SQLException {
         String query = "SELECT id_detail FROM detail_transaksi ORDER BY id_detail DESC LIMIT 1";
         try (Statement stmt = conn.createStatement();

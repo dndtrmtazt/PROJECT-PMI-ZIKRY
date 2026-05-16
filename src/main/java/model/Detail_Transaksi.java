@@ -1,5 +1,6 @@
 package model;
 
+// Model detail transaksi, yaitu daftar item yang dibeli dalam satu transaksi.
 public class Detail_Transaksi {
     private String idDetail;
     private String idTransaksi;
@@ -70,6 +71,7 @@ public class Detail_Transaksi {
 
     @Override
     public String toString() {
+        // Membantu membaca isi detail transaksi ketika dicek lewat log/debug.
         return "Detail_Transaksi{" +
                 "idDetail='" + idDetail + '\'' +
                 ", idTransaksi='" + idTransaksi + '\'' +

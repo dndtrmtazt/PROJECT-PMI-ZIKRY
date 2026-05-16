@@ -45,7 +45,7 @@ public class LaporanController implements Initializable {
     @FXML private TableColumn<Laporan, Double> colPengeluaran;
     @FXML private TableColumn<Laporan, Integer> colTransaksi;
 
-    private final ObservableList<Laporan> masterData = FXCollections.observableArrayList();
+    private final ObservableList<Laporan> listLaporan = FXCollections.observableArrayList();
     private final Locale localeID = new Locale("id", "ID");
     private final NumberFormat nf = NumberFormat.getCurrencyInstance(localeID);
 
@@ -105,10 +105,10 @@ public class LaporanController implements Initializable {
     }
 
     private void loadData() {
-        // Data master berisi seluruh riwayat laporan sebelum user melakukan filter tanggal.
+        // list laporan berisi seluruh riwayat laporan sebelum user melakukan filter tanggal.
         List<Laporan> data = LaporanDao.getAllLaporan();
-        masterData.setAll(data);
-        tableLaporan.setItems(masterData);
+        listLaporan.setAll(data);
+        tableLaporan.setItems(listLaporan);
     }
 
     private void updateSummary() {
@@ -195,14 +195,10 @@ public class LaporanController implements Initializable {
         }
 
         LocalDate selectedDate = datePicker.getValue();
-        // Since it's a single DatePicker but prompt says "Rentang Tanggal", 
-        // maybe it should be start/end? But there's only one.
-        // Let's assume it filters for that specific date or starting from that date.
-        // The DAO has getLaporanByDateRange. Let's use it for the selected date as start and end.
 
         List<Laporan> filteredData = LaporanDao.getLaporanByDateRange(selectedDate, selectedDate);
-        masterData.setAll(filteredData);
-        tableLaporan.setItems(masterData);
+        listLaporan.setAll(filteredData);
+        tableLaporan.setItems(listLaporan);
     }
 
     @FXML
@@ -220,14 +216,14 @@ public class LaporanController implements Initializable {
         }
 
         boolean exportPdf = selectedFormat == ExportLaporanDialogController.ExportFormat.PDF;
-        File targetFile = pilihLokasiExport(exportPdf);
+        File targetFile = pilihLokasiExport(exportPdf); //menyimpan export dimna
         if (targetFile == null) {
             return;
         }
 
-        String periode = getPeriodeExport();
+        String periode = getPeriodeExport(); //ambil tanggal ekspor
         try {
-            // Logic export utama tetap dipisah di LaporanExportUtil agar controller tidak terlalu penuh.
+            // logika pilih format export laporan
             if (exportPdf) {
                 LaporanExportUtil.exportToPdf(targetFile, dataExport, periode);
             } else {

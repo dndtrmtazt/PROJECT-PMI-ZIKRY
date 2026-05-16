@@ -19,6 +19,7 @@ import java.time.LocalDate;
 import java.text.NumberFormat;
 import java.util.Locale;
 
+// Controller form tambah dan edit pengeluaran toko.
 public class FormPengeluaranController implements Initializable {
 
     @FXML private VBox rootPane;
@@ -31,6 +32,7 @@ public class FormPengeluaranController implements Initializable {
     private String idLama;
     private final NumberFormat numberFormat = NumberFormat.getIntegerInstance(new Locale("id", "ID"));
 
+    // Menyiapkan nilai awal form, format input nominal, dan validasi jenis.
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         dpTanggal.setValue(LocalDate.now());
@@ -44,6 +46,7 @@ public class FormPengeluaranController implements Initializable {
         setupJenisFormatter();
     }
 
+    // Mengisi form untuk mode edit, atau menyiapkan ID baru untuk mode tambah.
     public void setData(Pengeluaran p) {
         if (p != null) {
             isEdit = true;
@@ -70,6 +73,7 @@ public class FormPengeluaranController implements Initializable {
         }
     }
 
+    // Validasi input lalu menyimpan atau memperbarui pengeluaran.
     @FXML
     private void handleSimpan(ActionEvent event) {
         try {
@@ -99,7 +103,7 @@ public class FormPengeluaranController implements Initializable {
 
             boolean sukses;
             if (isEdit) {
-                // Pastikan method updatePengeluaran di DAO bersifat static atau panggil lewat instance
+                // Update memakai idLama agar baris yang benar tetap ditemukan.
                 sukses = PengeluaranDAO.updatePengeluaran(p, idLama);
             } else {
                 sukses = PengeluaranDAO.addPengeluaran(p);
@@ -116,16 +120,19 @@ public class FormPengeluaranController implements Initializable {
         }
     }
 
+    // Menutup form tanpa menyimpan.
     @FXML
     private void handleBatal(ActionEvent event) {
         tutupJendela(event);
     }
 
+    // Menutup Stage form dari tombol yang ditekan.
     private void tutupJendela(ActionEvent event) {
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.close();
     }
 
+    // Menampilkan alert validasi atau error penyimpanan.
     private void tampilkanPesan(String pesan, Alert.AlertType tipe) {
         Alert alert = new Alert(tipe);
         alert.setTitle("Informasi");
@@ -134,6 +141,7 @@ public class FormPengeluaranController implements Initializable {
         alert.showAndWait();
     }
 
+    // Memastikan nominal hanya berisi angka dan otomatis diformat ribuan.
     private void setupNominalFormatter(Tooltip tipNominal) {
         txtNominal.setTextFormatter(new TextFormatter<>(change -> {
             String newText = change.getControlNewText();
@@ -172,6 +180,7 @@ public class FormPengeluaranController implements Initializable {
         }));
     }
 
+    // Membatasi jenis pengeluaran agar tidak berisi karakter yang tidak wajar.
     private void setupJenisFormatter() {
         txtJenis.setTextFormatter(new TextFormatter<>(change -> {
             String newText = change.getControlNewText();
@@ -179,6 +188,7 @@ public class FormPengeluaranController implements Initializable {
         }));
     }
 
+    // Mengatur warna form pengeluaran sesuai light/dark mode.
     public void setDarkMode(boolean enabled) {
         String bgMain = enabled ? "#1E1E1E" : "white";
         String textColor = enabled ? "white" : "#1F2937";
@@ -253,6 +263,7 @@ public class FormPengeluaranController implements Initializable {
         }
     }
 
+    // Helper untuk memasang atau melepas class CSS.
     private void setStyleClass(Node node, String styleClass, boolean enabled) {
         if (node == null) return;
         if (enabled) {

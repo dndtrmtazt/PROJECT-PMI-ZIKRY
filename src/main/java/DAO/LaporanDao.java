@@ -7,10 +7,13 @@ import java.util.ArrayList;
 import java.util.List;
 import model.Laporan;
 
+// DAO khusus laporan, menggabungkan data transaksi dan pengeluaran per tanggal.
 public class LaporanDao {
 
+    // Mengambil seluruh laporan harian dari gabungan tabel transaksi dan pengeluaran.
     public static List<Laporan> getAllLaporan() {
         List<Laporan> listLaporan = new ArrayList<>();
+        // UNION dipakai agar tanggal yang hanya punya transaksi atau hanya punya pengeluaran tetap muncul.
         String query = "SELECT " +
                        "    t.tanggal, " +
                        "    COALESCE(p.total_penjualan, 0) as total_penjualan, " +
@@ -46,8 +49,10 @@ public class LaporanDao {
         return listLaporan;
     }
 
+    // Mengambil laporan berdasarkan rentang tanggal yang dipilih user.
     public static List<Laporan> getLaporanByDateRange(LocalDate startDate, LocalDate endDate) {
         List<Laporan> listLaporan = new ArrayList<>();
+        // Query ini sama seperti laporan penuh, tetapi dibatasi oleh tanggal awal dan akhir.
         String query = "SELECT " +
                        "    t.tanggal, " +
                        "    COALESCE(p.total_penjualan, 0) as total_penjualan, " +
@@ -88,6 +93,7 @@ public class LaporanDao {
         return listLaporan;
     }
 
+    // Membungkus hasil query laporan menjadi model Laporan untuk TableView.
     private static Laporan mapLaporan(ResultSet rs) throws SQLException {
         return new Laporan(
                 rs.getString("tanggal"),

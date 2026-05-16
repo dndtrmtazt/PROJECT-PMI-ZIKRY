@@ -6,8 +6,10 @@ import java.util.ArrayList;
 import java.util.List;
 import model.Detail_Transaksi;
 
+// DAO untuk detail item dalam satu transaksi penjualan.
 public class DetailTransaksiDAO {
 
+    // Membuat ID detail berikutnya dengan format DTL001, DTL002, dan seterusnya.
     public static String getNextIdDetail() {
         String query = "SELECT id_detail FROM detail_transaksi ORDER BY id_detail DESC LIMIT 1";
         try (Connection conn = koneksi.koneksiDB();
@@ -24,6 +26,7 @@ public class DetailTransaksiDAO {
         return "DTL001";
     }
 
+    // Mengambil semua item pembelian dari satu transaksi.
     public static List<Detail_Transaksi> getDetailByTransaksi(String idTransaksi) {
         List<Detail_Transaksi> listDetail = new ArrayList<>();
         String query = "SELECT id_detail, id_transaksi, id_barang, jumlah, harga_satuan, subtotal FROM detail_transaksi WHERE id_transaksi = ?";
@@ -43,6 +46,7 @@ public class DetailTransaksiDAO {
         return listDetail;
     }
 
+    // Mengambil satu detail transaksi berdasarkan ID detail.
     public static Detail_Transaksi getDetailById(String idDetail) {
         String query = "SELECT id_detail, id_transaksi, id_barang, jumlah, harga_satuan, subtotal FROM detail_transaksi WHERE id_detail = ?";
         try (Connection conn = koneksi.koneksiDB();
@@ -61,6 +65,7 @@ public class DetailTransaksiDAO {
         return null;
     }
 
+    // Menyimpan satu item detail transaksi ke database.
     public static boolean insertDetail(Detail_Transaksi detail) {
         String query = "INSERT INTO detail_transaksi (id_detail, id_transaksi, id_barang, jumlah, harga_satuan) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = koneksi.koneksiDB();
@@ -81,6 +86,7 @@ public class DetailTransaksiDAO {
         return false;
     }
 
+    // Mengubah item detail transaksi yang sudah ada.
     public static boolean updateDetail(Detail_Transaksi detail) {
         String query = "UPDATE detail_transaksi SET id_barang = ?, jumlah = ?, harga_satuan = ? WHERE id_detail = ?";
         try (Connection conn = koneksi.koneksiDB();
@@ -99,6 +105,7 @@ public class DetailTransaksiDAO {
         return false;
     }
 
+    // Menghapus detail transaksi berdasarkan ID.
     public static boolean deleteDetail(String idDetail) {
         String query = "DELETE FROM detail_transaksi WHERE id_detail = ?";
         try (Connection conn = koneksi.koneksiDB();
@@ -114,6 +121,7 @@ public class DetailTransaksiDAO {
         return false;
     }
 
+    // Mengubah baris database menjadi objek Detail_Transaksi.
     private static Detail_Transaksi mapDetail(ResultSet rs) throws SQLException {
         Detail_Transaksi detail = new Detail_Transaksi();
         detail.setIdDetail(rs.getString("id_detail"));
