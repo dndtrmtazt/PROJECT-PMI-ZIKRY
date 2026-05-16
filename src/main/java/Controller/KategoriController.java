@@ -36,7 +36,6 @@ public class KategoriController implements Initializable {
     @FXML private HBox vboxHeader, hboxSearch, hboxTableHead;
     @FXML private Label lblTitle, lblDaftarKategori;
     @FXML private TextField txtSearchKategori;
-    @FXML private Button btnSearchKategori;
     @FXML private ScrollPane scrollKategori;
     @FXML private ImageView imgLightMode, imgDarkMode, imgLogout;
 
@@ -52,11 +51,6 @@ public class KategoriController implements Initializable {
         if (txtSearchKategori != null) {
             txtSearchKategori.textProperty().addListener((obs, oldValue, newValue) -> applyKategoriFilter(newValue));
         }
-    }
-
-    @FXML
-    private void handleSearchKategori() {
-        applyKategoriFilter(txtSearchKategori == null ? "" : txtSearchKategori.getText());
     }
 
     private void applyKategoriFilter(String keywordText) {

@@ -23,7 +23,6 @@
                     <padding><Insets left="20.0" right="20.0" /></padding>
                     <children>
                         <TextField fx:id="txtSearchKategori" prefHeight="35.0" prefWidth="600.0" promptText="Cari Kategori..." styleClass="admin-input" HBox.hgrow="ALWAYS" />
-                        <Button fx:id="btnSearchKategori" onAction="#handleSearchKategori" prefHeight="35.0" prefWidth="150.0" styleClass="admin-button-primary" text="Temukan Kategori" />
                     </children>
                 </HBox>
 

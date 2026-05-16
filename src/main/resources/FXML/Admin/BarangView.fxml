@@ -30,7 +30,6 @@
                 <HBox fx:id="hboxSearch" alignment="CENTER_LEFT" maxHeight="80.0" maxWidth="1.7976931348623157E308" minHeight="80.0" prefHeight="80.0" spacing="15.0" styleClass="admin-search-card">
                     <children>
                         <TextField fx:id="txtCari" prefHeight="35.0" promptText="Cari Barang..." styleClass="admin-input" HBox.hgrow="ALWAYS" />
-                        <Button mnemonicParsing="false" prefHeight="35.0" prefWidth="150.0" styleClass="admin-button-primary" text="Temukan Barang" />
                     </children>
                     <padding>
                         <Insets left="20.0" right="20.0" />
