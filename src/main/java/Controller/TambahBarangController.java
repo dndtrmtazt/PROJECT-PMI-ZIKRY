@@ -318,7 +318,7 @@ public class TambahBarangController {
     // Navigasi kembali ke halaman daftar barang.
     private void pindahKeHalamanUtama() {
         if (MainController.getInstance() != null) {
-            MainController.getInstance().panggilHalaman("BarangView");
+            MainController.getInstance().loadHalaman("BarangView");
         }
     }
 

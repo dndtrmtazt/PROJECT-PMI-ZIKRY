@@ -66,7 +66,7 @@ public class KategoriController implements Initializable {
                     .collect(Collectors.toList());
         }
 
-        tampilkanDataKategori(list);
+        showDataKategori(list);
     }
 
     // Mengecek apakah kategori cocok dengan kata kunci pencarian.
@@ -123,7 +123,7 @@ public class KategoriController implements Initializable {
     }
 
     // Membuat ulang baris kategori yang tampil di halaman.
-    private void tampilkanDataKategori(List<Kategori> list) {
+    private void showDataKategori(List<Kategori> list) {
         if (vboxKategoriList == null) return;
 
         vboxKategoriList.getChildren().clear();

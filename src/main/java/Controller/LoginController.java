@@ -44,10 +44,10 @@ public class LoginController {
     private boolean isDarkMode = false;
 
     @FXML
-    void handleLogin(ActionEvent event) {
+    void loginButtonAction(ActionEvent event) {
         String userId = usernameField.getText().trim();
         String password = passwordField.getText().trim();
-
+        //chek kondisi field
         if (userId.isEmpty() || password.isEmpty()) {
             showLoginError("Username dan Password tidak boleh kosong!");
             return;
@@ -97,10 +97,10 @@ public class LoginController {
                 MainController mainController = loader.getController();
                 mainController.setHakAkses(user.getRole());
             }
-
+            //Mengambil Jendela yang Sedang Aktif
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            Scene scene = new Scene(root);
-            showDashboardMaximized(stage, scene, "Toko Zikry - " + user.getRole().toUpperCase());
+            Scene scene = new Scene(root); //Membuat Lembar Halaman Baru
+            showDashboardMaximized(stage, scene, "Toko Zikry - " + user.getRole().toUpperCase()); //Menampilkan Layar Baru dan Memaksimalkan Ukurannya
 
         } catch (IOException e) {
             showLoginError("Gagal masuk ke Dashboard!");
@@ -233,7 +233,7 @@ public class LoginController {
     @FXML
     public void initialize() {
         // Memberitahu Java kalau tombol login adalah tombol default
-        // Pas user tekan ENTER, method handleLogin() bakal langsung jalan
+        // Pas user tekan ENTER, method loginButtonAction() bakal langsung jalan
         loginButton.setDefaultButton(true);
         setupFocusStates();
         errorLabel.setOpacity(0.0);

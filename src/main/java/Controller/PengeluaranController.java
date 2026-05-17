@@ -55,12 +55,12 @@ public class PengeluaranController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         setupSortHeaders();
-        muatDataPengeluaran();
+        loadDataPengeluaran();
         if (txtSearchPengeluaran != null) {
-            txtSearchPengeluaran.setOnAction(event -> muatDataPengeluaran());
+            txtSearchPengeluaran.setOnAction(event -> loadDataPengeluaran());
         }
         if (dpFilterTanggal != null) {
-            dpFilterTanggal.setOnAction(event -> muatDataPengeluaran());
+            dpFilterTanggal.setOnAction(event -> loadDataPengeluaran());
         }
         // Pastikan MainController.isDarkMode dapat diakses
         setDarkMode(MainController.isDarkMode);
@@ -103,7 +103,7 @@ public class PengeluaranController implements Initializable {
             stage.showAndWait();
 
             // Refresh tabel setelah jendela ditutup
-            muatDataPengeluaran();
+            loadDataPengeluaran();
         } catch (Exception e) {
             System.err.println("Gagal membuka Form Pengeluaran: " + e.getMessage());
             e.printStackTrace();
@@ -111,7 +111,7 @@ public class PengeluaranController implements Initializable {
     }
 
     // Memuat ulang data pengeluaran lalu membuat ulang baris tampilannya.
-    private void muatDataPengeluaran() {
+    private void loadDataPengeluaran() {
         if (vboxPengeluaranList == null) return;
         vboxPengeluaranList.getChildren().clear();
 
@@ -234,7 +234,7 @@ public class PengeluaranController implements Initializable {
             activeSortColumn = column;
             sortAscending = true;
         }
-        muatDataPengeluaran();
+        loadDataPengeluaran();
     }
 
     // Mengurutkan list sesuai header yang sedang aktif.
@@ -325,14 +325,14 @@ public class PengeluaranController implements Initializable {
     @FXML
     // Tombol cari memuat ulang data sesuai filter yang aktif.
     private void handleCariPengeluaran() {
-        muatDataPengeluaran();
+        loadDataPengeluaran();
     }
 
     // Menampilkan konfirmasi lalu menghapus data pengeluaran.
     private void handleHapus(Pengeluaran p) {
         if (showDeleteConfirmationDialog()) {
             if (PengeluaranDAO.deletePengeluaran(p.getIdPengeluaran())) {
-                muatDataPengeluaran();
+                loadDataPengeluaran();
             }
         }
     }
@@ -408,7 +408,7 @@ public class PengeluaranController implements Initializable {
         if (scrollPengeluaran != null) scrollPengeluaran.setStyle("-fx-background: transparent; -fx-background-color: transparent;");
 
         // Refresh konten agar warna baris berubah
-        muatDataPengeluaran();
+        loadDataPengeluaran();
     }
 
     // Helper untuk memasang atau melepas class CSS.

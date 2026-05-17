@@ -46,8 +46,8 @@ public class DashboardController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         currencyFormat.setMaximumFractionDigits(0);
         setupActions();
-        muatDataDashboard();
-        muatDataStokHampirHabis(); 
+        loadDataDashboard();
+        loadDataStokHampirHabis();
         setDarkMode(MainController.isDarkMode);
     }
 
@@ -81,26 +81,26 @@ public class DashboardController implements Initializable {
     // Navigasi cepat ke halaman laporan melalui MainController.
     private void bukaLaporan() {
         if (MainController.getInstance() != null) {
-            MainController.getInstance().bukaLaporan();
+            MainController.getInstance().openLaporan();
         }
     }
 
     // Navigasi cepat ke halaman pengeluaran.
     private void bukaPengeluaran() {
         if (MainController.getInstance() != null) {
-            MainController.getInstance().bukaPengeluaran();
+            MainController.getInstance().openPengeluaran();
         }
     }
 
     // Navigasi cepat ke halaman data barang.
     private void bukaDataBarang() {
         if (MainController.getInstance() != null) {
-            MainController.getInstance().bukaDataBarang();
+            MainController.getInstance().openDataBarang();
         }
     }
 
     // Mengambil angka ringkasan hari ini dari DAO.
-    private void muatDataDashboard() {
+    private void loadDataDashboard() {
         LocalDate hariIni = LocalDate.now();
         double totalPenjualanHariIni = TransaksiDAO.getTotalPenjualanByDate(hariIni);
         double totalPengeluaranHariIni = PengeluaranDAO.getTotalPengeluaranByDate(hariIni);
@@ -180,11 +180,11 @@ public class DashboardController implements Initializable {
             }
         }
         
-        muatDataStokHampirHabis(); // Re-render rows with theme
+        loadDataStokHampirHabis(); // Re-render rows with theme
     }
 
     // Mengambil barang dengan stok rendah lalu menampilkannya di dashboard.
-    private void muatDataStokHampirHabis() {
+    private void loadDataStokHampirHabis() {
         stokListContainer.getChildren().clear();
         boolean isDark = MainController.isDarkMode;
 

@@ -100,12 +100,12 @@ public class MainController {
         if ("kasir".equalsIgnoreCase(role)) {
             aturVisibility(true, wrapperTransaksi);
             setActiveState(wrapperTransaksi, indTransaksi, imgTransaksi, "ICON5.png");
-            panggilHalaman("TransaksiView");
+            loadHalaman("TransaksiView");
         } else if ("pemilik".equalsIgnoreCase(role)) {
             aturVisibility(true, wrapperDashboard, wrapperDataBarang, wrapperLaporan,
                     wrapperKategori, wrapperPengeluaran, wrapperUser, wrapperPengaturan);
             setActiveState(wrapperDashboard, indDashboard, imgDashboard, "icon39.png");
-            panggilHalaman("DashboardAdminView");
+            loadHalaman("DashboardAdminView");
         }
     }
 
@@ -115,39 +115,39 @@ public class MainController {
 
         // Semua tombol sidebar masuk ke satu handler ini, lalu diarahkan ke halaman yang sesuai.
         if (source == btnDashboard) {
-            bukaDashboard();
+            openDashboard();
         }
         else if (source == btnTransaksi) {
             setActiveState(wrapperTransaksi, indTransaksi, imgTransaksi, "ICON5.png");
-            panggilHalaman("TransaksiView");
+            loadHalaman("TransaksiView");
         }
         else if (source == btnDataBarang) {
-            bukaDataBarang();
+            openDataBarang();
         }
         else if (source == btnLaporan) {
-            bukaLaporan();
+            openLaporan();
         }
         else if (source == btnDataKategori) {
             setActiveState(wrapperKategori, indKategori, imgKategori, "icon43.png");
-            panggilHalaman("KategoriView");
+            loadHalaman("KategoriView");
         }
         else if (source == btnKelolaPengeluaran) {
-            bukaPengeluaran();
+            openPengeluaran();
         }
         else if (source == btnUser) {
             setActiveState(wrapperUser, indUser, imgUser, "icon 37.png");
-            panggilHalaman("KelolaUserView");
+            loadHalaman("KelolaUserView");
         }
         else if (source == btnPengaturan) {
             setActiveState(wrapperPengaturan, indPengaturan, imgPengaturan, "icon38.png");
-            panggilHalaman("PengaturanView");
+            loadHalaman("PengaturanView");
         }
         else if (source == btnLogout) {
             showAdminLogoutConfirmationPopup();
         }
     }
 
-    public FXMLLoader panggilHalaman(String fxmlFile) {
+    public FXMLLoader loadHalaman(String fxmlFile) {
         try {
             // Halaman dicari bertahap di folder FXML root, Admin, lalu Kasir agar navigasi tetap fleksibel.
             String path = "/FXML/" + fxmlFile + ".fxml";
@@ -216,24 +216,24 @@ public class MainController {
         applyActiveMenuStyle(wrapper, indicator, iconView, iconName);
     }
 
-    public void bukaDashboard() {
+    public void openDashboard() {
         setActiveState(wrapperDashboard, indDashboard, imgDashboard, "icon39.png");
-        panggilHalaman("DashboardAdminView");
+        loadHalaman("DashboardAdminView");
     }
 
-    public void bukaLaporan() {
+    public void openLaporan() {
         setActiveState(wrapperLaporan, indLaporan, imgLaporan, "icon42.png");
-        panggilHalaman("LaporanView");
+        loadHalaman("LaporanView");
     }
 
-    public void bukaPengeluaran() {
+    public void openPengeluaran() {
         setActiveState(wrapperPengeluaran, indPengeluaran, imgPengeluaran, "icon41.png");
-        panggilHalaman("PengeluaranView");
+        loadHalaman("PengeluaranView");
     }
 
-    public void bukaDataBarang() {
+    public void openDataBarang() {
         setActiveState(wrapperDataBarang, indDataBarang, imgDataBarang, "icon40.png");
-        panggilHalaman("BarangView");
+        loadHalaman("BarangView");
     }
 
     private void applyActiveMenuStyle(HBox wrapper, Region indicator, ImageView iconView, String iconName) {

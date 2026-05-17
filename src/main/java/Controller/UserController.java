@@ -42,7 +42,7 @@ public class UserController {
 
     @FXML
     public void initialize() {
-        muatDataUser();
+        loadDataUser();
         setDarkMode(MainController.isDarkMode);
     }
 
@@ -77,7 +77,7 @@ public class UserController {
         }
         if (lblSubTitle != null) lblSubTitle.setStyle("-fx-text-fill: " + textColor + "; -fx-font-weight: bold;");
 
-        muatDataUser();
+        loadDataUser();
     }
 
     // Helper untuk memasang atau melepas class CSS.
@@ -93,7 +93,7 @@ public class UserController {
     }
 
     // Mengambil data user dari database dan membuat baris list user.
-    private void muatDataUser() {
+    private void loadDataUser() {
         vboxUserList.getChildren().clear();
         List<User> list = UserDAO.getAllUsers();
         boolean isDark = MainController.isDarkMode;
@@ -169,7 +169,7 @@ public class UserController {
             stage.showAndWait();
 
             if (controller.isSaved()) {
-                muatDataUser(); // Refresh tabel
+                loadDataUser(); // Refresh tabel
             }
         } catch (IOException e) {
             alertError("Gagal membuka jendela edit: " + e.getMessage());
@@ -181,7 +181,7 @@ public class UserController {
     private void handleHapusUser(User user) {
         if (showDeleteConfirmationDialog()) {
             if (UserDAO.deleteUser(user.getIdUser())) { // Panggil method di DAO
-                muatDataUser(); // Refresh tabel
+                loadDataUser(); // Refresh tabel
             } else {
                 alertError("Gagal menghapus user dari database.");
             }
@@ -215,7 +215,7 @@ public class UserController {
             stage.showAndWait();
 
             if (controller != null && controller.isSaved()) {
-                muatDataUser();
+                loadDataUser();
             }
         } catch (Exception e) {
             alertError("Gagal membuka jendela: " + e.getMessage());

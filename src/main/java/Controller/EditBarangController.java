@@ -212,7 +212,7 @@ public class EditBarangController {
     // Kembali ke halaman daftar barang lewat MainController.
     private void pindahKeHalamanUtama() {
         if (MainController.getInstance() != null) {
-            MainController.getInstance().panggilHalaman("BarangView");
+            MainController.getInstance().loadHalaman("BarangView");
         }
     }
 

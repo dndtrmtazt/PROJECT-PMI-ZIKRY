@@ -84,17 +84,17 @@ public class FormPengeluaranController implements Initializable {
             String idUser = UserSession.getInstance().getUserId();
 
             if (id.isEmpty() || nominalStr.isEmpty() || jenis.isEmpty() || tgl == null) {
-                tampilkanPesan("Semua field wajib diisi!", Alert.AlertType.WARNING);
+                showPesan("Semua field wajib diisi!", Alert.AlertType.WARNING);
                 return;
             }
 
             if (idUser == null || idUser.trim().isEmpty()) {
-                tampilkanPesan("Session user tidak ditemukan. Silakan login ulang.", Alert.AlertType.ERROR);
+                showPesan("Session user tidak ditemukan. Silakan login ulang.", Alert.AlertType.ERROR);
                 return;
             }
 
             if (!jenis.matches(".*[A-Za-z].*")) {
-                tampilkanPesan("Jenis pengeluaran harus mengandung huruf dan tidak boleh angka saja.", Alert.AlertType.WARNING);
+                showPesan("Jenis pengeluaran harus mengandung huruf dan tidak boleh angka saja.", Alert.AlertType.WARNING);
                 return;
             }
 
@@ -110,30 +110,30 @@ public class FormPengeluaranController implements Initializable {
             }
 
             if (sukses) {
-                tutupJendela(event);
+                closeJendela(event);
             } else {
-                tampilkanPesan("Gagal menyimpan! Cek apakah ID sudah ada.", Alert.AlertType.ERROR);
+                showPesan("Gagal menyimpan! Cek apakah ID sudah ada.", Alert.AlertType.ERROR);
             }
 
         } catch (NumberFormatException e) {
-            tampilkanPesan("Nominal harus berupa angka valid!", Alert.AlertType.ERROR);
+            showPesan("Nominal harus berupa angka valid!", Alert.AlertType.ERROR);
         }
     }
 
     // Menutup form tanpa menyimpan.
     @FXML
     private void handleBatal(ActionEvent event) {
-        tutupJendela(event);
+        closeJendela(event);
     }
 
     // Menutup Stage form dari tombol yang ditekan.
-    private void tutupJendela(ActionEvent event) {
+    private void closeJendela(ActionEvent event) {
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.close();
     }
 
     // Menampilkan alert validasi atau error penyimpanan.
-    private void tampilkanPesan(String pesan, Alert.AlertType tipe) {
+    private void showPesan(String pesan, Alert.AlertType tipe) {
         Alert alert = new Alert(tipe);
         alert.setTitle("Informasi");
         alert.setHeaderText(null);

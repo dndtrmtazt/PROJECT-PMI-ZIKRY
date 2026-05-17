@@ -29,13 +29,13 @@ public class PengaturanController {
 
     @FXML
     public void initialize() {
-        muatDataToko();
+        loadDataToko();
         setFieldsEditable(false);
         setDarkMode(MainController.isDarkMode);
     }
 
     // Mengambil data toko dari database dan menampilkannya ke form.
-    private void muatDataToko() {
+    private void loadDataToko() {
         Toko toko = TokoDAO.getDataToko();
         if (toko != null) {
             txtNamaToko.setText(toko.getNamaToko());

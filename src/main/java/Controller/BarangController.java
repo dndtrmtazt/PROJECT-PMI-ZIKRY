@@ -185,7 +185,7 @@ public class BarangController {
         Barang selected = tableBarang.getSelectionModel().getSelectedItem();
 
         if (selected != null && MainController.getInstance() != null) {
-            FXMLLoader loader = MainController.getInstance().panggilHalaman("EditBarang");
+            FXMLLoader loader = MainController.getInstance().loadHalaman("EditBarang");
             if (loader != null) {
                 EditBarangController controller = loader.getController();
 
@@ -208,7 +208,7 @@ public class BarangController {
     @FXML
     private void handleTambahBarang() {
         if (MainController.getInstance() != null) {
-            MainController.getInstance().panggilHalaman("TambahBarang");
+            MainController.getInstance().loadHalaman("TambahBarang");
         }
     }
 }

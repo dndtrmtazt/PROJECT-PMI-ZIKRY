@@ -80,7 +80,7 @@
                <Font size="13.0" />
             </font>
          </Label>
-         <Button fx:id="loginButton" mnemonicParsing="false" onAction="#handleLogin" prefHeight="46.0" prefWidth="350.0" styleClass="login-button" text="Login">
+         <Button fx:id="loginButton" mnemonicParsing="false" onAction="#loginButtonAction" prefHeight="46.0" prefWidth="350.0" styleClass="login-button" text="Login">
             <VBox.margin>
                <Insets top="6.0" />
             </VBox.margin>
